@@ -1,0 +1,6 @@
+node_modules/
+output/
+rom/
+dev-old
+test.html
+npm-debug.log

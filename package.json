@@ -1,0 +1,17 @@
+{
+  "name": "atari2600.js",
+  "version": "0.0.1",
+  "scripts": {
+    "webpack": "webpack --config ./webpack.config.js --progress --colors --profile --bail"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.33",
+    "ts-loader": "^0.8.1",
+    "typescript": "^2.1.4",
+    "webpack": "^1.14.0",
+    "webpack-merge": "^2.3.1"
+  },
+  "private": true
+}
