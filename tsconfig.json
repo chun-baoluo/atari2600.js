@@ -1,16 +1,16 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "rootDir": "./dev",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "typeRoots": [ "./node_modules/@types" ]
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES5",
+        "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "rootDir": "./dev",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "typeRoots": [ "node_modules/@types" ],
+        "lib": ["es2015", "dom"]
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

@@ -1,41 +1,46 @@
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
 
-var config = {
+module.exports = {
     entry: {
-        app: './dev/index.ts'
+        app: __dirname + '/dev/index.ts'
     },
 
     resolve: {
-        extensions: ['', '.ts']
+        extensions: ['*', '.ts']
     },
 
     module: {
         loaders: [
             {
                 test: /\.ts$/,
-                loader: 'ts'
+                loader: 'ts-loader',
+                exclude: /dev-old/
             }
         ]
     },
-
-    plugins: []
-};
-
-module.exports = webpackMerge(config, {
-    watch: true,
     output: {
-        path: './output',
+        path: __dirname + './output',
         publicPath: './',
         filename: '[name].js',
     },
-
-    htmlLoader: {
-        minimize: true
-    },
-
     plugins: [
-        new webpack.NoErrorsPlugin(),
-        new webpack.optimize.DedupePlugin()
-    ]
-});
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+             beautify: false,
+             comments: false,
+             compress: {
+                 sequences: true,
+                 booleans: true,
+                 loops: true,
+                 unused: true,
+                 warnings: false,
+                 drop_console: true,
+                 pure_getters: true,
+                 unsafe: true,
+                 unsafe_comps: true,
+                 screw_ie8: true
+             }
+         })
+    ],
+    watch: true,
+};
