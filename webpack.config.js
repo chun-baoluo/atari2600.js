@@ -19,28 +19,28 @@ module.exports = {
         ]
     },
     output: {
-        path: __dirname + './output',
+        path: __dirname + '/output',
         publicPath: './',
         filename: '[name].js',
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-             beautify: false,
-             comments: false,
-             compress: {
-                 sequences: true,
-                 booleans: true,
-                 loops: true,
-                 unused: true,
-                 warnings: false,
-                 drop_console: true,
-                 pure_getters: true,
-                 unsafe: true,
-                 unsafe_comps: true,
-                 screw_ie8: true
-             }
-         })
+        // new webpack.optimize.UglifyJsPlugin({
+        //      beautify: false,
+        //      comments: false,
+        //      compress: {
+        //          sequences: true,
+        //          booleans: true,
+        //          loops: true,
+        //          unused: true,
+        //          warnings: false,
+        //          drop_console: true,
+        //          pure_getters: true,
+        //          unsafe: true,
+        //          unsafe_comps: true,
+        //          screw_ie8: true
+        //      }
+        //  })
     ],
     watch: true,
 };

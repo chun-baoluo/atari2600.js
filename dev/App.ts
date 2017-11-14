@@ -1,26 +1,30 @@
 import Display from './Display';
-import RomReader from './RomReader';
+import { RomReader } from './RomReader';
 
 import Register from './Register';
 
 export class App {
+    display: Display = null;
+
+    constructor() {
+        this.handleRom = this.handleRom.bind(this);
+    };
+
+    handleRom(rom: Uint8Array) {
+        this.display.nextFrame().then(() => {
+            setTimeout(() => this.handleRom(rom), 1000);
+        });
+    };
+
     processFile()  {
 
     	console.log('Reading process started!');
 
     	let file: any = (<HTMLInputElement>document.getElementById('file')).files[0];
+        let canvas: any = document.getElementById('canvas');
 
-        let reader = new RomReader(file, (rom: Uint8Array) => {
-            console.log(rom);
+        this.display = new Display(canvas);
 
-            let canvas: any = document.getElementById('canvas');
-
-            let display: any = new Display(canvas);
-
-            display.nextFrame().then(() => {
-                console.log('REGISTER ', Register.A);
-            });
-
-        });
+        let reader = new RomReader(file, this.handleRom);
     };
 }

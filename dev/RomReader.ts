@@ -1,11 +1,11 @@
-export default class RomReader extends FileReader {
+export class RomReader extends FileReader {
     callback: Function;
 
     rom: Uint8Array;
 
     romSize: number;
 
-    constructor(file: any, callback: any) {
+    constructor(file: any, callback: Function) {
         super();
         this.callback = callback;
         this.onloadend = this.onRomLoadEnd;

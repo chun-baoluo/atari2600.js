@@ -30,7 +30,7 @@ export default class Display {
 
     nextFrame() {
         return new Promise((resolve: Function, reject: Function) => {
-            Register.A = 1;
+            console.log('NEXT FRAME');
             resolve(true);
         });
     };

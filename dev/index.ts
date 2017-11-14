@@ -1,7 +1,5 @@
 import { App } from './App';
 
-var app = new App();
+let app = new App();
 
-console.log(app.processFile);
-
-(<HTMLInputElement>document.getElementById('file')).onchange = app.processFile;
+(<HTMLInputElement>document.getElementById('file')).onchange = () => app.processFile();
