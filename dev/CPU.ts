@@ -1,20 +1,27 @@
+import { Register } from './RAM';
+
 export class CPU {
-	locked: boolean = false;
+	private static locked: boolean = false;
 
-	cycle: number = 0;
+	private static cycle: number = 0;
 
-	public lock() {
+	public static lock() {
 		this.locked = true;
 	};
 
-	public unlock() {
+	public static unlock() {
 		this.locked = false;
 	};
 
-	public pulse() {
+	public static pulse() {
+		if(!this.locked && this.cycle == 0) {
+			
+			Register.PC++;
+		}
+		this.cycle--;
 	};
 
-	public setCycle(val: number) {
+	public static setCycle(val: number) {
 		this.cycle = val;
 	};
 };

@@ -1,4 +1,5 @@
-import Register from './Register';
+import { Register } from './RAM';
+import { CPU } from './CPU';
 
 export default class Display {
 
@@ -31,6 +32,9 @@ export default class Display {
     nextFrame() {
         return new Promise((resolve: Function, reject: Function) => {
             console.log('NEXT FRAME');
+            
+            CPU.pulse();
+            
             resolve(true);
         });
     };

@@ -1,7 +1,7 @@
 import Display from './Display';
 import { RomReader } from './RomReader';
 
-import Register from './Register';
+import { Register, Rom } from './RAM';
 
 export class App {
     display: Display = null;
@@ -10,9 +10,9 @@ export class App {
         this.handleRom = this.handleRom.bind(this);
     };
 
-    handleRom(rom: Uint8Array) {
+    handleRom() {
         this.display.nextFrame().then(() => {
-            setTimeout(() => this.handleRom(rom), 1000);
+            setTimeout(() => this.handleRom(), 1000);
         });
     };
 
@@ -25,6 +25,9 @@ export class App {
 
         this.display = new Display(canvas);
 
-        let reader = new RomReader(file, this.handleRom);
+        let reader = new RomReader(file, (rom: Uint8Array) => {
+            Rom.data = rom;
+            this.handleRom();
+        });
     };
 }
