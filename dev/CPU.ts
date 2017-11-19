@@ -1,4 +1,5 @@
-import { Register } from './RAM';
+import { Register, Rom } from './RAM';
+import { Opcode } from './Opcode';
 
 export class CPU {
 	private static locked: boolean = false;
@@ -14,9 +15,8 @@ export class CPU {
 	};
 
 	public static pulse() {
-		if(!this.locked && this.cycle == 0) {
-			
-			Register.PC++;
+		if(!this.locked && this.cycle == 0) {;
+			Opcode[Rom.data[Register.PC++]]();
 		}
 		this.cycle--;
 	};
