@@ -10,6 +10,8 @@ export class RomReader extends FileReader {
         this.callback = callback;
         this.onloadend = this.onRomLoadEnd;
         this.readAsArrayBuffer(file);
+
+        FileReader.apply(this);
     };
 
     // Lets mirror our data to match 64K rom
