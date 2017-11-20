@@ -15,8 +15,17 @@ export class CPU {
 	};
 
 	public static pulse() {
-		if(!this.locked && this.cycle == 0) {;
-			Opcode[Rom.data[Register.PC++]]();
+		if(!this.locked && this.cycle <= 0) {;
+			try {
+				console.log(Rom.data[Register.PC].toString(16));
+				
+				this.setCycle(Opcode[Rom.data[Register.PC]]());
+				Register.PC++;
+			} catch(e) {
+				console.log('Error', Rom.data[Register.PC].toString(16));
+				
+				throw e;
+			}
 		}
 		this.cycle--;
 	};
