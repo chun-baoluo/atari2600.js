@@ -2,13 +2,8 @@ import { CPU } from './CPU';
 import { Flag, Register, Rom } from './RAM';
 
 export class Opcode {
-    public static 0xd8() {
-        Flag.D = 0;
-        CPU.setCycle(2);
-    };
 
     public static 0x78() {
-        console.log('BIT set');
         Flag.I = 1;
         CPU.setCycle(2);
     };
@@ -28,6 +23,11 @@ export class Opcode {
             Flag.N = 0;
         }
 
+        CPU.setCycle(2);
+    };
+    
+    public static 0xd8() {
+        Flag.D = 0;
         CPU.setCycle(2);
     };
 };

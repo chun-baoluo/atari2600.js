@@ -20,5 +20,5 @@ export class Flag {
 };
 
 export class Rom {
-	public static data: Uint8Array = null;
+	public static data: Int8Array = null;
 };

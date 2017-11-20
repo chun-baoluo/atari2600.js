@@ -1,46 +1,46 @@
 const webpackConfig = require("./webpack.config");
 
 module.exports = function(config) {
-  config.set({
+    config.set({
 
-    basePath: '',
+        basePath: '',
 
-    frameworks: ['mocha', 'chai'],
+        frameworks: ['mocha', 'chai'],
 
-    files: [
-      'test/**/*.spec.ts'
-    ],
+        files: [
+            'test/**/*.spec.ts'
+        ],
 
-    exclude: [
-    ],
+        exclude: [
+        ],
 
-    preprocessors: {
-        "test/**/*.spec.ts": ["webpack"] // Using karma-webpack npm module
-    },
+        preprocessors: {
+            "test/**/*.spec.ts": ["webpack"]
+        },
 
-    reporters: ['progress'],
+        reporters: ['progress'],
 
-    port: 9876,
+        port: 9876,
 
-    colors: true,
+        colors: true,
 
-    logLevel: config.LOG_INFO,
+        logLevel: config.LOG_INFO,
 
-    autoWatch: true,
+        autoWatch: true,
 
-    browsers: ['Chrome'],
+        browsers: ['Chrome'],
 
-    singleRun: false,
+        singleRun: false,
 
-    concurrency: Infinity,
+        concurrency: Infinity,
 
-    mime: {
-        'text/x-typescript': ['ts']
-    },
+        mime: {
+            'text/x-typescript': ['ts']
+        },
 
-    webpack: {
-        module: webpackConfig.module,
-        resolve: webpackConfig.resolve
-    }
-  })
+        webpack: {
+            module: webpackConfig.module,
+            resolve: webpackConfig.resolve
+        }
+    });
 }
