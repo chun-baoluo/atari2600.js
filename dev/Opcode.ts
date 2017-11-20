@@ -1,5 +1,6 @@
-import { CPU } from './CPU';
 import { Flag, Register, Rom } from './RAM';
+
+// TODO: Check what will happen if decremented unsigned value goes below zero (0xCA)
 
 export class Opcode {
 
@@ -8,6 +9,13 @@ export class Opcode {
         Flag.I = 1;
         
         return 2;
+    };
+    
+    // STA nn, X
+    public static 0x95() {    
+        Rom.data[Rom.data[++Register.PC] + Register.X] = Register.A; 
+        
+        return 4;
     };
     
     // TXS
@@ -57,6 +65,27 @@ export class Opcode {
         };
 
         return 2;        
+    };
+    
+    // DEX
+    public static 0xCA() {
+        Register.X--;
+        
+        let signed: number = new Int8Array([Register.X])[0];
+
+        if(signed == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+        
+        if(signed < 0) {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+        
+        return 2;
     };
     
     // CLD

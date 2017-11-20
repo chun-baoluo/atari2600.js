@@ -10,15 +10,25 @@ describe("Opcode", () => {
         Flag.I = 0;
         Flag.N = 0;
         Flag.Z = 0;
+        Register.A = 0;
         Register.PC = 0;
         Register.S = 0;
         Register.X = 0;
-        Rom.data = new Int8Array([]);
+        Rom.data = new Uint8Array([]);
     });
 
-    it("(0x78) should set interrupt disable bit", () => {
+    it("(0x78) should set the interrupt disable bit", () => {
         Opcode[0x78]();
         chai.assert.strictEqual(Flag.I, 1);
+    });
+    
+    it("(0x95) should set an address value to be equal regsiter A", () => {
+        Rom.data = new Uint8Array([0x95, 0x01, 0]);
+        Register.X = new Uint8Array([0x01])[0];
+        Register.A = 5;
+        
+        Opcode[0x95]();
+        chai.assert.strictEqual(Rom.data[2], Register.A);
     });
     
     it("(0x9A) should set register S to be equal register X", () => {
@@ -28,7 +38,7 @@ describe("Opcode", () => {
     });
     
     it("(0xA2) should set register X to nn, change N and Z flags", () => {
-        Rom.data = new Int8Array([0xA2, 0xff, 0]);
+        Rom.data = new Uint8Array([0xA2, 0xFF, 0]);
         Flag.Z = 1;
         
         Opcode[0xA2]();
@@ -43,7 +53,7 @@ describe("Opcode", () => {
     });
     
     it("(0xA9) should set register A to nn, change N and Z flags", () => {
-        Rom.data = new Int8Array([0xA9, 0xff, 0]);
+        Rom.data = new Uint8Array([0xA9, 0xFF, 0]);
         Flag.Z = 1;
         
         Opcode[0xA9]();
@@ -53,6 +63,25 @@ describe("Opcode", () => {
         
         Opcode[0xA9]();
         chai.assert.strictEqual(Register.A, Rom.data[2]);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
+    
+    it("(0xCA) should decrement register X by one, change N and Z flags", () => {
+        let value: number = new Uint8Array([0xFF])[0];
+        Register.X = value;
+        Flag.Z = 1;
+        
+        Opcode[0xCA]();
+        chai.assert.strictEqual(Register.X, value - 1);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        
+        value = new Uint8Array([0x01])[0];
+        Register.X = value;        
+        
+        Opcode[0xCA]();
+        chai.assert.strictEqual(Register.X, value - 1);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });

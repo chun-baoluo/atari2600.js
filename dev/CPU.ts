@@ -15,7 +15,7 @@ export class CPU {
 	};
 
 	public static pulse() {
-		if(!this.locked && this.cycle <= 0) {;
+		if(!this.locked && this.cycle <= 0) {
 			try {
 				console.log(Rom.data[Register.PC].toString(16));
 				

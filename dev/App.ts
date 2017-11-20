@@ -25,7 +25,7 @@ export class App {
 
         this.display = new Display(canvas);
 
-        let reader = new RomReader(file, (rom: Int8Array) => {
+        let reader = new RomReader(file, (rom: Uint8Array) => {
             Rom.data = rom;
             this.handleRom();
         });
