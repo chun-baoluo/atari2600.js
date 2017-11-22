@@ -1,9 +1,7 @@
 import { Flag, Register, Rom, RAM } from './RAM';
 import { CPU } from './CPU';
 
-// TODO: Check what will happen if decremented unsigned value goes below zero (0xCA)
-// TODO: Conditional branches - additional cycle when jump
-// TODO: Possible 0x95 problem with signed/unsigned values, needs double checking
+// TODO: Negative flag - proper setting
 
 export class Opcode {
     
@@ -14,12 +12,33 @@ export class Opcode {
     private static getUint8(val: number) {
         return new Uint8Array([val])[0];
     };
+    
+    private static isNextPage(pc1: number, pc2: number) {
+        return ('000' + pc1.toString(16)).slice(-4).split('')[0] != ('000' + pc2.toString(16)).slice(-4).split('')[0];    
+    };
 
     // SEI
     public static 0x78() {
         Flag.I = 1;
         
         return 2;
+    };
+    
+    // STA nn
+    public static 0x85() {
+        RAM.set(Rom.data[++Register.PC], Register.A);
+        return 3;
+    };
+    
+    // STA nnnn 
+    public static 0x8D() {
+        let low: number = Rom.data[++Register.PC];
+        let high: number = Rom.data[++Register.PC];
+        let address: number = ((high & 0xff) << 8) | (low & 0xff);
+        
+        RAM.set(address, Register.A);
+        
+        return 4;
     };
     
     // STA nn, X
@@ -62,7 +81,7 @@ export class Opcode {
         
         let signed: number = this.getInt8(Register.A);
 
-        if(signed == 0) {
+        if(Register.A == 0) {
             Flag.Z = 1;
         } else {
             Flag.Z = 0;
@@ -77,15 +96,44 @@ export class Opcode {
         return 2;        
     };
     
+    // LDA nnnn
+    public static 0xAD() {
+        let low: number = Rom.data[++Register.PC];
+        let high: number = Rom.data[++Register.PC];
+        let address: number = ((high & 0xff) << 8) | (low & 0xff);
+        
+        console.log('ADDRESS', address);
+        
+        Register.A = RAM.get(address);
+        
+        let signed: number = this.getInt8(Register.A);
+        
+        if(Register.A == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+        
+        if(signed < 0) {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+        
+        return 4;
+    };
+    
     // DEX
     public static 0xCA() {
-        Register.X = this.getUint8(Register.X - 1);
+        Register.X--;
         
         let signed: number = this.getInt8(Register.X);
+        
+        if(Register.X < 0) {
+            Register.X = 255;
+        };
 
         if(Register.X == 0) {
-            // Register.X = 255;
-            
             Flag.Z = 1;
         } else {
             Flag.Z = 0;
@@ -109,11 +157,7 @@ export class Opcode {
         
 		let num: number = this.getInt8(Rom.data[++Register.PC]);
         
-        Register.PC += num;
-        
-        return 3;
-			//cpu.setCycle(3 + (isNextPage(register.PC, register.PC += num)? 1 : 0));
-		
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num)? 1 : 0);
     };
     
     // CLD
