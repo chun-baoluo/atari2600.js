@@ -14,7 +14,23 @@ export class Opcode {
     };
     
     private static isNextPage(pc1: number, pc2: number) {
-        return ('000' + pc1.toString(16)).slice(-4).split('')[0] != ('000' + pc2.toString(16)).slice(-4).split('')[0];    
+        return ('000' + pc1.toString(16)).slice(-4).charAt(0) != ('000' + pc2.toString(16)).slice(-4).charAt(0);    
+    };
+    
+    private static toBin(val: number) {
+        return ('00000000' + (val >>> 0).toString(2)).slice(-8);
+    };
+    
+    // BPL nnn
+    public static 0x10() {        
+        if(Flag.N == 1) {
+			Register.PC++;
+			return 2;
+		};
+        
+		let num: number = this.getInt8(Rom.data[++Register.PC]);
+        
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num)? 1 : 0);        
     };
 
     // SEI
@@ -57,16 +73,14 @@ export class Opcode {
     // LDX #nn
     public static 0xA2() {
         Register.X = Rom.data[++Register.PC];
-        
-        let signed: number = this.getInt8(Register.X);
 
-        if(signed == 0) {
+        if(Register.X == 0) {
             Flag.Z = 1;
         } else {
             Flag.Z = 0;
         };
         
-        if(signed < 0) {
+        if(this.toBin(Register.X).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -78,8 +92,6 @@ export class Opcode {
     // LDA #nn
     public static 0xA9() {
         Register.A = Rom.data[++Register.PC];
-        
-        let signed: number = this.getInt8(Register.A);
 
         if(Register.A == 0) {
             Flag.Z = 1;
@@ -87,7 +99,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(signed < 0) {
+        if(this.toBin(Register.A).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -102,11 +114,9 @@ export class Opcode {
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xff) << 8) | (low & 0xff);
         
-        console.log('ADDRESS', address);
+        console.log(address, RAM.get(address));
         
         Register.A = RAM.get(address);
-        
-        let signed: number = this.getInt8(Register.A);
         
         if(Register.A == 0) {
             Flag.Z = 1;
@@ -114,7 +124,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(signed < 0) {
+        if(this.toBin(Register.A).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -139,7 +149,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(signed < 0) {
+        if(this.toBin(Register.X).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;

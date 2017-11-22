@@ -16,13 +16,24 @@ describe("CPU Jump and Control Instructions", () => {
         Register.X = 0;
         Rom.data = new Uint8Array([]);
     });
+    
+    it("(0x10) should jump if Negative flag is set", () => {
+        Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
+        Opcode[0x10]();
+        chai.assert.strictEqual(Register.PC, 0);
+        
+        Flag.N = 1;
+        Register.PC = 0;
+        Opcode[0x10]();
+        chai.assert.strictEqual(Register.PC, 1);
+    });
 
     it("(0x78) should set the interrupt disable bit", () => {
         Opcode[0x78]();
         chai.assert.strictEqual(Flag.I, 1);
     });
 
-    it("(0xD0) should jump if BNE if Zero flag is set", () => {
+    it("(0xD0) should jump if Zero flag is set", () => {
         Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
         Opcode[0xD0]();
         chai.assert.strictEqual(Register.PC, 0);

@@ -26,8 +26,6 @@ export class RAM {
 	};
 	
 	public static readRom(rom: Uint8Array) {
-		console.log(rom, rom.byteLength);
-		
 		this.memory.set(rom, 61440);
 	};
 	
