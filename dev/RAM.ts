@@ -19,7 +19,7 @@ export class Flag {
 };
 
 export class RAM {
-	public static memory: Uint8Array = new Uint8Array(65536);
+	private static memory: Uint8Array = new Uint8Array(65536);
 	
 	public static get(address: number) {
 		return this.memory[address];

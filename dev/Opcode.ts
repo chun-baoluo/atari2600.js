@@ -2,6 +2,7 @@ import { Flag, Register, Rom, RAM } from './RAM';
 import { CPU } from './CPU';
 
 // TODO: Negative flag - proper setting
+// TODO: Memory mirroring
 
 export class Opcode {
     
