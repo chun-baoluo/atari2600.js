@@ -18,7 +18,25 @@ export class Flag {
 	public static Z: number = 0; // Zero
 };
 
+export class RAM {
+	public static memory: Uint8Array = new Uint8Array(65536);
+	
+	public static get(address: number) {
+		return this.memory[address];
+	};
+	
+	public static readRom(rom: Uint8Array) {
+		console.log(rom, rom.byteLength);
+		
+		this.memory.set(rom, 61440);
+	};
+	
+	public static set(address: number, value: number) {
+		this.memory[address] = value;
+	};
+};
+
 export class Rom {
-	public static data: Uint8Array = new Uint8Array(65536);
+	public static data: Uint8Array = null;
 	public static size: number = 0;
 };

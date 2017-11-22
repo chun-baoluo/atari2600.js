@@ -2,7 +2,7 @@ import {} from 'mocha';
 import {} from 'chai';
 
 import { Opcode } from '../dev/Opcode';
-import { Flag, Register, Rom } from '../dev/RAM';
+import { Flag, Register, Rom, RAM } from '../dev/RAM';
 
 describe("Opcode", () => {
     beforeEach(() => {
@@ -23,12 +23,13 @@ describe("Opcode", () => {
     });
     
     it("(0x95) should set an address value to be equal regsiter A", () => {
-        Rom.data = new Uint8Array([0x95, 0x01, 0]);
-        Register.X = new Uint8Array([0x01])[0];
+        RAM.set(0x02, 0);
+        Rom.data = new Uint8Array([0x95, 0x01]);
+        Register.X = 0x01;
         Register.A = 5;
         
         Opcode[0x95]();
-        chai.assert.strictEqual(Rom.data[2], Register.A);
+        chai.assert.strictEqual(RAM.get(0x02), Register.A);
     });
     
     it("(0x9A) should set register S to be equal register X", () => {

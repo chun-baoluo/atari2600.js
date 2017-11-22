@@ -1,4 +1,4 @@
-import { Flag, Register, Rom } from './RAM';
+import { Flag, Register, Rom, RAM } from './RAM';
 import { CPU } from './CPU';
 
 // TODO: Check what will happen if decremented unsigned value goes below zero (0xCA)
@@ -24,15 +24,7 @@ export class Opcode {
     
     // STA nn, X
     public static 0x95() {    
-        
-        console.log(Rom.data);
-        
-        // Rom.data[Rom.data[++Register.PC] + Register.X] = Register.A;
-        
-        Register.PC++;
-        
-        //console.log('ADDRESS', this.getUint8(Rom.data[Register.PC]), this.getUint8(Register.X), this.getUint8(Rom.data[Register.PC] + Register.X));
-        
+        RAM.set(Rom.data[++Register.PC] + Register.X, Register.A);
         return 4;
     };
     
@@ -87,7 +79,7 @@ export class Opcode {
     
     // DEX
     public static 0xCA() {
-        Register.X--;
+        Register.X = this.getUint8(Register.X - 1);
         
         let signed: number = this.getInt8(Register.X);
 

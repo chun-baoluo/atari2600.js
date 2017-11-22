@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "build:dev": "webpack --config ./webpack.config.js --progress --colors --profile --bail",
-    "test": "./node_modules/.bin/karma start",
+    "test": "./node_modules/.bin/karma start"
   },
   "dependencies": {},
   "devDependencies": {
