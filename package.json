@@ -2,8 +2,8 @@
   "name": "atari2600.js",
   "version": "0.0.1",
   "scripts": {
-    "webpack": "webpack --config ./webpack.config.js --progress --colors --profile --bail",
-    "test": "./node_modules/.bin/karma start"
+    "build:dev": "webpack --config ./webpack.config.js --progress --colors --profile --bail",
+    "test": "./node_modules/.bin/karma start",
   },
   "dependencies": {},
   "devDependencies": {

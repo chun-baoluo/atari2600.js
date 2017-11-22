@@ -6,18 +6,14 @@ import { Register, Rom } from './RAM';
 export class App {
     display: Display = null;
 
-    constructor() {
-        this.handleRom = this.handleRom.bind(this);
-    };
-
     handleRom() {
         this.display.nextFrame().then(() => {
-            setTimeout(() => this.handleRom(), 1000);
+            this.handleRom();
+            // setTimeout(() => this.handleRom(), 1000 / 60);
         });
     };
 
     processFile()  {
-
     	console.log('Reading process started!');
 
     	let file: any = (<HTMLInputElement>document.getElementById('file')).files[0];
@@ -25,8 +21,9 @@ export class App {
 
         this.display = new Display(canvas);
 
-        let reader = new RomReader(file, (rom: Uint8Array) => {
-            Rom.data = rom;
+        let reader = new RomReader(file, (rom: Uint8Array, size: number) => {
+            Rom.data.set(rom);
+            Rom.size = size;
             this.handleRom();
         });
     };

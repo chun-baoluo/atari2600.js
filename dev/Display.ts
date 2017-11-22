@@ -31,8 +31,6 @@ export default class Display {
 
     nextFrame() {
         return new Promise((resolve: Function, reject: Function) => {
-            console.log('NEXT FRAME');
-            
             CPU.pulse();
             
             resolve(true);

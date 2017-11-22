@@ -16,9 +16,9 @@ export class Flag {
 	public static N: number = 0; // Negative/Sign
 	public static V: number = 0; // Overflow
 	public static Z: number = 0; // Zero
-	public static D8: number = 0;
 };
 
 export class Rom {
-	public static data: Uint8Array = null;
+	public static data: Uint8Array = new Uint8Array(65536);
+	public static size: number = 0;
 };

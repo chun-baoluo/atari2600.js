@@ -17,16 +17,13 @@ export class CPU {
 	public static pulse() {
 		if(!this.locked && this.cycle <= 0) {
 			try {
-				console.log(Rom.data[Register.PC].toString(16));
-				
 				this.setCycle(Opcode[Rom.data[Register.PC]]());
-				Register.PC++;
 			} catch(e) {
-				console.log('Error', Rom.data[Register.PC].toString(16));
-				
+				console.log('Error', Rom.data[Register.PC].toString(16), Register.PC);
 				throw e;
 			}
-		}
+			Register.PC++;
+		};
 		this.cycle--;
 	};
 
