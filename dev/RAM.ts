@@ -26,6 +26,11 @@ export class RAM {
 	};
 	
 	public static readRom(rom: Uint8Array) {
+		this.memory[0x294] = (Math.random() * 255) >> 0;
+		this.memory[0x295] = (Math.random() * 255) >> 0;
+		this.memory[0x296] = (Math.random() * 255) >> 0;
+		this.memory[0x297] = (Math.random() * 255) >> 0;
+		
 		this.memory.set(rom, 61440);
 	};
 	

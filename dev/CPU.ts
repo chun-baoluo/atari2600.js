@@ -1,5 +1,6 @@
 import { Register, Rom } from './RAM';
 import { Opcode } from './Opcode';
+import { PIA } from './PIA';
 
 export class CPU {
 	private static locked: boolean = false;
@@ -24,6 +25,8 @@ export class CPU {
 				throw e;
 			}
 			Register.PC++;
+			
+			PIA.tick();
 		};
 		this.cycle--;
 	};

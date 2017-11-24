@@ -1,5 +1,4 @@
 import { Flag, Register, Rom, RAM } from './RAM';
-import { CPU } from './CPU';
 
 // TODO: Negative flag - proper setting
 // TODO: Memory mirroring
@@ -19,11 +18,19 @@ export class Opcode {
     };
     
     private static toBin(val: number) {
-        return ('00000000' + (val >>> 0).toString(2)).slice(-8);
+        let bits: string = (val >>> 0).toString(2);
+        
+        if(bits.length > 8) {
+            return ('0000000000000000' + bits).slice(-16);
+        };
+        
+        return ('00000000' + bits).slice(-8);
     };
     
     // BPL nnn
-    public static 0x10() {        
+    public static 0x10() {
+        //Flag.N = 1;
+                
         if(Flag.N == 1) {
 			Register.PC++;
 			return 2;
@@ -31,7 +38,7 @@ export class Opcode {
         
 		let num: number = this.getInt8(Rom.data[++Register.PC]);
         
-        return 3 + (this.isNextPage(Register.PC, Register.PC += num)? 1 : 0);        
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);        
     };
 
     // SEI
@@ -113,9 +120,7 @@ export class Opcode {
     public static 0xAD() {
         let low: number = Rom.data[++Register.PC];
         let high: number = Rom.data[++Register.PC];
-        let address: number = ((high & 0xff) << 8) | (low & 0xff);
-        
-        console.log(address, RAM.get(address));
+        let address: number = ((high & 0xff) << 8) | (low & 0xFF);
         
         Register.A = RAM.get(address);
         
@@ -141,7 +146,7 @@ export class Opcode {
         let signed: number = this.getInt8(Register.X);
         
         if(Register.X < 0) {
-            Register.X = 255;
+            Register.X = 0xFF;
         };
 
         if(Register.X == 0) {
