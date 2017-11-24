@@ -8,8 +8,8 @@ export class App {
 
     handleRom() {
         this.display.nextFrame().then(() => {
-            this.handleRom();
-            // setTimeout(() => this.handleRom(), 1000 / 60);
+            // this.handleRom();
+            setTimeout(() => this.handleRom(), 1000 / 60);
         });
     };
 
