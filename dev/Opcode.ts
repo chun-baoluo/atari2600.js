@@ -1,30 +1,13 @@
 import { Flag, Register, Rom, RAM } from './RAM';
+import { Convert } from './Common';
 
 // TODO: Negative flag - proper setting
 // TODO: Memory mirroring
 
 export class Opcode {
     
-    private static getInt8(val: number) {
-        return new Int8Array([val])[0];
-    };
-    
-    private static getUint8(val: number) {
-        return new Uint8Array([val])[0];
-    };
-    
     private static isNextPage(pc1: number, pc2: number) {
         return ('000' + pc1.toString(16)).slice(-4).charAt(0) != ('000' + pc2.toString(16)).slice(-4).charAt(0);    
-    };
-    
-    private static toBin(val: number) {
-        let bits: string = (val >>> 0).toString(2);
-        
-        if(bits.length > 8) {
-            return ('0000000000000000' + bits).slice(-16);
-        };
-        
-        return ('00000000' + bits).slice(-8);
     };
     
     // BPL nnn
@@ -36,7 +19,7 @@ export class Opcode {
 			return 2;
 		};
         
-		let num: number = this.getInt8(Rom.data[++Register.PC]);
+		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
         
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);        
     };
@@ -50,7 +33,7 @@ export class Opcode {
     
     // STA nn
     public static 0x85() {
-        RAM.set(Rom.data[++Register.PC], Register.A);
+        RAM.write(Rom.data[++Register.PC], Register.A);
         return 3;
     };
     
@@ -60,14 +43,14 @@ export class Opcode {
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xff) << 8) | (low & 0xff);
         
-        RAM.set(address, Register.A);
+        RAM.write(address, Register.A);
         
         return 4;
     };
     
     // STA nn, X
     public static 0x95() {    
-        RAM.set(Rom.data[++Register.PC] + Register.X, Register.A);
+        RAM.write(Rom.data[++Register.PC] + Register.X, Register.A);
         return 4;
     };
     
@@ -88,7 +71,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(this.toBin(Register.X).charAt(0) == '1') {
+        if(Convert.toBin(Register.X).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -107,7 +90,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(this.toBin(Register.A).charAt(0) == '1') {
+        if(Convert.toBin(Register.A).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -122,7 +105,7 @@ export class Opcode {
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xff) << 8) | (low & 0xFF);
         
-        Register.A = RAM.get(address);
+        Register.A = RAM.read(address);
         
         if(Register.A == 0) {
             Flag.Z = 1;
@@ -130,7 +113,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(this.toBin(Register.A).charAt(0) == '1') {
+        if(Convert.toBin(Register.A).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -141,13 +124,7 @@ export class Opcode {
     
     // DEX
     public static 0xCA() {
-        Register.X--;
-        
-        let signed: number = this.getInt8(Register.X);
-        
-        if(Register.X < 0) {
-            Register.X = 0xFF;
-        };
+        Register.X = Convert.toUint8(Register.X - 1);
 
         if(Register.X == 0) {
             Flag.Z = 1;
@@ -155,7 +132,7 @@ export class Opcode {
             Flag.Z = 0;
         };
         
-        if(this.toBin(Register.X).charAt(0) == '1') {
+        if(Convert.toBin(Register.X).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
@@ -171,7 +148,7 @@ export class Opcode {
 			return 2;
 		};
         
-		let num: number = this.getInt8(Rom.data[++Register.PC]);
+		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
         
         return 3 + (this.isNextPage(Register.PC, Register.PC += num)? 1 : 0);
     };

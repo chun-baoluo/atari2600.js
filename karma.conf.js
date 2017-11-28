@@ -1,5 +1,3 @@
-const webpackConfig = require("./webpack.config");
-
 module.exports = function(config) {
     config.set({
 
@@ -39,8 +37,18 @@ module.exports = function(config) {
         },
 
         webpack: {
-            module: webpackConfig.module,
-            resolve: webpackConfig.resolve
+            module: {
+                loaders: [
+                    {
+                        test: /\.ts$/,
+                        loader: 'ts-loader',
+                        exclude: /dev-old/
+                    }
+                ]
+            },
+            resolve: {
+                extensions: ['*', '.ts']
+            }
         }
     });
 }

@@ -23,11 +23,13 @@ module.exports = (env={ type: 'dev'}) => {
                 }
             ]
         },
+        
         output: {
             path: __dirname + '/output',
             publicPath: './',
             filename: '[name].js',
         },
+        
         plugins: env.type == 'dev' ? plugins : plugins.concat([
             new webpack.optimize.UglifyJsPlugin({
                  beautify: false,
@@ -46,6 +48,7 @@ module.exports = (env={ type: 'dev'}) => {
                  }
              })
         ]),
+        
         watch: env.type == 'dev'
     };
     

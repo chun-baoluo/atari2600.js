@@ -25,9 +25,8 @@ export class CPU {
 				throw e;
 			}
 			Register.PC++;
-			
-			PIA.tick();
 		};
+		PIA.tick();
 		this.cycle--;
 	};
 

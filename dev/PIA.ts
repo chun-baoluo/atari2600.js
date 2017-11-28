@@ -1,5 +1,7 @@
 import { RAM } from './RAM';
 
+// Timer restart after reading from INTIM?
+
 export class PIA {
     
     private static timer: number = null;
@@ -29,38 +31,34 @@ export class PIA {
         }
     };
     
+    public static setTimer(address: number) {
+        this.timer = address;
+        this.cycle = this.timers[address].interval;
+        RAM.set(0x284, RAM.get(address));
+    };
+    
     public static tick() {
-        // console.log('PIAtick', RAM.get(0x296).toString(16),  RAM.get(0x284).toString(16), this.timer);
-
         for(let i: number = 0x294; i <= 0x297; i++) {
-            
-            console.log(i, this.timers[i], RAM.get(i), RAM.get(i) != this.timers[i].value);
-                    
-            if(!this.timers[i].active && RAM.get(i) != this.timers[i].value) {
-                this.timer = i;
-                this.timers[i].active = true;
+            if(this.timer != i) {
                 RAM.set(i, RAM.get(i) - 1);
+                continue;
             };
             
-            if(!this.timer) {
+            // console.log('PIAtick', RAM.get(0x296).toString(16),  RAM.get(0x284).toString(16), this.timer);
+            
+            if(this.timer && this.cycle == 0) {
+                this.setTimer(this.timer);
                 RAM.set(i, RAM.get(i) - 1);
+                RAM.set(0x284, RAM.get(i));
+                
+                if(RAM.get(i) == 0xFF) {
+                    this.timer = null;
+                    this.cycle = 0;
+                };
             };
         };
         
-        if(this.timer) {
-            let value: number = RAM.get(this.timer) - this.timers[this.timer].interval;
-            
-            if(value <= 0) {
-                this.timers[this.timer].value = 0;
-                this.timers[this.timer].active = false;
-                this.timer = null;
-                RAM.set(0x284, 0);
-            } else {
-                this.timers[this.timer].value = value;
-                RAM.set(this.timer, value);
-                RAM.set(0x284, value);                
-            };
-        };
-
+        this.cycle--;
+        
     };
 };
