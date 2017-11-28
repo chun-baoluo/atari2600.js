@@ -31,8 +31,6 @@ export class RAM {
 	public static read(address: number) {
 		let value: number = this.memory[address];
 		
-		console.log(address);
-		
 		if(this[address] !== undefined) {
 			this[address]();
 		};	
@@ -42,8 +40,6 @@ export class RAM {
 	
 	public static readRom(rom: Uint8Array) {
 		this.memory[0x284] = (Math.random() * 255) >> 0;
-		// this.memory[0x285] = 192; // 11000000
-		
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
 		this.memory[0x296] = (Math.random() * 255) >> 0;
@@ -54,6 +50,8 @@ export class RAM {
 	
 	public static set(address: number, value: number) {
 		this.memory[address] = value;
+		
+		return this.memory[address];
 	};
 	
 	public static write(address: number, value: number) {
@@ -62,6 +60,8 @@ export class RAM {
 		};
 		
 		this.memory[address] = value;
+		
+		return this.memory[address];
 	};
 	
 	// INSTAT read
@@ -74,9 +74,7 @@ export class RAM {
 	// TIM64T write
 	private static 0x296(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
-		
-		console.log(value);
-		
+
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
 		PIA.setTimer(0x296);

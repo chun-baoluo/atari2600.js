@@ -1,6 +1,6 @@
 import { RAM } from './RAM';
 
-// Timer restart after reading from INTIM?
+// TODO: Timer restart after reading from INTIM?
 
 export class PIA {
     
@@ -44,17 +44,17 @@ export class PIA {
                 continue;
             };
             
-            // console.log('PIAtick', RAM.get(0x296).toString(16),  RAM.get(0x284).toString(16), this.timer);
+            console.log('PIAtick', RAM.get(0x296).toString(16),  RAM.get(0x284).toString(16), this.cycle, this.timer);
             
             if(this.timer && this.cycle == 0) {
-                this.setTimer(this.timer);
-                RAM.set(i, RAM.get(i) - 1);
-                RAM.set(0x284, RAM.get(i));
-                
-                if(RAM.get(i) == 0xFF) {
+                if(RAM.get(i) == 0 && RAM.set(i, RAM.get(i) - 1) == 0xFF) {
                     this.timer = null;
                     this.cycle = 0;
+                    RAM.set(0x285, 192);
                 };
+                
+                this.setTimer(this.timer);
+                RAM.set(0x284, RAM.get(i));
             };
         };
         
