@@ -1,6 +1,7 @@
 import { RAM } from './RAM';
 
 // TODO: Timer restart after reading from INTIM?
+// TODO: Missing cycle?
 
 export class PIA {
     
@@ -44,17 +45,19 @@ export class PIA {
                 continue;
             };
             
-            console.log('PIAtick', RAM.get(0x296).toString(16),  RAM.get(0x284).toString(16), this.cycle, this.timer);
+            console.log('PIAtick', RAM.get(i).toString(16),  RAM.get(0x284).toString(16), this.cycle);
             
             if(this.timer && this.cycle == 0) {
-                if(RAM.get(i) == 0 && RAM.set(i, RAM.get(i) - 1) == 0xFF) {
+                let before: number = RAM.get(i);
+                let after: number = RAM.set(i, RAM.get(i) - 1);
+                
+                this.setTimer(i);
+                
+                if(before == 0 && after == 0xFF) {
                     this.timer = null;
                     this.cycle = 0;
                     RAM.set(0x285, 192);
                 };
-                
-                this.setTimer(this.timer);
-                RAM.set(0x284, RAM.get(i));
             };
         };
         

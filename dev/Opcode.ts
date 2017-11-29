@@ -23,6 +23,18 @@ export class Opcode {
         
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);        
     };
+    
+    // JMP nnnn
+    public static 0x4C() {
+        let low: number = Rom.data[++Register.PC];
+        let high: number = Rom.data[++Register.PC];
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+    
+        Register.PC = address & 0xFF;
+        Register.PC--;
+    
+        return 3;
+    };
 
     // SEI
     public static 0x78() {
@@ -35,6 +47,31 @@ export class Opcode {
     public static 0x85() {
         RAM.write(Rom.data[++Register.PC], Register.A);
         return 3;
+    };
+    
+    // STX nn
+    public static 0x86() {
+        RAM.write(Rom.data[++Register.PC], Register.X);
+        return 3;
+    };
+    
+    // DEY
+    public static 0x88() {
+        Register.Y = Convert.toUint8(Register.Y - 1);
+
+        if(Register.Y == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+        
+        if(Convert.toBin(Register.Y).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+        
+        return 2;
     };
     
     // STA nnnn 
@@ -58,6 +95,25 @@ export class Opcode {
     public static 0x9A() {
         Register.S = Register.X;
         
+        return 2;
+    };
+
+    // LDY #nn
+    public static 0xA0() {
+        Register.Y = Rom.data[++Register.PC];
+
+        if(Register.Y == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+        
+        if(Convert.toBin(Register.Y).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
         return 2;
     };
 
@@ -103,7 +159,7 @@ export class Opcode {
     public static 0xAD() {
         let low: number = Rom.data[++Register.PC];
         let high: number = Rom.data[++Register.PC];
-        let address: number = ((high & 0xff) << 8) | (low & 0xFF);
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
         
         Register.A = RAM.read(address);
         
@@ -156,6 +212,25 @@ export class Opcode {
     // CLD
     public static 0xD8() {
         Flag.D = 0;
+        
+        return 2;
+    };
+    
+    // INX
+    public static 0xE8() {
+        Register.X = Convert.toUint8(Register.X + 1);
+
+        if(Register.X == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+        
+        if(Convert.toBin(Register.X).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
         
         return 2;
     };
