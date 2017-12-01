@@ -75,21 +75,21 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0x85) should set an address value (nn) to be equal regsiter A", () => {
-        RAM.set(0x02, 0);
-        Rom.data = new Uint8Array([0x85, 0x02]);
+        RAM.set(0x32, 2);
+        Rom.data = new Uint8Array([0x85, 0x32]);
         Register.A = 5;
         
         Opcode[0x85]();
-        chai.assert.strictEqual(RAM.get(0x02), Register.A);
+        chai.assert.strictEqual(RAM.get(0x32), Register.A);
     });
     
     it("(0x86) should set an address value (nn) to be equal regsiter X", () => {
-        RAM.set(0x02, 0);
-        Rom.data = new Uint8Array([0x86, 0x02]);
+        RAM.set(0x32, 0);
+        Rom.data = new Uint8Array([0x86, 0x32]);
         Register.X = 5;
         
         Opcode[0x86]();
-        chai.assert.strictEqual(RAM.get(0x02), Register.X);
+        chai.assert.strictEqual(RAM.get(0x32), Register.X);
     });
     
     it("(0x8D) should set an address value (nnnn) to be equal regsiter A", () => {
@@ -102,13 +102,13 @@ describe("CPU Memory and Register Transfers", () => {
     });
     
     it("(0x95) should set an address value + X register to be equal regsiter A", () => {
-        RAM.set(0x02, 0);
-        Rom.data = new Uint8Array([0x95, 0x01]);
+        RAM.set(0x32, 0);
+        Rom.data = new Uint8Array([0x95, 0x31]);
         Register.X = 0x01;
         Register.A = 5;
         
         Opcode[0x95]();
-        chai.assert.strictEqual(RAM.get(0x02), Register.A);
+        chai.assert.strictEqual(RAM.get(0x32), Register.A);
     });
     
     it("(0x9A) should set register S to be equal register X", () => {
