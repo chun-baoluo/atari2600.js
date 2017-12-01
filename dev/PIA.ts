@@ -45,7 +45,7 @@ export class PIA {
                 continue;
             };
             
-            console.log('PIAtick', RAM.get(i).toString(16),  RAM.get(0x284).toString(16), this.cycle);
+            // console.log('PIAtick', RAM.get(i).toString(16),  RAM.get(0x284).toString(16), this.cycle);
             
             if(this.timer && this.cycle == 0) {
                 let before: number = RAM.get(i);
@@ -62,6 +62,5 @@ export class PIA {
         };
         
         this.cycle--;
-        
     };
 };

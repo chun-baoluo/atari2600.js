@@ -31,8 +31,9 @@ describe("CPU Jump and Control Instructions", () => {
     });
     
     it("(0x4C) should jump to nnnn", () => {
-        Rom.data = new Uint8Array([0x4C, 0x02, 0xFF]);
+        Rom.data = new Uint8Array([0x4C, 0x01, 0xFF]);
         Opcode[0x4C]();
+        Register.PC++;
         chai.assert.strictEqual(Register.PC, 1);
     });
 

@@ -1,4 +1,5 @@
 import { PIA } from './PIA';
+import { CPU } from './CPU';
 import { Convert } from './Common';
 
 export class Register {
@@ -62,6 +63,11 @@ export class RAM {
 		this.memory[address] = value;
 		
 		return this.memory[address];
+	};
+	
+	// WSYNC write
+	private static 0x02() {
+		CPU.lock();
 	};
 	
 	// INSTAT read
