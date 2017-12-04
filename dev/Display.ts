@@ -13,6 +13,10 @@ export default class Display {
 
     constructor(canvas: any) {
         this.canvas = canvas;
+        
+        this.canvas.width = 160;
+        
+        this.canvas.height = 192;
 
         this.ctx = canvas.getContext('2d');
 

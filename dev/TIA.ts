@@ -155,13 +155,10 @@ export class TIA {
     };
 
     public static draw(data: any, w: number, h: number, scanline: number, clock: number) {
-
         let reflect: any = (Convert.toBin(RAM.get(0x0A)).split('').reverse()[0] == '1');
-
         let pf0: Array<string> = Convert.toBin(RAM.get(0x0D)).split('').reverse();
         let pf1: Array<string> = Convert.toBin(RAM.get(0x0E)).split('').reverse();
         let pf2: Array<string> = Convert.toBin(RAM.get(0x0F)).split('').reverse();
-
         let c: number = null;
         let pf = this.toHex(this.color(Convert.toBin(RAM.get(0x08))));
         let bk = this.toHex(this.color(Convert.toBin(RAM.get(0x09))));
@@ -254,7 +251,6 @@ export class TIA {
                     break;
                 };
             };
-
         } else if(clock > 144 && clock <= 160 && reflect) {
             for(let i = 148; i <= 160; i += 4) {
                 if(clock <= i) {
@@ -268,12 +264,7 @@ export class TIA {
             };
         };
 
-        let pixelindex = Math.floor((scanline * w + ( 2 * clock)) * 4);
-        data.data[pixelindex] = c[0];
-        data.data[pixelindex + 1] = c[1];
-        data.data[pixelindex + 2] = c[2];
-
-        pixelindex = Math.floor((scanline * w + ( 2 * clock - 1)) * 4);
+        let pixelindex = (scanline * w + clock) << 2;
         data.data[pixelindex] = c[0];
         data.data[pixelindex + 1] = c[1];
         data.data[pixelindex + 2] = c[2];

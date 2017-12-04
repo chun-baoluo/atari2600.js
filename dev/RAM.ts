@@ -12,7 +12,6 @@ export class Register {
 };
 
 export class Flag {
-	public static '-': number = 1; // Not used?
 	public static B: number = 0; // Break flag
 	public static C: number = 0; // Carry
 	public static D: number = 1; // Decimal mode
@@ -40,6 +39,8 @@ export class RAM {
 	};
 	
 	public static readRom(rom: Uint8Array) {
+		this.reset();
+		
 		this.memory[0x284] = (Math.random() * 255) >> 0;
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
@@ -81,6 +82,28 @@ export class RAM {
 		this.memory[0x285] = parseInt(bits.join(''), 2)
 	};
 	
+	// TIM1T write
+	private static 0x294(value: number) {
+		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
+
+		value = new Uint8Array([value - 1])[0];
+		bits[0] = '0';
+		PIA.setTimer(0x294);
+		
+		return value;
+	};
+	
+	// TIM8T write
+	private static 0x295(value: number) {
+		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
+
+		value = new Uint8Array([value - 1])[0];
+		bits[0] = '0';
+		PIA.setTimer(0x295);
+		
+		return value;
+	};
+	
 	// TIM64T write
 	private static 0x296(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
@@ -88,6 +111,17 @@ export class RAM {
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
 		PIA.setTimer(0x296);
+		
+		return value;
+	};
+	
+	// TIM1024T write
+	private static 0x297(value: number) {
+		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
+
+		value = new Uint8Array([value - 1])[0];
+		bits[0] = '0';
+		PIA.setTimer(0x297);
 		
 		return value;
 	};
