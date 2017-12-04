@@ -141,6 +141,25 @@ export class Opcode {
 
         return 2;
     };
+    
+    // LDX nn
+    public static 0xA6() {
+        Register.X = RAM.read(Rom.data[++Register.PC]);
+
+        if(Register.X == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.X).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 3;
+    };
 
     // LDA #nn
     public static 0xA9() {
@@ -220,6 +239,26 @@ export class Opcode {
         Flag.D = 0;
 
         return 2;
+    };
+    
+    // INC nn
+    public static 0xE6() {
+        let address: number = Rom.data[++Register.PC];
+        let result: number = RAM.write(address, RAM.get(address) + 1);
+
+        if(result == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(result).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 5;
     };
 
     // INX

@@ -49,6 +49,10 @@ export class RAM {
 		this.memory.set(rom, 61440);
 	};
 	
+	public static reset() {
+		this.memory = new Uint8Array(65536);
+	};
+	
 	public static set(address: number, value: number) {
 		this.memory[address] = value;
 		

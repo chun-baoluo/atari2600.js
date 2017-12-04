@@ -5,19 +5,22 @@ import { Opcode } from '../dev/Opcode';
 import { Flag, Register, Rom, RAM } from '../dev/RAM';
 import { Convert } from '../dev/Common';
 
+let beforeEachCallback = () => {
+    Flag.D = 0;
+    Flag.I = 0;
+    Flag.N = 0;
+    Flag.Z = 0;
+    Register.A = 0;
+    Register.PC = 0;
+    Register.S = 0;
+    Register.X = 0;
+    Register.Y = 0;
+    Rom.data = new Uint8Array([]);
+    RAM.reset();    
+};
+
 describe("CPU Jump and Control Instructions", () => {
-    beforeEach(() => {
-        Flag.D = 0;
-        Flag.I = 0;
-        Flag.N = 0;
-        Flag.Z = 0;
-        Register.A = 0;
-        Register.PC = 0;
-        Register.S = 0;
-        Register.X = 0;
-        Register.Y = 0;
-        Rom.data = new Uint8Array([]);
-    });
+    beforeEach(beforeEachCallback);
 
     it("(0x10) should jump if Negative flag is set", () => {
         Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
@@ -65,18 +68,7 @@ describe("CPU Jump and Control Instructions", () => {
 });
 
 describe("CPU Memory and Register Transfers", () => {
-    beforeEach(() => {
-        Flag.D = 0;
-        Flag.I = 0;
-        Flag.N = 0;
-        Flag.Z = 0;
-        Register.A = 0;
-        Register.PC = 0;
-        Register.S = 0;
-        Register.X = 0;
-        Register.Y = 0;
-        Rom.data = new Uint8Array([]);
-    });
+    beforeEach(beforeEachCallback);
 
     it("(0x84) should set an address value (nn) to be equal register Y", () => {
         RAM.set(0x32, 2);
@@ -130,7 +122,7 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Register.S, Register.X);
     });
 
-    it("(0xA0) should set register Y to nn, change N and Z flags", () => {
+    it("(0xA0) should set register Y to #nn, change N and Z flags", () => {
         Rom.data = new Uint8Array([0xA0, 0xFF, 0]);
         Flag.Z = 1;
 
@@ -145,7 +137,7 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Flag.Z, 1);
     });
 
-    it("(0xA2) should set register X to nn, change N and Z flags", () => {
+    it("(0xA2) should set register X to #nn, change N and Z flags", () => {
         Rom.data = new Uint8Array([0xA2, 0xFF, 0]);
         Flag.Z = 1;
 
@@ -159,8 +151,16 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
+    
+    it("(0xA6) should set register X to nn, change N and Z flags", () => {
+        RAM.set(0x01, 5);
+        Rom.data = new Uint8Array([0xA6, 0x01]);
 
-    it("(0xA9) should set register A to nn, change N and Z flags", () => {
+        Opcode[0xA6]();
+        chai.assert.strictEqual(RAM.get(0x01), Register.X);
+    });
+
+    it("(0xA9) should set register A to #nn, change N and Z flags", () => {
         Rom.data = new Uint8Array([0xA9, 0xFF, 0]);
         Flag.Z = 1;
 
@@ -185,18 +185,7 @@ describe("CPU Memory and Register Transfers", () => {
 });
 
 describe("CPU Arithmetic/Logical Operations", () => {
-    beforeEach(() => {
-        Flag.D = 0;
-        Flag.I = 0;
-        Flag.N = 0;
-        Flag.Z = 0;
-        Register.A = 0;
-        Register.PC = 0;
-        Register.S = 0;
-        Register.X = 0;
-        Register.Y = 0;
-        Rom.data = new Uint8Array([]);
-    });
+    beforeEach(beforeEachCallback);
 
     it("(0x88) should decrement register Y by one, change N and Z flags", () => {
         let value: number = new Uint8Array([0xFF])[0];
@@ -232,6 +221,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
 
         Opcode[0xCA]();
         chai.assert.strictEqual(Register.X, value - 1);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
+
+    it("(0xE6) should increment nn by one, change N and Z flags", () => {
+        Rom.data = new Uint8Array([0xE6, 0x32, 0x33]);
+        Flag.Z = 1;
+
+        RAM.set(0x32, 0xFA);
+        Opcode[0xE6]();
+        
+        chai.assert.strictEqual(RAM.get(0x32), 0xFB);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        RAM.set(0x33, 0xFF);
+        Opcode[0xE6]();
+        
+        chai.assert.strictEqual(RAM.get(0x33), 0);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
