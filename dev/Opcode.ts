@@ -1,13 +1,14 @@
 import { Flag, Register, Rom, RAM } from './RAM';
 import { Convert } from './Common';
 
-// TODO: Negative flag - proper setting
 // TODO: Memory mirroring
 
 export class Opcode {
 
     private static isNextPage(pc1: number, pc2: number) {
-        return ('000' + pc1.toString(16)).slice(-4).charAt(0) != ('000' + pc2.toString(16)).slice(-4).charAt(0);
+        let left: string = ('000' + pc1.toString(16)).slice(-4);
+        let right: string = ('000' + pc2.toString(16)).slice(-4);
+        return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
     };
 
     // BPL nnn
@@ -202,6 +203,29 @@ export class Opcode {
 
         return 4;
     };
+    
+    // LDA nnnn, X
+    public static 0xBD() {
+        let low: number = Rom.data[++Register.PC];
+        let high: number = Rom.data[++Register.PC];
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+
+        Register.A = RAM.read(address + Register.X);
+
+        if(Register.A == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.A).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 4 + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
+    };
 
     // DEX
     public static 0xCA() {
@@ -231,7 +255,7 @@ export class Opcode {
 
 		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
 
-        return 3 + (this.isNextPage(Register.PC, Register.PC += num)? 1 : 0);
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // CLD
