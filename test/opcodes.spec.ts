@@ -252,6 +252,31 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
+    
+    it("(0xE0) should compare results of X - #nn, set N, Z and C flags", () => {
+        Rom.data = new Uint8Array([0xE0, 0x32, 0x32, 0x36]);
+        Register.X = 0x07;
+        Flag.Z = 1;
+
+        Opcode[0xE0]();
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+
+        Register.X = 0x32;
+        
+        Opcode[0xE0]();
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+        
+        Register.X = 0x38;
+        
+        Opcode[0xE0]();
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0xE6) should increment nn by one, change N and Z flags", () => {
         Rom.data = new Uint8Array([0xE6, 0x32, 0x33]);

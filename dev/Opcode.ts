@@ -2,6 +2,7 @@ import { Flag, Register, Rom, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
+// TODO: Check whether carry set right or not
 
 export class Opcode {
 
@@ -261,6 +262,32 @@ export class Opcode {
     // CLD
     public static 0xD8() {
         Flag.D = 0;
+
+        return 2;
+    };
+    
+    // CPX #nn
+    public static 0xE0() {
+        let value: number = Rom.data[++Register.PC];
+        let result: number = Convert.toInt8(Register.X - value);
+
+        if(result == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(result < 0) {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+        
+        if(result >= 0) {
+            Flag.C = 1;
+        } else {
+            Flag.C = 0;
+        };
 
         return 2;
     };

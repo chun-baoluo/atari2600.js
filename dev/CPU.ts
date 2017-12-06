@@ -2,6 +2,8 @@ import { Register, Rom } from './RAM';
 import { Opcode } from './Opcode';
 import { PIA } from './PIA';
 
+// TODO: Move PIA's tick to Display? / check when it should fire - every CPU pulse or what?
+
 export class CPU {
 	private static locked: boolean = false;
 
@@ -32,6 +34,7 @@ export class CPU {
 		};
 		PIA.tick();
 		this.cycle--;
+		
 	};
 
 	public static setCycle(val: number) {

@@ -154,7 +154,7 @@ export class TIA {
         return this.colorPalette.get(val.slice(0, -1));
     };
 
-    public static draw(data: any, w: number, h: number, scanline: number, clock: number) {
+    public static draw(imageData: any, w: number, h: number, scanline: number, clock: number) {
         let reflect: any = (Convert.toBin(RAM.get(0x0A)).split('').reverse()[0] == '1');
         let pf0: Array<string> = Convert.toBin(RAM.get(0x0D)).split('').reverse();
         let pf1: Array<string> = Convert.toBin(RAM.get(0x0E)).split('').reverse();
@@ -265,11 +265,11 @@ export class TIA {
         };
 
         let pixelindex = (scanline * w + clock) << 2;
-        data.data[pixelindex] = c[0];
-        data.data[pixelindex + 1] = c[1];
-        data.data[pixelindex + 2] = c[2];
+        imageData.data[pixelindex] = c[0];
+        imageData.data[pixelindex + 1] = c[1];
+        imageData.data[pixelindex + 2] = c[2];
 
-        return data;
+        return imageData;
     };
 
     public static toHex(hex: string) {
