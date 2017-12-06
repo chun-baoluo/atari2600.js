@@ -96,6 +96,24 @@ describe("CPU Memory and Register Transfers", () => {
         Opcode[0x86]();
         chai.assert.strictEqual(RAM.get(0x32), Register.X);
     });
+    
+    it("(0x8A) should set register A to be equal register X, change N and Z flags", () => {
+        Register.X = 0xFA;
+        Flag.Z = 1;
+        
+        Opcode[0x8A]();
+        
+        chai.assert.strictEqual(Register.A, Register.X);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        Register.X = 0;
+
+        Opcode[0x8A]();
+        chai.assert.strictEqual(Register.A, Register.X);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
 
     it("(0x8D) should set an address value (nnnn) to be equal register A", () => {
         RAM.set(0x01, 0);
@@ -179,6 +197,24 @@ describe("CPU Memory and Register Transfers", () => {
 
         Opcode[0xA9]();
         chai.assert.strictEqual(Register.A, Rom.data[2]);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
+    
+    it("(0xAA) should set register X to be equal register A, change N and Z flags", () => {
+        Register.A = 0xFA;
+        Flag.Z = 1;
+        
+        Opcode[0xAA]();
+        
+        chai.assert.strictEqual(Register.X, Register.A);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        Register.A = 0;
+
+        Opcode[0xAA]();
+        chai.assert.strictEqual(Register.X, Register.A);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });

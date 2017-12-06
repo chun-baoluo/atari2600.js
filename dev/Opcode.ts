@@ -81,6 +81,25 @@ export class Opcode {
 
         return 2;
     };
+    
+    // TXA
+    public static 0x8A() {
+        Register.A = Register.X;
+
+        if(Register.A == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.A).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 2;
+    };
 
     // STA nnnn
     public static 0x8D() {
@@ -193,6 +212,25 @@ export class Opcode {
         };
 
         if(Convert.toBin(Register.A).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 2;
+    };
+    
+    // TAX
+    public static 0xAA() {
+        Register.X = Register.A;
+
+        if(Register.X == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.X).charAt(0) == '1') {
             Flag.N = 1;
         } else {
             Flag.N = 0;
