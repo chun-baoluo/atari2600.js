@@ -311,6 +311,26 @@ export class Opcode {
         return 2;
     };
     
+    // DEC nn
+    public static 0xC6() {
+        let address: number = Rom.data[++Register.PC];
+        let result: number = RAM.write(address, RAM.get(address) - 1);
+
+        if(result == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(result).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 5;
+    };
+    
     // INY
     public static 0xC8() {
         Register.Y = Convert.toUint8(Register.Y + 1);

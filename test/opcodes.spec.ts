@@ -303,6 +303,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 1);
     });
     
+    it("(0xC6) should decrement nn by one, change N and Z flags", () => {
+        Rom.data = new Uint8Array([0xE6, 0x32, 0x33]);
+        Flag.Z = 1;
+
+        RAM.set(0x32, 0xFA);
+        Opcode[0xC6]();
+        
+        chai.assert.strictEqual(RAM.get(0x32), 0xF9);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        RAM.set(0x33, 0x01);
+        Opcode[0xC6]();
+        
+        chai.assert.strictEqual(RAM.get(0x33), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
+    
     it("(0xC8) should increment register Y by one, change N and Z flags", () => {
         let value: number = new Uint8Array([0xE8])[0];
         Register.Y = value;
