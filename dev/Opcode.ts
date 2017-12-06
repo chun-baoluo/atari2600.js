@@ -144,6 +144,25 @@ export class Opcode {
         return 2;
     };
     
+    // LDA nn
+    public static 0xA5() {
+        Register.A = RAM.read(Rom.data[++Register.PC]);
+
+        if(Register.A == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.A).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 3;
+    };
+    
     // LDX nn
     public static 0xA6() {
         Register.X = RAM.read(Rom.data[++Register.PC]);
@@ -226,6 +245,51 @@ export class Opcode {
         };
 
         return 4 + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
+    };
+    
+    // CPY #nn
+    public static 0xC0() {
+        let value: number = Rom.data[++Register.PC];
+        let result: number = Convert.toInt8(Register.Y - value);
+
+        if(result == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(result < 0) {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+        
+        if(result >= 0) {
+            Flag.C = 1;
+        } else {
+            Flag.C = 0;
+        };
+
+        return 2;
+    };
+    
+    // INY
+    public static 0xC8() {
+        Register.Y = Convert.toUint8(Register.Y + 1);
+
+        if(Register.Y == 0) {
+            Flag.Z = 1;
+        } else {
+            Flag.Z = 0;
+        };
+
+        if(Convert.toBin(Register.Y).charAt(0) == '1') {
+            Flag.N = 1;
+        } else {
+            Flag.N = 0;
+        };
+
+        return 2;
     };
 
     // DEX

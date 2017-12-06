@@ -152,6 +152,14 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Flag.Z, 1);
     });
     
+    it("(0xA5) should set register A to nn, change N and Z flags", () => {
+        RAM.set(0x01, 5);
+        Rom.data = new Uint8Array([0xA5, 0x01]);
+
+        Opcode[0xA5]();
+        chai.assert.strictEqual(RAM.get(0x01), Register.A);
+    });
+    
     it("(0xA6) should set register X to nn, change N and Z flags", () => {
         RAM.set(0x01, 5);
         Rom.data = new Uint8Array([0xA6, 0x01]);
@@ -230,6 +238,50 @@ describe("CPU Arithmetic/Logical Operations", () => {
 
         Opcode[0x88]();
         chai.assert.strictEqual(Register.Y, value - 1);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
+    
+    it("(0xC0) should compare results of Y - #nn, set N, Z and C flags", () => {
+        Rom.data = new Uint8Array([0xE0, 0x32, 0x32, 0x36]);
+        Register.Y = 0x07;
+        Flag.Z = 1;
+
+        Opcode[0xC0]();
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+
+        Register.Y = 0x32;
+        
+        Opcode[0xC0]();
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+        
+        Register.Y = 0x38;
+        
+        Opcode[0xC0]();
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
+    
+    it("(0xC8) should increment register Y by one, change N and Z flags", () => {
+        let value: number = new Uint8Array([0xE8])[0];
+        Register.Y = value;
+        Flag.Z = 1;
+
+        Opcode[0xC8]();
+        chai.assert.strictEqual(Register.Y, Convert.toUint8(value + 1));
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        value = new Uint8Array([0xFF])[0];
+        Register.Y = value;
+
+        Opcode[0xC8]();
+        chai.assert.strictEqual(Register.Y, Convert.toUint8(value + 1));
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
