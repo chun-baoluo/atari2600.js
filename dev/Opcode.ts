@@ -212,7 +212,7 @@ export class Opcode {
 
         Flag.N = (result < 0 ? 1 : 0);
         
-        Flag.Z = (result >= 0 ? 1 : 0);
+        Flag.C = (result >= 0 ? 1 : 0);
 
         return 2;
     };
@@ -279,7 +279,7 @@ export class Opcode {
 
         Flag.N = (result < 0 ? 1 : 0);
         
-        Flag.Z = (result >= 0 ? 1 : 0);
+        Flag.C = (result >= 0 ? 1 : 0);
 
         return 2;
     };
