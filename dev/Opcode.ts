@@ -2,7 +2,7 @@ import { Flag, Register, Rom, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
-// TODO: Check whether carry set right or not
+// TODO: Check whether carry getting set right or not
 
 export class Opcode {
 
@@ -14,8 +14,6 @@ export class Opcode {
 
     // BPL nnn
     public static 0x10() {
-        //Flag.N = 1;
-
         if(Flag.N == 1) {
 			Register.PC++;
 			return 2;
@@ -67,18 +65,10 @@ export class Opcode {
     public static 0x88() {
         Register.Y = Convert.toUint8(Register.Y - 1);
 
-        if(Register.Y == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.Y).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
-
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        
+        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+        
         return 2;
     };
     
@@ -86,17 +76,9 @@ export class Opcode {
     public static 0x8A() {
         Register.A = Register.X;
 
-        if(Register.A == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        if(Convert.toBin(Register.A).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -128,18 +110,10 @@ export class Opcode {
     // LDY #nn
     public static 0xA0() {
         Register.Y = Rom.data[++Register.PC];
+        
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        if(Register.Y == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.Y).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -147,18 +121,10 @@ export class Opcode {
     // LDX #nn
     public static 0xA2() {
         Register.X = Rom.data[++Register.PC];
+        
+        Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        if(Register.X == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.X).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -167,17 +133,9 @@ export class Opcode {
     public static 0xA5() {
         Register.A = RAM.read(Rom.data[++Register.PC]);
 
-        if(Register.A == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        if(Convert.toBin(Register.A).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
 
         return 3;
     };
@@ -185,18 +143,10 @@ export class Opcode {
     // LDX nn
     public static 0xA6() {
         Register.X = RAM.read(Rom.data[++Register.PC]);
+        
+        Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        if(Register.X == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.X).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 3;
     };
@@ -204,18 +154,10 @@ export class Opcode {
     // LDA #nn
     public static 0xA9() {
         Register.A = Rom.data[++Register.PC];
+        
+        Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        if(Register.A == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.A).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -223,18 +165,10 @@ export class Opcode {
     // TAX
     public static 0xAA() {
         Register.X = Register.A;
+        
+        Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        if(Register.X == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.X).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -246,18 +180,10 @@ export class Opcode {
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
         Register.A = RAM.read(address);
+        
+        Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        if(Register.A == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.A).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
 
         return 4;
     };
@@ -270,17 +196,9 @@ export class Opcode {
 
         Register.A = RAM.read(address + Register.X);
 
-        if(Register.A == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        if(Convert.toBin(Register.A).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
 
         return 4 + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
     };
@@ -289,24 +207,12 @@ export class Opcode {
     public static 0xC0() {
         let value: number = Rom.data[++Register.PC];
         let result: number = Convert.toInt8(Register.Y - value);
-
-        if(result == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(result < 0) {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
         
-        if(result >= 0) {
-            Flag.C = 1;
-        } else {
-            Flag.C = 0;
-        };
+        Flag.Z = (result == 0 ? 1 : 0);
+
+        Flag.N = (result < 0 ? 1 : 0);
+        
+        Flag.Z = (result >= 0 ? 1 : 0);
 
         return 2;
     };
@@ -315,18 +221,10 @@ export class Opcode {
     public static 0xC6() {
         let address: number = Rom.data[++Register.PC];
         let result: number = RAM.write(address, RAM.get(address) - 1);
+        
+        Flag.Z = (result == 0 ? 1 : 0);
 
-        if(result == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(result).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(result).charAt(0) == '1' ? 1 : 0);
 
         return 5;
     };
@@ -334,18 +232,10 @@ export class Opcode {
     // INY
     public static 0xC8() {
         Register.Y = Convert.toUint8(Register.Y + 1);
+        
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        if(Register.Y == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.Y).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -354,17 +244,9 @@ export class Opcode {
     public static 0xCA() {
         Register.X = Convert.toUint8(Register.X - 1);
 
-        if(Register.X == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        if(Convert.toBin(Register.X).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
@@ -393,23 +275,11 @@ export class Opcode {
         let value: number = Rom.data[++Register.PC];
         let result: number = Convert.toInt8(Register.X - value);
 
-        if(result == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (result == 0 ? 1 : 0);
 
-        if(result < 0) {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (result < 0 ? 1 : 0);
         
-        if(result >= 0) {
-            Flag.C = 1;
-        } else {
-            Flag.C = 0;
-        };
+        Flag.Z = (result >= 0 ? 1 : 0);
 
         return 2;
     };
@@ -419,17 +289,9 @@ export class Opcode {
         let address: number = Rom.data[++Register.PC];
         let result: number = RAM.write(address, RAM.get(address) + 1);
 
-        if(result == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
+        Flag.Z = (result == 0 ? 1 : 0);
 
-        if(Convert.toBin(result).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(result).charAt(0) == '1' ? 1 : 0);
 
         return 5;
     };
@@ -437,18 +299,10 @@ export class Opcode {
     // INX
     public static 0xE8() {
         Register.X = Convert.toUint8(Register.X + 1);
+        
+        Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        if(Register.X == 0) {
-            Flag.Z = 1;
-        } else {
-            Flag.Z = 0;
-        };
-
-        if(Convert.toBin(Register.X).charAt(0) == '1') {
-            Flag.N = 1;
-        } else {
-            Flag.N = 0;
-        };
+        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 2;
     };
