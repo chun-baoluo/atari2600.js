@@ -1,36 +1,16 @@
-module.exports = function(config) {
+module.exports = (config) => {
     config.set({
-
-        basePath: '',
-
         frameworks: ['mocha', 'chai'],
 
         files: [
             'test/**/*.spec.ts'
         ],
 
-        exclude: [
-        ],
-
         preprocessors: {
             "test/**/*.spec.ts": ["webpack"]
         },
-
-        reporters: ['progress'],
-
-        port: 9876,
-
-        colors: true,
-
-        logLevel: config.LOG_INFO,
-
-        autoWatch: true,
-
+        
         browsers: ['PhantomJS'],
-
-        singleRun: false,
-
-        concurrency: Infinity,
 
         mime: {
             'text/x-typescript': ['ts']
