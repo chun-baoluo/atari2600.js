@@ -2,7 +2,7 @@ import { Flag, Register, Rom, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
-// TODO: Check whether carry getting set right or not
+// TODO: Check whether carry is getting set right or not
 
 export class Opcode {
 
@@ -10,6 +10,33 @@ export class Opcode {
         let left: string = ('000' + pc1.toString(16)).slice(-4);
         let right: string = ('000' + pc2.toString(16)).slice(-4);
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
+    };
+    
+    // ORA #nn
+    public static 0x09() {
+        Register.A = Register.A | Rom.data[++Register.PC];
+        
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 2;
+    };
+    
+    // ASL A
+    public static 0x0A() {
+        
+        let carry: string = Convert.toBin(Register.A).charAt(0);
+        
+        Register.A = Convert.toUint8(Register.A << 1);
+        
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        
+        Flag.C = parseInt(carry);
+        
+        return 2;
     };
 
     // BPL nnn
@@ -22,6 +49,21 @@ export class Opcode {
 		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
+    };
+    
+    // LSR A
+    public static 0x4A() {
+        let carry: string = Convert.toBin(Register.A).charAt(7);
+        
+        Register.A = Convert.toUint8(Register.A >>> 1);
+        
+        Flag.Z = 0;
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        
+        Flag.C = parseInt(carry);
+        
+        return 2;
     };
 
     // JMP nnnn
@@ -92,6 +134,18 @@ export class Opcode {
         RAM.write(address, Register.A);
 
         return 4;
+    };
+    
+    // BCC/BLT nnn
+    public static 0x90() {
+        if(Flag.C == 1) {
+            Register.PC++;
+            return 2;
+        };
+
+        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // STA nn, X
@@ -310,5 +364,17 @@ export class Opcode {
     // No operator
     public static 0xEA() {
         return 2;
+    };
+    
+    // BEQ/BZS nnn
+    public static 0xF0() {
+        if(Flag.Z == 0) {
+            Register.PC++;
+            return 2;
+        };
+
+        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 };

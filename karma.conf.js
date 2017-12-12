@@ -3,6 +3,7 @@ module.exports = (config) => {
         frameworks: ['mocha', 'chai'],
 
         files: [
+            'node_modules/babel-polyfill/dist/polyfill.min.js',
             'test/**/*.spec.ts'
         ],
 

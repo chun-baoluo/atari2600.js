@@ -22,7 +22,7 @@ let beforeEachCallback = () => {
 describe("CPU Jump and Control Instructions", () => {
     beforeEach(beforeEachCallback);
 
-    it("(0x10) should jump if Negative flag is set", () => {
+    it("(0x10) should jump if Negative flag isn't set", () => {
         Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
         
         chai.assert.strictEqual(Opcode[0x10](), 3);
@@ -31,6 +31,18 @@ describe("CPU Jump and Control Instructions", () => {
         Flag.N = 1;
         Register.PC = 0;
         chai.assert.strictEqual(Opcode[0x10](), 2);
+        chai.assert.strictEqual(Register.PC, 1);
+    });
+    
+    it("(0x90) should jump if Carry flag isn't set", () => {
+        Rom.data = new Uint8Array([0xD0, 0xFF, 0x02]);
+        
+        chai.assert.strictEqual(Opcode[0x90](), 3);
+        chai.assert.strictEqual(Register.PC, 0);
+
+        Flag.C = 1;
+        Register.PC = 0;
+        chai.assert.strictEqual(Opcode[0x90](), 2);
         chai.assert.strictEqual(Register.PC, 1);
         
     });
@@ -42,7 +54,6 @@ describe("CPU Jump and Control Instructions", () => {
         
         Register.PC++;
         chai.assert.strictEqual(Register.PC, 1);
-        
     });
 
     it("(0x78) should set the interrupt disable bit", () => {
@@ -50,7 +61,7 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Flag.I, 1);
     });
 
-    it("(0xD0) should jump if Zero flag is set", () => {
+    it("(0xD0) should jump if Zero flag isn/'t set", () => {
         Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
 
         chai.assert.strictEqual(Opcode[0xD0](), 3);
@@ -70,6 +81,18 @@ describe("CPU Jump and Control Instructions", () => {
 
     it("(0xEA) should do nothing", () => {
         chai.assert.strictEqual(Opcode[0xEA](), 2);
+    });
+    
+    it("(0xF0) should jump if Zero flag is set", () => {
+        Rom.data = new Uint8Array([0xD0, -0x01, 0x02]);
+
+        chai.assert.strictEqual(Opcode[0xF0](), 2);
+        chai.assert.strictEqual(Register.PC, 1);
+
+        Flag.Z = 1;
+        Register.PC = 0;
+        chai.assert.strictEqual(Opcode[0xF0](), 3);
+        chai.assert.strictEqual(Register.PC, 0);
     });
 });
 
@@ -263,6 +286,60 @@ describe("CPU Memory and Register Transfers", () => {
 
 describe("CPU Arithmetic/Logical Operations", () => {
     beforeEach(beforeEachCallback);
+
+    it("(0x09) should do OR operation with A and #nn, change N and Z flags", () => {
+        Rom.data = new Uint8Array([0xE0, 0x00, 0xFF]);
+        
+        Register.A = 0;
+        
+        chai.assert.strictEqual(Opcode[0x09](), 2);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        
+        Register.A = 128;
+    
+        chai.assert.strictEqual(Opcode[0x09](), 2);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
+    it("(0x0A) should left shift register A, change N, Z and C flags", () => {
+        Register.A = 0xFF;
+        
+        chai.assert.strictEqual(Opcode[0x0A](), 2);
+        chai.assert.strictEqual(Register.A, 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+        
+        Register.A = 128;
+    
+        chai.assert.strictEqual(Opcode[0x0A](), 2);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
+    
+    it("(0x4A) should right shift register A, change N, Z and C flags", () => {
+        Register.A = 0x1;
+        
+        chai.assert.strictEqual(Opcode[0x4A](), 2);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+        
+        Register.A = 0xFF;
+    
+        chai.assert.strictEqual(Opcode[0x4A](), 2);
+        chai.assert.strictEqual(Register.A, 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0x88) should decrement register Y by one, change N and Z flags", () => {
         let value: number = new Uint8Array([0xFF])[0];
