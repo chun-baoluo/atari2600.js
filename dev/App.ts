@@ -30,8 +30,6 @@ export class App {
 
     	let file: any = (<HTMLInputElement>document.getElementById('file')).files[0];
         let canvas: any = document.getElementById('canvas');
-        // 
-        // this.display = new Display(canvas);
 
         TIA.canvas = canvas;
 

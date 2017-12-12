@@ -96,6 +96,7 @@ export class RAM {
 
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
+		this.memory[0x294] = value;
 		PIA.setTimer(0x294);
 		
 		return value;
@@ -107,6 +108,7 @@ export class RAM {
 
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
+		this.memory[0x295] = value;
 		PIA.setTimer(0x295);
 		
 		return value;
@@ -118,6 +120,7 @@ export class RAM {
 
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
+		this.memory[0x296] = value;
 		PIA.setTimer(0x296);
 		
 		return value;
@@ -129,6 +132,7 @@ export class RAM {
 
 		value = new Uint8Array([value - 1])[0];
 		bits[0] = '0';
+		this.memory[0x297] = value;
 		PIA.setTimer(0x297);
 		
 		return value;

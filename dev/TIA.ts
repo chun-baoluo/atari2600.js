@@ -170,7 +170,7 @@ export class TIA {
     };
     
     public static set canvas(canvas: any) {
-        this.canvas = canvas;
+        this._canvas = canvas;
         
         this.canvas.width = 160;
         
@@ -241,8 +241,8 @@ export class TIA {
                 };
 
                 let counter: number = 2;
-                for(let clock = 68; clock < 228; clock += 1) {            
-                    this.imageData = this.setPixel(this.imageData, this.canvas.width, this.canvas.height, this.scanline, clock - 68);
+                for(let clock = 0; clock < 160; clock += 1) {            
+                    this.imageData = this.setPixel(this.imageData, this.canvas.width, this.canvas.height, this.scanline, clock);
                     
                     if(counter > 2) {
                         counter = 0;
@@ -368,7 +368,7 @@ export class TIA {
         } else if(clock > 144 && clock <= 160 && reflect) {
             for(let i = 148; i <= 160; i += 4) {
                 if(clock <= i) {
-                    if(pf1[7 - (i / 4 - 37)] == '1') {
+                    if(pf0[7 - (i / 4 - 37)] == '1') {
                         c = pf;
                         break;
                     };
