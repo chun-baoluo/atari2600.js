@@ -1,6 +1,7 @@
 import { PIA } from './PIA';
 import { CPU } from './CPU';
 import { Convert } from './Common';
+import { TIA } from './TIA';
 
 export class Register {
 	public static A: number = 0; // Accumulator
@@ -68,6 +69,13 @@ export class RAM {
 		this.memory[address] = value;
 		
 		return this.memory[address];
+	};
+	
+	private static 0x00(value: number) {
+		if(Convert.toBin(this.memory[0x00]).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
+			TIA.expectNewFrame = true;			
+		};
+		return value;
 	};
 	
 	// WSYNC write

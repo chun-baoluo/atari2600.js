@@ -1,16 +1,28 @@
-import Display from './Display';
 import { RomReader } from './RomReader';
-
+import { CPU } from './CPU';
 import { Register, Rom, RAM } from './RAM';
+import { TIA } from './TIA';
 
 export class App {
-    display: Display = null;
+
+    constructor() {
+        this.handleRom = this.handleRom.bind(this);
+    };
 
     handleRom() {
-        this.display.nextFrame().then(() => {
-            setTimeout(() => this.handleRom(), 3000);
-            console.log('FRAME ENDED');
-        });
+        for(; Register.PC < Rom.size ;) {
+            CPU.pulse();
+            CPU.unlock();
+            
+            if(TIA.expectNewFrame) {
+                TIA.nextFrame().then(() => {
+                    TIA.expectNewFrame = false;
+                    setTimeout(() => requestAnimationFrame(this.handleRom), 1000 / 60);
+                    console.log('FRAME ENDED');
+                });
+                break;
+            };             
+        };
     };
 
     processFile()  {
@@ -18,8 +30,10 @@ export class App {
 
     	let file: any = (<HTMLInputElement>document.getElementById('file')).files[0];
         let canvas: any = document.getElementById('canvas');
+        // 
+        // this.display = new Display(canvas);
 
-        this.display = new Display(canvas);
+        TIA.canvas = canvas;
 
         let reader = new RomReader(file, (rom: Uint8Array) => {
             Rom.data = rom;
