@@ -4,10 +4,10 @@ module.exports = (env={ type: 'dev'}) => {
     let plugins = [
         new webpack.NoEmitOnErrorsPlugin()
     ];
-    
+
     return {
         entry: {
-            app: __dirname + '/dev/index.ts'
+            app: __dirname + '/dev/App.ts'
         },
 
         resolve: {
@@ -23,13 +23,15 @@ module.exports = (env={ type: 'dev'}) => {
                 }
             ]
         },
-        
+
         output: {
             path: __dirname + '/output',
             publicPath: './',
             filename: '[name].js',
+            libraryTarget: "var",
+            library: 'Atari2600'
         },
-        
+
         plugins: env.type == 'dev' ? plugins : plugins.concat([
             new webpack.optimize.UglifyJsPlugin({
                  beautify: false,
@@ -48,10 +50,10 @@ module.exports = (env={ type: 'dev'}) => {
                  }
              })
         ]),
-        
+
         watch: env.type == 'dev'
     };
-    
-    
-    
+
+
+
 };
