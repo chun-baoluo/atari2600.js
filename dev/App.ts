@@ -7,7 +7,7 @@ export class App {
 
     constructor(canvas: any) {
         this.handleRom = this.handleRom.bind(this);
-        TIA.canvas = this.canvas;
+        TIA.canvas = canvas;
     };
 
     private handleRom() {
