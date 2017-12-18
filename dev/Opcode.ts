@@ -51,6 +51,27 @@ export class Opcode {
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
+    // ASL nn, X
+    public static 0x16() {
+        let address: number = Rom.data[++Register.PC] + Register.X;
+
+        let value: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(value).charAt(0);
+
+        value = Convert.toUint8(value << 1);
+
+        RAM.write(address, value);
+
+        Flag.Z = (value == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+
+        Flag.C = parseInt(carry);
+
+        return 6;
+    };
+
     // LSR A
     public static 0x4A() {
         let carry: string = Convert.toBin(Register.A).charAt(7);
