@@ -6,6 +6,7 @@ import { Flag, Register, Rom, RAM } from '../dev/RAM';
 import { Convert } from '../dev/Common';
 
 let beforeEachCallback = () => {
+    Flag.C = 0;
     Flag.D = 0;
     Flag.I = 0;
     Flag.N = 0;
@@ -352,6 +353,46 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 1);
     });
 
+    it("(0x29) should do AND operation with A and #nn, change N and Z flags", () => {
+        Rom.data = new Uint8Array([0xE0, 0x01, 0xFF]);
+
+        Register.A = 0x02;
+
+        chai.assert.strictEqual(Opcode[0x29](), 2);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x29](), 2);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
+    it("(0x36) should rotate left through carry nn + X, change N, Z and C flags", () => {
+        Rom.data = new Uint8Array([0x36, 0x31, 0x32]);
+        Register.X = 0x01;
+        RAM.set(0x32, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x36](), 6);
+        chai.assert.strictEqual(RAM.get(0x32), 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 127);
+
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x36](), 6);
+        chai.assert.strictEqual(RAM.get(0x33), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+
     it("(0x4A) should right shift register A, change N, Z and C flags", () => {
         Register.A = 0x1;
 
@@ -388,6 +429,27 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
+    });
+
+    it("(0x76) should rorate right through carry nn + X, change N, Z and C flags", () => {
+        RAM.set(0x32, 0xFF);
+        Rom.data = new Uint8Array([0x56, 0x31, 0x32])
+        Register.X = 0x01;
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x76](), 6);
+        chai.assert.strictEqual(RAM.get(0x32), 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 0xFE);
+
+        chai.assert.strictEqual(Opcode[0x76](), 6);
+        chai.assert.strictEqual(RAM.get(0x33), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
     });
 
     it("(0x88) should decrement register Y by one, change N and Z flags", () => {
