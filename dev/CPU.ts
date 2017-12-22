@@ -5,7 +5,15 @@ import { PIA } from './PIA';
 export class CPU {
 	private static locked: boolean = false;
 
-	private static cycle: number = 0;
+	private static _cycle: number = 0;
+	
+	public static get cycle() {
+		return this._cycle;
+	};
+	
+	public static set cycle(cycle: number) {
+		this._cycle = cycle;
+	};
 
 	public static lock() {
 		this.locked = true;
@@ -23,7 +31,7 @@ export class CPU {
 		if(this.cycle <= 0) {
 			try {
 				// console.log(Rom.data[Register.PC].toString(16));
-				this.setCycle(Opcode[Rom.data[Register.PC]]());
+				this.cycle = Opcode[Rom.data[Register.PC]]();
 			} catch(e) {
 				console.log('Error', Rom.data[Register.PC].toString(16), Register.PC);
 				throw e;
@@ -33,9 +41,5 @@ export class CPU {
 		PIA.tick();
 		this.cycle--;
 
-	};
-
-	public static setCycle(val: number) {
-		this.cycle = val;
 	};
 };

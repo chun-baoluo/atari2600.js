@@ -365,16 +365,14 @@ export class TIA {
     };
 
     public static setPixel(imageData: any, w: number, h: number, scanline: number, clock: number) {
-        let c: Array<number> = null;
+        let c: Array<number> = this.bk;
 
         if(clock <= 16) {
             for(let i = 4; i <= 16; i += 4) {
                 if(clock <= i) {
                     if(this.pf0[4 + (i / 4) - 1] == '1') {
                         c = (this.scoreMode ? this.colup0 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -383,9 +381,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf1[7 - (i / 4 - 5)] == '1') {
                         c = (this.scoreMode ? this.colup0 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -394,9 +390,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf2[0 + (i / 4 - 13)] == '1') {
                         c = (this.scoreMode ? this.colup0 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -405,9 +399,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf0[4 + (i / 4) - 21] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -416,9 +408,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf1[7 - (i / 4 - 25)] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -427,9 +417,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf2[0 + (i / 4 - 33)] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -438,9 +426,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf2[7 - (i / 4 - 21)] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -449,9 +435,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf1[0 + (i / 4 - 29)] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };
@@ -460,9 +444,7 @@ export class TIA {
                 if(clock <= i) {
                     if(this.pf0[7 - (i / 4 - 37)] == '1') {
                         c = (this.scoreMode ? this.colup1 : this.pf);
-                        break;
                     };
-                    c = this.bk;
                     break;
                 };
             };

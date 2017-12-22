@@ -45,8 +45,6 @@ export class PIA {
                 continue;
             };
             
-            // console.log('PIAtick', RAM.get(i).toString(16),  RAM.get(0x284).toString(16), TIA.scanline);
-            
             if(this.timer && this.cycle == 0) {
                 let before: number = RAM.get(i);
                 let after: number = RAM.set(i, RAM.get(i) - 1);

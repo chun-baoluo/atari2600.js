@@ -79,8 +79,6 @@ export class Opcode {
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
         
-        console.log(address);
-        
         Register.S = Register.PC;
         Register.PC = (address - 61440) - 1;
         
@@ -230,7 +228,7 @@ export class Opcode {
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -241,7 +239,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -288,7 +286,7 @@ export class Opcode {
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -299,7 +297,7 @@ export class Opcode {
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -310,7 +308,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 3;
     };
@@ -321,7 +319,7 @@ export class Opcode {
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 3;
     };
@@ -332,7 +330,7 @@ export class Opcode {
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -343,7 +341,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -354,7 +352,7 @@ export class Opcode {
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -369,7 +367,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 4;
     };
@@ -380,7 +378,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 4;
     };
@@ -395,7 +393,7 @@ export class Opcode {
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.A).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 4 + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
     };
@@ -421,7 +419,7 @@ export class Opcode {
 
         Flag.Z = (result == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(result).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
 
         return 5;
     };
@@ -432,7 +430,7 @@ export class Opcode {
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -457,7 +455,7 @@ export class Opcode {
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 2;
     };
@@ -502,7 +500,7 @@ export class Opcode {
 
         Flag.Z = (result == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(result).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
 
         return 5;
     };
@@ -513,7 +511,7 @@ export class Opcode {
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
-        Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 2;
     };
