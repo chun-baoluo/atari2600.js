@@ -17,8 +17,7 @@ export class App {
 
             if(TIA.expectNewFrame) {
                 TIA.nextFrame().then(() => {
-                    TIA.expectNewFrame = false;
-                    setTimeout(() => requestAnimationFrame(this.handleRom), 1000 / 60);
+                    requestAnimationFrame(this.handleRom);
                     console.log('FRAME ENDED');
                 });
                 break;

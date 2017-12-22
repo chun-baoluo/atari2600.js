@@ -83,6 +83,49 @@ export class RAM {
 		CPU.lock();
 	};
 	
+	// COLUP0 write
+	private static 0x06(value: number) {
+		TIA.colup0 = TIA.toHex(TIA.color(Convert.toBin(value)));
+	};
+	
+	// COLUP1 write
+	private static 0x07(value: number) {
+		TIA.colup1 = TIA.toHex(TIA.color(Convert.toBin(value)));
+	};
+	
+	// PF write
+	private static 0x08(value: number) {
+		TIA.pf = TIA.toHex(TIA.color(Convert.toBin(value)));
+	};
+	
+	// BK write
+	private static 0x09(value: number) {
+		TIA.bk = TIA.toHex(TIA.color(Convert.toBin(value)));
+	};
+			
+	// PF0 write
+	private static 0x0D(value: number) {
+		TIA.pf0 = Convert.toBin(value).split('').reverse();
+	};
+	
+	// PF1 write
+	private static 0x0E(value: number) {
+		TIA.pf1 = Convert.toBin(value).split('').reverse();
+	};
+	
+	// PF2 write
+	private static 0x0F(value: number) {
+		TIA.pf2 = Convert.toBin(value).split('').reverse();
+	};
+	
+	// COLUPF write
+	private static 0x0A(value: number) {
+		let colupf: Array<string> = Convert.toBin(value).split('').reverse();
+		TIA.colupf = colupf;
+		TIA.reflect = (colupf[0] == '1');
+		TIA.scoreMode = (colupf[1] == '1' && colupf[2] == '0');
+	};
+	
 	// INSTAT read
 	private static 0x285() {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
