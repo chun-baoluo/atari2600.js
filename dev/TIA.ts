@@ -300,14 +300,6 @@ export class TIA {
     public static set pf2(pf2: Array<string>) {
         this._pf2 = pf2;
     };
-
-    public static get scanline() {
-        return this._scanline;
-    };
-
-    public static set scanline(scanline: number) {
-        this._scanline = scanline;
-    };
     
     public static get scoreMode() {
         return this._scoreMode;
@@ -319,7 +311,7 @@ export class TIA {
 
     public static nextFrame() {
         return new Promise((resolve: Function) => {
-            for(this.scanline = 1; this.scanline <= 3; this.scanline++) {
+            for(let scanline = 1; scanline <= 3; scanline++) {
                 for(let clock = 0; clock < 228; clock += 3) {
                     CPU.pulse();
                 };
@@ -327,7 +319,7 @@ export class TIA {
                 CPU.unlock();
             };
 
-            for(this.scanline = 1; this.scanline <= 37; this.scanline++) {
+            for(let scanline = 1; scanline <= 37; scanline++) {
                 for(let clock = 0; clock < 228; clock += 3) {
                     CPU.pulse();
                 };
@@ -336,14 +328,14 @@ export class TIA {
             };
 
             
-            for(this.scanline = 1; this.scanline <= 192; this.scanline++) {
+            for(let scanline = 1; scanline <= 192; scanline++) {
                 for(let clock = 0; clock < 68; clock += 3) {
                     CPU.pulse();
                 };
                 
                 let counter: number = 2;
                 for(let clock = 0; clock < 160; clock += 1) {
-                    this.imageData = this.setPixel(this.imageData, this.canvas.width, this.canvas.height, this.scanline, clock);
+                    this.imageData = this.setPixel(this.imageData, this.canvas.width, this.canvas.height, scanline, clock);
                     
                     if(counter > 2) {
                         counter = 0;
@@ -358,7 +350,7 @@ export class TIA {
 
             this.ctx.putImageData(this.imageData, 0, 0);
 
-            for(this.scanline = 1; this.scanline <= 30; this.scanline++) {
+            for(let scanline = 1; scanline <= 30; scanline++) {
                 for(let clock = 0; clock < 228; clock += 3) {
                     CPU.pulse();
                 };

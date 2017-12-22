@@ -34,6 +34,20 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Opcode[0x10](), 2);
         chai.assert.strictEqual(Register.PC, 1);
     });
+    
+    it("(0x20) should jump to subroutine", () => {
+        Rom.data = new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]);
+
+        chai.assert.strictEqual(Opcode[0x20](), 6);
+        chai.assert.strictEqual(Register.PC, 4);
+    });
+    
+    it("(0x60) should return from subroutine", () => {
+        Register.S = 6;
+        
+        chai.assert.strictEqual(Opcode[0x60](), 6);
+        chai.assert.strictEqual(Register.PC, 6);
+    });
 
     it("(0x90) should jump if Carry flag isn't set", () => {
         Rom.data = new Uint8Array([0xD0, 0xFF, 0x02]);
@@ -45,7 +59,6 @@ describe("CPU Jump and Control Instructions", () => {
         Register.PC = 0;
         chai.assert.strictEqual(Opcode[0x90](), 2);
         chai.assert.strictEqual(Register.PC, 1);
-
     });
 
     it("(0x4C) should jump to nnnn", () => {
@@ -214,6 +227,23 @@ describe("CPU Memory and Register Transfers", () => {
 
         chai.assert.strictEqual(Opcode[0xA6](), 3);
         chai.assert.strictEqual(RAM.get(0x01), Register.X);
+    });
+    
+    it("(0xA8) should set register Y to be equal register A, change N and Z flags", () => {
+        Register.A = 0xFA;
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xA8](), 2);
+        chai.assert.strictEqual(Register.Y, Register.A);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        Register.A = 0;
+
+        chai.assert.strictEqual(Opcode[0xA8](), 2);
+        chai.assert.strictEqual(Register.Y, Register.A);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
     });
 
     it("(0xA9) should set register A to #nn, change N and Z flags", () => {

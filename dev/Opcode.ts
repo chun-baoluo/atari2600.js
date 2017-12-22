@@ -3,6 +3,7 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Check whether carry is getting set right or not
+// TODO: If Rom size is bigger than 4kb, JSR may work wrong due to offset
 
 export class Opcode {
 
@@ -71,6 +72,20 @@ export class Opcode {
 
         return 6;
     };
+    
+    // JSR nnnn
+    public static 0x20() {    
+        let low: number = Rom.data[++Register.PC];
+        let high: number = Rom.data[++Register.PC];
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+        
+        console.log(address);
+        
+        Register.S = Register.PC;
+        Register.PC = (address - 61440) - 1;
+        
+        return 6;
+    };
 
     // AND #nn
     public static 0x29() {
@@ -129,8 +144,7 @@ export class Opcode {
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
-        Register.PC = address & 0xFF;
-        Register.PC--;
+        Register.PC = (address & 0xFF) - 1;
 
         return 3;
     };
@@ -151,6 +165,12 @@ export class Opcode {
 
         Flag.C = parseInt(carry);
 
+        return 6;
+    };
+    
+    // RTS
+    public static 0x60() {
+        Register.PC = Register.S;
         return 6;
     };
 
@@ -304,6 +324,17 @@ export class Opcode {
         Flag.N = (Convert.toBin(Register.X).charAt(0) == '1' ? 1 : 0);
 
         return 3;
+    };
+    
+    // TAY
+    public static 0xA8() {
+        Register.Y = Register.A;
+
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toBin(Register.Y).charAt(0) == '1' ? 1 : 0);
+
+        return 2;
     };
 
     // LDA #nn
