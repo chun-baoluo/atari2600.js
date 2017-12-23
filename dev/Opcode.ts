@@ -72,16 +72,16 @@ export class Opcode {
 
         return 6;
     };
-    
+
     // JSR nnnn
-    public static 0x20() {    
+    public static 0x20() {
         let low: number = Rom.data[++Register.PC];
         let high: number = Rom.data[++Register.PC];
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
-        
+
         Register.S = Register.PC;
         Register.PC = (address - 61440) - 1;
-        
+
         return 6;
     };
 
@@ -165,11 +165,30 @@ export class Opcode {
 
         return 6;
     };
-    
+
     // RTS
     public static 0x60() {
         Register.PC = Register.S;
         return 6;
+    };
+
+    // ROR A
+    public static 0x6A() {
+        let carry: string = Convert.toBin(Register.A).charAt(7);
+
+        let value = Convert.toUint8(Register.A >>> 1);
+
+        let rotated: string = Flag.C.toString() + Convert.toBin(value).substring(1);
+
+        Register.A = Convert.toUint8(parseInt(rotated, 2));
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        Flag.C = parseInt(carry);
+
+        return 2;
     };
 
     // ROR nn, X
@@ -323,7 +342,7 @@ export class Opcode {
 
         return 3;
     };
-    
+
     // TAY
     public static 0xA8() {
         Register.Y = Register.A;
@@ -370,6 +389,18 @@ export class Opcode {
         Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 4;
+    };
+
+    // BCS/BGE nnn
+    public static 0xB0() {
+        if(Flag.C == 0) {
+            Register.PC++;
+            return 2;
+        };
+
+        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // LDA nn, X

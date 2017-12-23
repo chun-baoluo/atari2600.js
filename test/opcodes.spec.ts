@@ -34,19 +34,33 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Opcode[0x10](), 2);
         chai.assert.strictEqual(Register.PC, 1);
     });
-    
+
     it("(0x20) should jump to subroutine", () => {
         Rom.data = new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]);
 
         chai.assert.strictEqual(Opcode[0x20](), 6);
         chai.assert.strictEqual(Register.PC, 4);
     });
-    
+
+    it("(0x4C) should jump to nnnn", () => {
+        Rom.data = new Uint8Array([0x4C, 0x01, 0xFF]);
+
+        chai.assert.strictEqual(Opcode[0x4C](), 3);
+
+        Register.PC++;
+        chai.assert.strictEqual(Register.PC, 1);
+    });
+
     it("(0x60) should return from subroutine", () => {
         Register.S = 6;
-        
+
         chai.assert.strictEqual(Opcode[0x60](), 6);
         chai.assert.strictEqual(Register.PC, 6);
+    });
+
+    it("(0x78) should set the interrupt disable bit", () => {
+        chai.assert.strictEqual(Opcode[0x78](), 2);
+        chai.assert.strictEqual(Flag.I, 1);
     });
 
     it("(0x90) should jump if Carry flag isn't set", () => {
@@ -61,18 +75,19 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Register.PC, 1);
     });
 
-    it("(0x4C) should jump to nnnn", () => {
-        Rom.data = new Uint8Array([0x4C, 0x01, 0xFF]);
+    it("(0xB0) should jump if Carry flag is set", () => {
+        Rom.data = new Uint8Array([0xB0, 0xFF, 0x02]);
 
-        chai.assert.strictEqual(Opcode[0x4C](), 3);
+        Flag.C = 1;
 
-        Register.PC++;
+        chai.assert.strictEqual(Opcode[0xB0](), 3);
+        chai.assert.strictEqual(Register.PC, 0);
+
+        Flag.C = 0;
+
+        Register.PC = 0;
+        chai.assert.strictEqual(Opcode[0xB0](), 2);
         chai.assert.strictEqual(Register.PC, 1);
-    });
-
-    it("(0x78) should set the interrupt disable bit", () => {
-        chai.assert.strictEqual(Opcode[0x78](), 2);
-        chai.assert.strictEqual(Flag.I, 1);
     });
 
     it("(0xD0) should jump if Zero flag isn/'t set", () => {
@@ -228,7 +243,7 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Opcode[0xA6](), 3);
         chai.assert.strictEqual(RAM.get(0x01), Register.X);
     });
-    
+
     it("(0xA8) should set register Y to be equal register A, change N and Z flags", () => {
         Register.A = 0xFA;
         Flag.Z = 1;
@@ -461,9 +476,28 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 1);
     });
 
+    it("(0x6A) should rorate right through carry register A, change N, Z and C flags", () => {
+        Register.A = 0xFF;
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x6A](), 2);
+        chai.assert.strictEqual(Register.A, 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        Register.A = 0xFE;
+
+        chai.assert.strictEqual(Opcode[0x6A](), 2);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+
     it("(0x76) should rorate right through carry nn + X, change N, Z and C flags", () => {
         RAM.set(0x32, 0xFF);
-        Rom.data = new Uint8Array([0x56, 0x31, 0x32])
+        Rom.data = new Uint8Array([0x56, 0x31, 0x32]);
         Register.X = 0x01;
         Flag.N = Flag.Z = 1;
 

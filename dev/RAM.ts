@@ -24,100 +24,112 @@ export class Flag {
 
 export class RAM {
 	public static memory: Uint8Array = new Uint8Array(65536);
-	
+
 	public static get(address: number) {
 		return this.memory[address];
 	};
-	
+
 	public static read(address: number) {
 		let value: number = this.memory[address];
-		
+
 		if(this[address] !== undefined) {
 			this[address]();
-		};	
-		
+		};
+
 		return value;
 	};
-	
+
 	public static readRom(rom: Uint8Array) {
 		this.reset();
-		
+
+		this.memory = new Uint8Array(61440 + rom.length);
+
 		this.memory[0x284] = (Math.random() * 255) >> 0;
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
 		this.memory[0x296] = (Math.random() * 255) >> 0;
 		this.memory[0x297] = (Math.random() * 255) >> 0;
-		
+
 		this.memory.set(rom, 61440);
 	};
-	
+
 	public static reset() {
 		this.memory = new Uint8Array(65536);
 	};
-	
+
 	public static set(address: number, value: number) {
 		this.memory[address] = value;
-		
+
 		return this.memory[address];
 	};
-	
+
 	public static write(address: number, value: number) {
 		if(this[address] !== undefined) {
 			value = this[address](value);
 		};
-		
+
 		this.memory[address] = value;
-		
+
 		return this.memory[address];
 	};
-	
+
 	private static 0x00(value: number) {
 		if(Convert.toBin(this.memory[0x00]).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
-			TIA.expectNewFrame = true;			
+			TIA.expectNewFrame = true;
 		};
 		return value;
 	};
-	
+
 	// WSYNC write
 	private static 0x02() {
 		CPU.lock();
 	};
-	
+
+	// NUSIZ0 write
+	private static 0x04(value: number) {
+		TIA.nusiz0 = Convert.toBin(value).split('');
+	};
+
+	// NUSIZ1 write
+	private static 0x05(value: number) {
+		TIA.nusiz1 = Convert.toBin(value).split('');
+	};
+
 	// COLUP0 write
 	private static 0x06(value: number) {
 		TIA.colup0 = TIA.toHex(TIA.color(Convert.toBin(value)));
 	};
-	
+
 	// COLUP1 write
 	private static 0x07(value: number) {
 		TIA.colup1 = TIA.toHex(TIA.color(Convert.toBin(value)));
 	};
-	
+
 	// PF write
 	private static 0x08(value: number) {
 		TIA.pf = TIA.toHex(TIA.color(Convert.toBin(value)));
 	};
-	
+
 	// BK write
 	private static 0x09(value: number) {
 		TIA.bk = TIA.toHex(TIA.color(Convert.toBin(value)));
 	};
-			
+
 	// PF0 write
 	private static 0x0D(value: number) {
 		TIA.pf0 = Convert.toBin(value).split('').reverse();
 	};
-	
+
 	// PF1 write
 	private static 0x0E(value: number) {
 		TIA.pf1 = Convert.toBin(value).split('').reverse();
 	};
-	
+
 	// PF2 write
 	private static 0x0F(value: number) {
 		TIA.pf2 = Convert.toBin(value).split('').reverse();
 	};
-	
+
 	// COLUPF write
 	private static 0x0A(value: number) {
 		let colupf: Array<string> = Convert.toBin(value).split('').reverse();
@@ -125,14 +137,24 @@ export class RAM {
 		TIA.reflect = (colupf[0] == '1');
 		TIA.scoreMode = (colupf[1] == '1' && colupf[2] == '0');
 	};
-	
+
+	// GRP0 write
+	public static 0x1B(value: number) {
+		TIA.grp0 = Convert.toBin(value).split('');
+	};
+
+	// GRP1 write
+	public static 0x1C(value: number) {
+		TIA.grp1 = Convert.toBin(value).split('');
+	};
+
 	// INSTAT read
 	private static 0x285() {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
 		bits[1] = '0';
 		this.memory[0x285] = parseInt(bits.join(''), 2)
 	};
-	
+
 	// TIM1T write
 	private static 0x294(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
@@ -141,10 +163,10 @@ export class RAM {
 		bits[0] = '0';
 		this.memory[0x294] = value;
 		PIA.setTimer(0x294);
-		
+
 		return value;
 	};
-	
+
 	// TIM8T write
 	private static 0x295(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
@@ -153,10 +175,10 @@ export class RAM {
 		bits[0] = '0';
 		this.memory[0x295] = value;
 		PIA.setTimer(0x295);
-		
+
 		return value;
 	};
-	
+
 	// TIM64T write
 	private static 0x296(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
@@ -165,10 +187,10 @@ export class RAM {
 		bits[0] = '0';
 		this.memory[0x296] = value;
 		PIA.setTimer(0x296);
-		
+
 		return value;
 	};
-	
+
 	// TIM1024T write
 	private static 0x297(value: number) {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');
@@ -177,7 +199,7 @@ export class RAM {
 		bits[0] = '0';
 		this.memory[0x297] = value;
 		PIA.setTimer(0x297);
-		
+
 		return value;
 	};
 };
