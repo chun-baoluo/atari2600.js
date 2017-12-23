@@ -151,41 +151,49 @@ export class TIA {
         ['1111111','#FEDF70']
     ]);
 
-    private static _bk: Array<number> = [0, 0, 0];
+    public static bk: Array<number> = [0, 0, 0];
 
     private static _canvas: any = null;
 
-    private static _ctx: any = null;
+    public static ctx: any = null;
 
-    private static _colup0: Array<number> = [0, 0, 0];
+    public static colup0: Array<number> = [0, 0, 0];
 
-    private static _colup1: Array<number> = [0, 0, 0];
+    public static colup1: Array<number> = [0, 0, 0];
 
-    private static _colupf: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static colupf: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    private static _grp0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static grp0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    private static _grp1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static grp1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-	private static _imageData: any = null;
+	public static imageData: any = null;
 
-    private static _expectNewFrame: boolean = false;
+    public static expectNewFrame: boolean = false;
 
-    private static _nusiz0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static nusiz0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    private static _nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    private static _reflect: boolean = false;
+    public static reflect: boolean = false;
 
-    private static _pf: Array<number> = [0, 0, 0];
+    public static resp0: boolean = false;
 
-    private static _pf0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static resp1: boolean = false;
 
-    private static _pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static resp0Counter: number = null;
 
-    private static _pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static resp1Counter: number = null;
 
-    private static _scoreMode: boolean = false
+    public static pf: Array<number> = [0, 0, 0];
+
+    public static pf0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+
+    public static pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+
+    public static pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+
+    public static scoreMode: boolean = false
 
     public static color(val: string) {
         return this.colorPalette.get(val.slice(0, -1));
@@ -209,142 +217,6 @@ export class TIA {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    };
-
-    public static get bk() {
-        return this._bk;
-    };
-
-    public static set bk(bk: Array<number>) {
-        this._bk = bk;
-    };
-
-    public static get colupf() {
-        return this._colupf;
-    };
-
-    public static set colupf(colupf: Array<string>) {
-        this._colupf = colupf;
-    };
-
-    public static get colup0() {
-        return this._colup0;
-    };
-
-    public static set colup0(colup0: Array<number>) {
-        this._colup0 = colup0;
-    };
-
-    public static get colup1() {
-        return this._colup1;
-    };
-
-    public static set colup1(colup1: Array<number>) {
-        this._colup1 = colup1;
-    };
-
-    public static get ctx() {
-        return this._ctx;
-    };
-
-    public static set ctx(ctx: any) {
-        this._ctx = ctx;
-    };
-
-    public static get expectNewFrame() {
-        return this._expectNewFrame;
-    };
-
-    public static set expectNewFrame(expectNewFrame: boolean) {
-        this._expectNewFrame = expectNewFrame;
-    };
-
-    public static get grp0() {
-        return this._grp0;
-    };
-
-    public static set grp0(grp0: Array<string>) {
-        this._grp0 = grp0;
-    };
-
-    public static get grp1() {
-        return this._grp1;
-    };
-
-    public static set grp1(grp1: Array<string>) {
-        this._grp1 = grp1;
-    };
-
-    public static get imageData() {
-        return this._imageData;
-    };
-
-    public static set imageData(imageData: any) {
-        this._imageData = imageData;
-    };
-
-    public static get nusiz0() {
-        return this._nusiz0;
-    };
-
-    public static set nusiz0(nusiz0: Array<string>) {
-        this._nusiz0 = nusiz0;
-    };
-
-    public static get nusiz1() {
-        return this._nusiz1;
-    };
-
-    public static set nusiz1(nusiz1: Array<string>) {
-        this._nusiz1 = nusiz1;
-    };
-
-    public static get reflect() {
-        return this._reflect;
-    };
-
-    public static set reflect(reflect: boolean) {
-        this._reflect = reflect;
-    };
-
-    public static get pf0() {
-        return this._pf0;
-    };
-
-    public static set pf0(pf0: Array<string>) {
-        this._pf0 = pf0;
-    };
-
-    public static get pf() {
-        return this._pf;
-    };
-
-    public static set pf(pf: Array<number>) {
-        this._pf = pf;
-    };
-
-    public static get pf1() {
-        return this._pf1;
-    };
-
-    public static set pf1(pf1: Array<string>) {
-        this._pf1 = pf1;
-    };
-
-    public static get pf2() {
-        return this._pf2;
-    };
-
-    public static set pf2(pf2: Array<string>) {
-        this._pf2 = pf2;
-    };
-
-    public static get scoreMode() {
-        return this._scoreMode;
-    };
-
-    public static set scoreMode(scoreMode: boolean) {
-        this._scoreMode = scoreMode;
     };
 
     public static nextFrame() {
@@ -373,7 +245,7 @@ export class TIA {
 
                 let counter: number = 2;
                 for(let clock = 0; clock < 160; clock += 1) {
-                    this.imageData = this.setPixel(this.imageData, this.canvas.width, this.canvas.height, scanline, clock);
+                    this.imageData = this.setPixel(this.imageData, scanline, clock);
 
                     if(counter > 2) {
                         counter = 0;
@@ -402,7 +274,7 @@ export class TIA {
         });
     };
 
-    public static setPixel(imageData: any, w: number, h: number, scanline: number, clock: number) {
+    public static setPixel(imageData: any, scanline: number, clock: number) {
         let c: Array<number> = this.bk;
 
         if(clock <= 16) {
@@ -488,17 +360,39 @@ export class TIA {
             };
         };
 
-        if(this.grp0[(8 + clock) % 8] == '1') {
-            c = this.colup0;
+        if(this.resp0) {
+            if(this.grp0[7 - this.resp0Counter--/*clock*/] == '1') {
+                c = this.colup0;
+            };
+
+            if(this.resp0Counter < 0) {
+                this.resp0Counter = null;
+                this.resp0 = false;
+            };
         };
 
-        let pixelindex = (scanline * w + clock) << 2;
+        if(this.resp1) {
+            if(this.grp1[7 - this.resp1Counter--/*clock*/] == '1') {
+                c = this.colup1;
+            };
+
+            if(this.resp1Counter < 0) {
+                this.resp1Counter = null;
+                this.resp1 = false;
+            };
+        };
+
+        return this.fillImageData(imageData, c, scanline, clock);
+    };
+
+    private static fillImageData(imageData: any, c: Array<number>, scanline: number, clock: number) {
+        let pixelindex = (scanline * this.canvas.width + clock) << 2;
         imageData.data[pixelindex] = c[0];
         imageData.data[pixelindex + 1] = c[1];
         imageData.data[pixelindex + 2] = c[2];
 
         return imageData;
-    };
+    }
 
     public static toHex(hex: string) {
         let c: any = [];
