@@ -206,17 +206,17 @@ export class TIA {
     public static set canvas(canvas: any) {
         this._canvas = canvas;
 
-        this.canvas.width = 160;
+        this._canvas.width = 160;
 
-        this.canvas.height = 192;
+        this._canvas.height = 192;
 
         this.ctx = canvas.getContext('2d');
 
         this.ctx.fillStyle = '#000';
 
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
-        this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
 
     public static nextFrame() {

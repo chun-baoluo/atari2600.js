@@ -18,7 +18,6 @@ export class App {
             if(TIA.expectNewFrame) {
                 TIA.nextFrame().then(() => {
                     requestAnimationFrame(this.handleRom);
-                    console.log('FRAME ENDED');
                 });
                 break;
             };
@@ -26,8 +25,6 @@ export class App {
     };
 
     public processFile(file: any)  {
-    	console.log('Reading process started!');
-
         let reader = new RomReader(file, (rom: Uint8Array) => {
             Rom.data = rom;
             Rom.size = rom.byteLength;
