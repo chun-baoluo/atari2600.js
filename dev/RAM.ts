@@ -106,59 +106,63 @@ export class RAM {
 	// COLUP0 write
 	private static 0x06(value: number) {
 		if(value === undefined) return;
-		TIA.colup0 = TIA.toHex(TIA.color(Convert.toBin(value)));
+		let colup0: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		TIA.pf.colup0 = colup0;
+		TIA.p0.colup = colup0;
 		return value;
 	};
 
 	// COLUP1 write
 	private static 0x07(value: number) {
 		if(value === undefined) return;
-		TIA.colup1 = TIA.toHex(TIA.color(Convert.toBin(value)));
-		return value;
-	};
-
-	// PF write
-	private static 0x08(value: number) {
-		if(value === undefined) return;
-		TIA.pf = TIA.toHex(TIA.color(Convert.toBin(value)));
-		return value;
-	};
-
-	// BK write
-	private static 0x09(value: number) {
-		if(value === undefined) return;
-		TIA.bk = TIA.toHex(TIA.color(Convert.toBin(value)));
+		let colup1: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		TIA.pf.colup1 = colup1;
+		TIA.p1.colup = colup1;
 		return value;
 	};
 
 	// COLUPF write
+	private static 0x08(value: number) {
+		if(value === undefined) return;
+		TIA.pf.colupf = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		return value;
+	};
+
+	// COLUBK write
+	private static 0x09(value: number) {
+		if(value === undefined) return;
+		TIA.bk.colubk = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		return value;
+	};
+
+	// CTRLPF  write
 	private static 0x0A(value: number) {
 		if(value === undefined) return;
-		let colupf: Array<string> = Convert.toBin(value).split('').reverse();
-		TIA.colupf = colupf;
-		TIA.reflect = (colupf[0] == '1');
-		TIA.scoreMode = (colupf[1] == '1' && colupf[2] == '0');
+		let ctrlpf: Array<string> = Convert.toBin(value).split('').reverse();
+		TIA.pf.ctrlpf = ctrlpf;
+		TIA.pf.reflect = (ctrlpf[0] == '1');
+		TIA.pf.scoreMode = (ctrlpf[1] == '1' && ctrlpf[2] == '0');
 		return value;
 	};
 
 	// PF0 write
 	private static 0x0D(value: number) {
 		if(value === undefined) return;
-		TIA.pf0 = Convert.toBin(value).split('').reverse();
+		TIA.pf.pf0 = Convert.toBin(value).split('').reverse();
 		return value;
 	};
 
 	// PF1 write
 	private static 0x0E(value: number) {
 		if(value === undefined) return;
-		TIA.pf1 = Convert.toBin(value).split('').reverse();
+		TIA.pf.pf1 = Convert.toBin(value).split('').reverse();
 		return value;
 	};
 
 	// PF2 write
 	private static 0x0F(value: number) {
 		if(value === undefined) return;
-		TIA.pf2 = Convert.toBin(value).split('').reverse();
+		TIA.pf.pf2 = Convert.toBin(value).split('').reverse();
 		return value;
 	};
 
@@ -166,7 +170,6 @@ export class RAM {
 	private static 0x10(value: number) {
 		if(value === undefined) return;
 		TIA.resp0 = true;
-		TIA.resp0Counter = 7;
 		return value;
 	};
 
@@ -174,21 +177,20 @@ export class RAM {
 	private static 0x11(value: number) {
 		if(value === undefined) return;
 		TIA.resp1 = true;
-		TIA.resp1Counter = 7;
 		return value;
 	};
 
 	// GRP0 write
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
-		TIA.grp0 = Convert.toBin(value).split('');
+		TIA.p0.grp = Convert.toBin(value).split('');
 		return value;
 	};
 
 	// GRP1 write
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
-		TIA.grp1 = Convert.toBin(value).split('');
+		TIA.p1.grp = Convert.toBin(value).split('');
 		return value;
 	};
 

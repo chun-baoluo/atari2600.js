@@ -4,6 +4,183 @@ import { CPU } from './CPU';
 
 // TODO: String to number for colors
 
+abstract class GameObject {
+    protected _canvas: any = null;
+    protected _ctx: any = null;
+    protected _imageData: any = null;
+    
+    public get canvas() {
+        this._ctx.putImageData(this._imageData, 0, 0);
+        this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
+        return this._canvas;
+    };
+    
+    public set canvas(canvas: any) {
+        this._canvas = canvas;
+    };
+    
+    constructor() {
+        this._canvas = document.createElement('canvas');
+        
+        this._canvas.width = 160;
+        
+        this._canvas.height = 192;
+        
+        this._ctx = this._canvas.getContext('2d');
+        
+        this._imageData = this._ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
+    };
+    
+    abstract pixel(scanline: number, clock: number): any;
+};
+
+class Background extends GameObject {
+    
+    public colubk: Array<number> = [0, 0, 0];
+    
+    pixel(scanline: number, clock: number) {
+        let pixelindex = (scanline * this._canvas.width + clock) << 2;
+        this._imageData.data[pixelindex] = this.colubk[0];
+        this._imageData.data[pixelindex + 1] = this.colubk[1];
+        this._imageData.data[pixelindex + 2] = this.colubk[2];
+        this._imageData.data[pixelindex + 3] = 255;
+    };
+
+};
+
+class Playfield extends GameObject {
+    
+    public reflect: boolean = false;
+    public ctrlpf: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public colupf: Array<number> = [0, 0, 0];
+    public scoreMode: boolean = false;
+    public colup0: Array<number> = [0, 0, 0];
+    public colup1: Array<number> = [0, 0, 0];
+    public pf0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    
+    pixel(scanline: number, clock: number) {
+        let c: Array<number> = null;
+
+        if(clock <= 16) {
+            for(let i = 4; i <= 16; i += 4) {
+                if(clock <= i) {
+                    if(this.pf0[4 + (i / 4) - 1] == '1') {
+                        c = (this.scoreMode ? this.colup0 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 16 && clock <= 48) {
+            for(let i = 20; i <= 48; i += 4) {
+                if(clock <= i) {
+                    if(this.pf1[7 - (i / 4 - 5)] == '1') {
+                        c = (this.scoreMode ? this.colup0 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 48 && clock <= 80) {
+            for(let i = 52; i <= 80; i += 4) {
+                if(clock <= i) {
+                    if(this.pf2[0 + (i / 4 - 13)] == '1') {
+                        c = (this.scoreMode ? this.colup0 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 80 && clock <= 96 && !this.reflect) { // REF = 0
+            for(let i = 84; i <= 96; i += 4) {
+                if(clock <= i) {
+                    if(this.pf0[4 + (i / 4) - 21] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 96 && clock <= 128 && !this.reflect) {
+            for(let i = 100; i <= 128; i += 4) {
+                if(clock <= i) {
+                    if(this.pf1[7 - (i / 4 - 25)] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 128 && clock <= 160 && !this.reflect) {
+            for(let i = 132; i <= 160; i += 4) {
+                if(clock <= i) {
+                    if(this.pf2[0 + (i / 4 - 33)] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 80 && clock <= 112 && this.reflect) { // REF = 1
+            for(let i = 84; i <= 112; i += 4) {
+                if(clock <= i) {
+                    if(this.pf2[7 - (i / 4 - 21)] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 112 && clock <= 144 && this.reflect) {
+            for(let i = 116; i <= 144; i += 4) {
+                if(clock <= i) {
+                    if(this.pf1[0 + (i / 4 - 29)] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        } else if(clock > 144 && clock <= 160 && this.reflect) {
+            for(let i = 148; i <= 160; i += 4) {
+                if(clock <= i) {
+                    if(this.pf0[7 - (i / 4 - 37)] == '1') {
+                        c = (this.scoreMode ? this.colup1 : this.colupf);
+                    };
+                    break;
+                };
+            };
+        };
+        
+        if(!c) {
+            return;
+        };
+            
+        let pixelindex = (scanline * this._canvas.width + clock) << 2;
+        this._imageData.data[pixelindex] = c[0];
+        this._imageData.data[pixelindex + 1] = c[1];
+        this._imageData.data[pixelindex + 2] = c[2];
+        this._imageData.data[pixelindex + 3] = 255;
+    };
+
+};
+
+class Player extends GameObject {
+    
+    public position: number = null;
+    public grp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public colup: Array<number> = [0, 0, 0];
+    
+    pixel(scanline: number, clock: number) {
+        
+        if(!this.position || this.position > clock || this.position + 7 < clock) {
+            return;
+        };
+        
+        if(this.grp[(this.position + (clock - this.position)) % this.position] == '1') {
+            let pixelindex = (scanline * this._canvas.width + clock) << 2;
+            this._imageData.data[pixelindex] = this.colup[0];
+            this._imageData.data[pixelindex + 1] = this.colup[1];
+            this._imageData.data[pixelindex + 2] = this.colup[2];
+            this._imageData.data[pixelindex + 3] = 255;
+        };
+    };
+};
+
 export class TIA {
     private static colorPalette: Map<any, any> = new Map([
         ['0000000','#000000'],
@@ -151,21 +328,11 @@ export class TIA {
         ['1111111','#FEDF70']
     ]);
 
-    public static bk: Array<number> = [0, 0, 0];
-
     private static _canvas: any = null;
 
     public static ctx: any = null;
-
-    public static colup0: Array<number> = [0, 0, 0];
-
-    public static colup1: Array<number> = [0, 0, 0];
-
-    public static colupf: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static grp0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static grp1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    
+    public static clock: number = 0;
 
 	public static imageData: any = null;
 
@@ -175,25 +342,17 @@ export class TIA {
 
     public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    public static reflect: boolean = false;
+    private static _resp0: boolean = false;
 
-    public static resp0: boolean = false;
-
-    public static resp1: boolean = false;
-
-    public static resp0Counter: number = null;
-
-    public static resp1Counter: number = null;
-
-    public static pf: Array<number> = [0, 0, 0];
-
-    public static pf0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static scoreMode: boolean = false
+    private static _resp1: boolean = false;
+    
+    public static p0: Player = new Player();
+    
+    public static p1: Player = new Player();
+    
+    public static bk: Background = new Background();
+    
+    public static pf: Playfield = new Playfield();
 
     public static color(val: string) {
         return this.colorPalette.get(val.slice(0, -1));
@@ -218,34 +377,60 @@ export class TIA {
 
         this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
+    
+    public static get resp0() {
+        return this._resp0;
+    };
+    
+    public static set resp0(resp0: boolean) {
+        this._resp0 = resp0;
+        
+        this.p0.position = this.clock - 68;
+    };
+    
+    public static get resp1() {
+        return this._resp1;
+    };
+    
+    public static set resp1(resp1: boolean) {
+        this._resp1 = resp1;
+        
+        this.p1.position = this.clock - 68;
+    };
+    
+    private static draw() {
+        this.ctx.drawImage(this.bk.canvas, 0, 0);
+        this.ctx.drawImage(this.pf.canvas, 0, 0);
+        this.ctx.drawImage(this.p0.canvas, 0, 0);
+        this.ctx.drawImage(this.p1.canvas, 0, 0);
+    };
 
-    public static nextFrame() {
-        return new Promise((resolve: Function) => {
-            for(let scanline = 1; scanline <= 3; scanline++) {
-                for(let clock = 0; clock < 228; clock += 3) {
+    public static async nextFrame() {
+        return new Promise(async  (resolve: Function) => {
+            for(let scanline = 0; scanline < 3; scanline++) {
+                for(this.clock = 0; this.clock < 228; this.clock += 3) {
                     CPU.pulse();
                 };
 
                 CPU.unlock();
             };
 
-            for(let scanline = 1; scanline <= 37; scanline++) {
-                for(let clock = 0; clock < 228; clock += 3) {
+            for(let scanline = 0; scanline < 37; scanline++) {
+                for(this.clock = 0; this.clock < 228; this.clock += 3) {
                     CPU.pulse();
                 };
 
                 CPU.unlock();
             };
 
-
-            for(let scanline = 1; scanline <= 192; scanline++) {
-                for(let clock = 0; clock < 68; clock += 3) {
+            for(let scanline = 0; scanline < 192; scanline++) {
+                for(this.clock = 0; this.clock < 68; this.clock += 3) {
                     CPU.pulse();
                 };
 
                 let counter: number = 2;
-                for(let clock = 0; clock < 160; clock += 1) {
-                    this.imageData = this.setPixel(this.imageData, scanline, clock);
+                for(this.clock = 68; this.clock < 228; this.clock += 1) {
+                    this.pixel(scanline, this.clock - 68);
 
                     if(counter > 2) {
                         counter = 0;
@@ -257,11 +442,11 @@ export class TIA {
 
                 CPU.unlock();
             };
+            
+            this.draw();
 
-            this.ctx.putImageData(this.imageData, 0, 0);
-
-            for(let scanline = 1; scanline <= 30; scanline++) {
-                for(let clock = 0; clock < 228; clock += 3) {
+            for(let scanline = 0; scanline < 30; scanline++) {
+                for(this.clock = 0; this.clock < 228; this.clock += 3) {
                     CPU.pulse();
                 };
 
@@ -274,132 +459,10 @@ export class TIA {
         });
     };
 
-    public static setPixel(imageData: any, scanline: number, clock: number) {
-        let c: Array<number> = this.bk;
-
-        if(clock <= 16) {
-            for(let i = 4; i <= 16; i += 4) {
-                if(clock <= i) {
-                    if(this.pf0[4 + (i / 4) - 1] == '1') {
-                        c = (this.scoreMode ? this.colup0 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 16 && clock <= 48) {
-            for(let i = 20; i <= 48; i += 4) {
-                if(clock <= i) {
-                    if(this.pf1[7 - (i / 4 - 5)] == '1') {
-                        c = (this.scoreMode ? this.colup0 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 48 && clock <= 80) {
-            for(let i = 52; i <= 80; i += 4) {
-                if(clock <= i) {
-                    if(this.pf2[0 + (i / 4 - 13)] == '1') {
-                        c = (this.scoreMode ? this.colup0 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 80 && clock <= 96 && !this.reflect) { // REF = 0
-            for(let i = 84; i <= 96; i += 4) {
-                if(clock <= i) {
-                    if(this.pf0[4 + (i / 4) - 21] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 96 && clock <= 128 && !this.reflect) {
-            for(let i = 100; i <= 128; i += 4) {
-                if(clock <= i) {
-                    if(this.pf1[7 - (i / 4 - 25)] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 128 && clock <= 160 && !this.reflect) {
-            for(let i = 132; i <= 160; i += 4) {
-                if(clock <= i) {
-                    if(this.pf2[0 + (i / 4 - 33)] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 80 && clock <= 112 && this.reflect) { // REF = 1
-            for(let i = 84; i <= 112; i += 4) {
-                if(clock <= i) {
-                    if(this.pf2[7 - (i / 4 - 21)] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 112 && clock <= 144 && this.reflect) {
-            for(let i = 116; i <= 144; i += 4) {
-                if(clock <= i) {
-                    if(this.pf1[0 + (i / 4 - 29)] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        } else if(clock > 144 && clock <= 160 && this.reflect) {
-            for(let i = 148; i <= 160; i += 4) {
-                if(clock <= i) {
-                    if(this.pf0[7 - (i / 4 - 37)] == '1') {
-                        c = (this.scoreMode ? this.colup1 : this.pf);
-                    };
-                    break;
-                };
-            };
-        };
-
-        if(this.resp0) {
-            if(this.grp0[7 - this.resp0Counter--/*clock*/] == '1') {
-                c = this.colup0;
-            };
-
-            if(this.resp0Counter < 0) {
-                this.resp0Counter = null;
-                this.resp0 = false;
-            };
-        };
-
-        if(this.resp1) {
-            if(this.grp1[7 - this.resp1Counter--/*clock*/] == '1') {
-                c = this.colup1;
-            };
-
-            if(this.resp1Counter < 0) {
-                this.resp1Counter = null;
-                this.resp1 = false;
-            };
-        };
-
-        return this.fillImageData(imageData, c, scanline, clock);
-    };
-
-    private static fillImageData(imageData: any, c: Array<number>, scanline: number, clock: number) {
-        let pixelindex = (scanline * this.canvas.width + clock) << 2;
-        imageData.data[pixelindex] = c[0];
-        imageData.data[pixelindex + 1] = c[1];
-        imageData.data[pixelindex + 2] = c[2];
-
-        return imageData;
-    }
-
-    public static toHex(hex: string) {
-        let c: any = [];
-        hex = hex.replace('#','');
-        c[0] = parseInt(hex.substring(0, 2), 16);
-        c[1] = parseInt(hex.substring(2, 4), 16);
-        c[2] = parseInt(hex.substring(4, 6), 16);
-        return c;
+    private static pixel(scanline: number, clock: number) {
+        this.bk.pixel(scanline, clock);
+        this.pf.pixel(scanline, clock);
+        this.p0.pixel(scanline, clock);
+        this.p1.pixel(scanline, clock);
     };
 };
