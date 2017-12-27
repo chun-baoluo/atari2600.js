@@ -1,6 +1,6 @@
 import { RomReader } from './RomReader';
 import { CPU } from './CPU';
-import { Register, Rom, RAM } from './RAM';
+import { Register, RAM } from './RAM';
 import { TIA } from './TIA';
 
 export class App {
@@ -11,7 +11,7 @@ export class App {
     };
 
     private handleRom() {
-        for(; Register.PC < Rom.size ;) {
+        for(; Register.PC < RAM.romSize ;) {
             CPU.pulse();
             CPU.unlock();
 
@@ -29,11 +29,7 @@ export class App {
         console.log('Reading process started!');
         
         let reader = new RomReader(file, (rom: Uint8Array) => {
-            Rom.data = rom;
-            Rom.size = rom.byteLength;
-
             RAM.readRom(rom);
-
             this.handleRom();
         });
     };

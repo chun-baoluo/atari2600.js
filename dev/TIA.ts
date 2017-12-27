@@ -385,7 +385,7 @@ export class TIA {
     public static set resp0(resp0: boolean) {
         this._resp0 = resp0;
         
-        this.p0.position = this.clock - 68;
+        this.p0.position = (this.clock <= 68 ? 3 : this.clock - 68);
     };
     
     public static get resp1() {
@@ -395,7 +395,7 @@ export class TIA {
     public static set resp1(resp1: boolean) {
         this._resp1 = resp1;
         
-        this.p1.position = this.clock - 68;
+        this.p1.position = (this.clock <= 68 ? 3 : this.clock - 68);
     };
     
     private static draw() {
@@ -405,8 +405,8 @@ export class TIA {
         this.ctx.drawImage(this.p1.canvas, 0, 0);
     };
 
-    public static async nextFrame() {
-        return new Promise(async  (resolve: Function) => {
+    public static nextFrame() {
+        return new Promise((resolve: Function) => {
             for(let scanline = 0; scanline < 3; scanline++) {
                 for(this.clock = 0; this.clock < 228; this.clock += 3) {
                     CPU.pulse();

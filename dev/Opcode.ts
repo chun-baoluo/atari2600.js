@@ -1,4 +1,4 @@
-import { Flag, Register, Rom, RAM } from './RAM';
+import { Flag, Register, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
@@ -15,7 +15,7 @@ export class Opcode {
 
     // ORA #nn
     public static 0x09() {
-        Register.A = Register.A | Rom.data[++Register.PC];
+        Register.A = Register.A | RAM.rom(++Register.PC);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
@@ -47,14 +47,14 @@ export class Opcode {
 			return 2;
 		};
 
-		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+		let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // ASL nn, X
     public static 0x16() {
-        let address: number = Rom.data[++Register.PC] + Register.X;
+        let address: number = RAM.rom(++Register.PC) + Register.X;
 
         let value: number = RAM.read(address);
 
@@ -75,8 +75,8 @@ export class Opcode {
 
     // JSR nnnn
     public static 0x20() {
-        let low: number = Rom.data[++Register.PC];
-        let high: number = Rom.data[++Register.PC];
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
         Register.S = Register.PC;
@@ -87,7 +87,7 @@ export class Opcode {
 
     // AND #nn
     public static 0x29() {
-        Register.A = Register.A & Rom.data[++Register.PC];
+        Register.A = Register.A & RAM.rom(++Register.PC);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
@@ -98,7 +98,7 @@ export class Opcode {
 
     // ROL nn, X
     public static 0x36() {
-        let address: number = Rom.data[++Register.PC] + Register.X;
+        let address: number = RAM.rom(++Register.PC) + Register.X;
 
         let value: number = RAM.read(address);
 
@@ -138,8 +138,8 @@ export class Opcode {
 
     // JMP nnnn
     public static 0x4C() {
-        let low: number = Rom.data[++Register.PC];
-        let high: number = Rom.data[++Register.PC];
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
         Register.PC = (address & 0xFF) - 1;
@@ -149,7 +149,7 @@ export class Opcode {
 
     // LSR nn, X
     public static 0x56() {
-        let address: number = Rom.data[++Register.PC] + Register.X;
+        let address: number = RAM.rom(++Register.PC) + Register.X;
         let value: number = RAM.read(address);
         let carry: string = Convert.toBin(value).charAt(7);
 
@@ -193,7 +193,7 @@ export class Opcode {
 
     // ROR nn, X
     public static 0x76() {
-        let address: number = Rom.data[++Register.PC] + Register.X;
+        let address: number = RAM.rom(++Register.PC) + Register.X;
 
         let value: number = RAM.read(address);
 
@@ -225,19 +225,19 @@ export class Opcode {
 
     // STY nn
     public static 0x84() {
-        RAM.write(Rom.data[++Register.PC], Register.Y);
+        RAM.write(RAM.rom(++Register.PC), Register.Y);
         return 3;
     };
 
     // STA nn
     public static 0x85() {
-        RAM.write(Rom.data[++Register.PC], Register.A);
+        RAM.write(RAM.rom(++Register.PC), Register.A);
         return 3;
     };
 
     // STX nn
     public static 0x86() {
-        RAM.write(Rom.data[++Register.PC], Register.X);
+        RAM.write(RAM.rom(++Register.PC), Register.X);
         return 3;
     };
 
@@ -265,8 +265,8 @@ export class Opcode {
 
     // STA nnnn
     public static 0x8D() {
-        let low: number = Rom.data[++Register.PC];
-        let high: number = Rom.data[++Register.PC];
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xff) << 8) | (low & 0xff);
 
         RAM.write(address, Register.A);
@@ -281,14 +281,14 @@ export class Opcode {
             return 2;
         };
 
-        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+        let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // STA nn, X
     public static 0x95() {
-        RAM.write(Rom.data[++Register.PC] + Register.X, Register.A);
+        RAM.write(RAM.rom(++Register.PC) + Register.X, Register.A);
         return 4;
     };
 
@@ -301,7 +301,7 @@ export class Opcode {
 
     // LDY #nn
     public static 0xA0() {
-        Register.Y = Rom.data[++Register.PC];
+        Register.Y = RAM.rom(++Register.PC);
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
 
@@ -312,7 +312,7 @@ export class Opcode {
 
     // LDX #nn
     public static 0xA2() {
-        Register.X = Rom.data[++Register.PC];
+        Register.X = RAM.rom(++Register.PC);
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
@@ -323,7 +323,7 @@ export class Opcode {
 
     // LDA nn
     public static 0xA5() {
-        Register.A = RAM.read(Rom.data[++Register.PC]);
+        Register.A = RAM.read(RAM.rom(++Register.PC));
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
@@ -334,7 +334,7 @@ export class Opcode {
 
     // LDX nn
     public static 0xA6() {
-        Register.X = RAM.read(Rom.data[++Register.PC]);
+        Register.X = RAM.read(RAM.rom(++Register.PC));
 
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
@@ -356,7 +356,7 @@ export class Opcode {
 
     // LDA #nn
     public static 0xA9() {
-        Register.A = Rom.data[++Register.PC];
+        Register.A = RAM.rom(++Register.PC);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
@@ -378,8 +378,8 @@ export class Opcode {
 
     // LDA nnnn
     public static 0xAD() {
-        let low: number = Rom.data[++Register.PC];
-        let high: number = Rom.data[++Register.PC];
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
         Register.A = RAM.read(address);
@@ -398,14 +398,14 @@ export class Opcode {
             return 2;
         };
 
-        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+        let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
     // LDA nn, X
     public static 0xB5() {
-        Register.A = RAM.read(Rom.data[++Register.PC] + Register.X);
+        Register.A = RAM.read(RAM.rom(++Register.PC) + Register.X);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
@@ -416,8 +416,8 @@ export class Opcode {
 
     // LDA nnnn, X
     public static 0xBD() {
-        let low: number = Rom.data[++Register.PC];
-        let high: number = Rom.data[++Register.PC];
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
         Register.A = RAM.read(address + Register.X);
@@ -431,7 +431,7 @@ export class Opcode {
 
     // CPY #nn
     public static 0xC0() {
-        let value: number = Rom.data[++Register.PC];
+        let value: number = RAM.rom(++Register.PC);
         let result: number = Convert.toInt8(Register.Y - value);
 
         Flag.Z = (result == 0 ? 1 : 0);
@@ -445,7 +445,7 @@ export class Opcode {
 
     // DEC nn
     public static 0xC6() {
-        let address: number = Rom.data[++Register.PC];
+        let address: number = RAM.rom(++Register.PC);
         let result: number = RAM.write(address, RAM.get(address) - 1);
 
         Flag.Z = (result == 0 ? 1 : 0);
@@ -468,7 +468,7 @@ export class Opcode {
 
     // CMP #nn
     public static 0xC9() {
-        let value: number = Rom.data[++Register.PC];
+        let value: number = RAM.rom(++Register.PC);
         let result: number = Convert.toInt8(Register.A - value);
 
         Flag.Z = (result == 0 ? 1 : 0);
@@ -498,7 +498,7 @@ export class Opcode {
 			return 2;
 		};
 
-		let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+		let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
@@ -512,7 +512,7 @@ export class Opcode {
 
     // CPX #nn
     public static 0xE0() {
-        let value: number = Rom.data[++Register.PC];
+        let value: number = RAM.rom(++Register.PC);
         let result: number = Convert.toInt8(Register.X - value);
 
         Flag.Z = (result == 0 ? 1 : 0);
@@ -526,7 +526,7 @@ export class Opcode {
 
     // INC nn
     public static 0xE6() {
-        let address: number = Rom.data[++Register.PC];
+        let address: number = RAM.rom(++Register.PC);
         let result: number = RAM.write(address, RAM.get(address) + 1);
 
         Flag.Z = (result == 0 ? 1 : 0);
@@ -559,7 +559,7 @@ export class Opcode {
             return 2;
         };
 
-        let num: number = Convert.toInt8(Rom.data[++Register.PC]);
+        let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };

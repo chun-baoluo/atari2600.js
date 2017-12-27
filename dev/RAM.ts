@@ -25,6 +25,8 @@ export class Flag {
 export class RAM {
 	public static memory: Uint8Array = new Uint8Array(65536);
 
+	public static romSize: number = null;
+
 	public static get(address: number) {
 		return this.memory[address];
 	};
@@ -42,6 +44,8 @@ export class RAM {
 	public static readRom(rom: Uint8Array) {
 		this.reset();
 
+		this.romSize = rom.length;
+
 		this.memory = new Uint8Array(61440 + rom.length);
 
 		this.memory[0x284] = (Math.random() * 255) >> 0;
@@ -55,6 +59,10 @@ export class RAM {
 
 	public static reset() {
 		this.memory = new Uint8Array(65536);
+	};
+	
+	public static rom(address: number) {
+		return this.memory[61440 + address];
 	};
 
 	public static set(address: number, value: number) {
@@ -138,10 +146,10 @@ export class RAM {
 	// CTRLPF  write
 	private static 0x0A(value: number) {
 		if(value === undefined) return;
-		let ctrlpf: Array<string> = Convert.toBin(value).split('').reverse();
+		let ctrlpf: Array<string> = Convert.toBin(value).split('');
 		TIA.pf.ctrlpf = ctrlpf;
-		TIA.pf.reflect = (ctrlpf[0] == '1');
-		TIA.pf.scoreMode = (ctrlpf[1] == '1' && ctrlpf[2] == '0');
+		TIA.pf.reflect = (ctrlpf[7] == '1');
+		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
 		return value;
 	};
 
@@ -253,9 +261,4 @@ export class RAM {
 
 		return value;
 	};
-};
-
-export class Rom {
-	public static data: Uint8Array = null;
-	public static size: number = 0;
 };

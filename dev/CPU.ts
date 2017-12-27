@@ -1,45 +1,37 @@
-import { Register, Rom } from './RAM';
+import { Register, RAM } from './RAM';
 import { Opcode } from './Opcode';
 import { PIA } from './PIA';
 
 export class CPU {
-	private static locked: boolean = false;
+	private static _locked: boolean = false;
 
 	private static _cycle: number = 0;
-	
-	public static get cycle() {
-		return this._cycle;
-	};
-	
-	public static set cycle(cycle: number) {
-		this._cycle = cycle;
-	};
 
 	public static lock() {
-		this.locked = true;
+		this._locked = true;
 	};
 
 	public static unlock() {
-		this.locked = false;
+		this._locked = false;
 	};
 
 	public static pulse() {
-		if(this.locked) {
+		if(this._locked) {
 			return false;
 		};
 
-		if(this.cycle <= 0) {
+		if(this._cycle <= 0) {
 			try {
-				// console.log(Rom.data[Register.PC].toString(16));
-				this.cycle = Opcode[Rom.data[Register.PC]]();
+				// console.log(RAM.rom(Register.PC).toString(16));
+				this._cycle = Opcode[RAM.rom(Register.PC)]();
 			} catch(e) {
-				console.log('Error', Rom.data[Register.PC].toString(16), Register.PC);
+				console.log('Error', RAM.rom(Register.PC).toString(16), Register.PC);
 				throw e;
 			}
 			Register.PC++;
 		};
 		PIA.tick();
-		this.cycle--;
+		this._cycle--;
 
 	};
 };
