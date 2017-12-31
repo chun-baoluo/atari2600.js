@@ -432,13 +432,12 @@ export class Opcode {
     // CPY #nn
     public static 0xC0() {
         let value: number = RAM.rom(++Register.PC);
-        let result: number = Convert.toInt8(Register.Y - value);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = (Register.Y == value ? 1 : 0);
 
-        Flag.N = (result < 0 ? 1 : 0);
+        Flag.N = (Register.Y < value ? 1 : 0);
 
-        Flag.C = (result >= 0 ? 1 : 0);
+        Flag.C = (Register.Y >= value ? 1 : 0);
 
         return 2;
     };
@@ -469,13 +468,12 @@ export class Opcode {
     // CMP #nn
     public static 0xC9() {
         let value: number = RAM.rom(++Register.PC);
-        let result: number = Convert.toInt8(Register.A - value);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = (Register.A == value ? 1 : 0);
 
-        Flag.N = (result < 0 ? 1 : 0);
+        Flag.N = (Register.A < value ? 1 : 0);
 
-        Flag.C = (result >= 0 ? 1 : 0);
+        Flag.C = (Register.A >= value ? 1 : 0);
 
         return 2;
     };
@@ -513,13 +511,12 @@ export class Opcode {
     // CPX #nn
     public static 0xE0() {
         let value: number = RAM.rom(++Register.PC);
-        let result: number = Convert.toInt8(Register.X - value);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = (Register.X == value ? 1 : 0);
 
-        Flag.N = (result < 0 ? 1 : 0);
+        Flag.N = (Register.X < value ? 1 : 0);
 
-        Flag.C = (result >= 0 ? 1 : 0);
+        Flag.C = (Register.X >= value ? 1 : 0);
 
         return 2;
     };
