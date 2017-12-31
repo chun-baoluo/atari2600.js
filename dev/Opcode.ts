@@ -2,15 +2,22 @@ import { Flag, Register, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
-// TODO: Check whether carry is getting set right or not
-// TODO: If Rom size is bigger than 4kb, JSR may work wrong due to offset
-
+// TODO: Check if BRK works correctly + shouls stack pointer be an array instead?
 export class Opcode {
 
     private static isNextPage(pc1: number, pc2: number) {
         let left: string = ('000' + pc1.toString(16)).slice(-4);
         let right: string = ('000' + pc2.toString(16)).slice(-4);
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
+    };
+
+    // BRK
+    public static 0x00() {
+        Flag.B = 1;
+        Flag.I = 1;
+        Register.PC += 2;
+        Register.S = Register.PC;
+        return 7;
     };
 
     // ORA #nn

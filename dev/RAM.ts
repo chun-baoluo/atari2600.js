@@ -60,7 +60,7 @@ export class RAM {
 	public static reset() {
 		this.memory = new Uint8Array(65536);
 	};
-	
+
 	public static rom(address: number) {
 		return this.memory[61440 + address];
 	};
@@ -100,14 +100,14 @@ export class RAM {
 	// NUSIZ0 write
 	private static 0x04(value: number) {
 		if(value === undefined) return;
-		TIA.nusiz0 = Convert.toBin(value).split('');
+		TIA.p0.nusiz = parseInt(Convert.toBin(value).substring(5, 7), 2);
 		return value;
 	};
 
 	// NUSIZ1 write
 	private static 0x05(value: number) {
 		if(value === undefined) return;
-		TIA.nusiz1 = Convert.toBin(value).split('');
+		TIA.p1.nusiz = parseInt(Convert.toBin(value).substring(5, 7), 2);
 		return value;
 	};
 

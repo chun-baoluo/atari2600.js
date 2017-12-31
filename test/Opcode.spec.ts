@@ -6,6 +6,7 @@ import { Flag, Register, RAM } from '../dev/RAM';
 import { Convert } from '../dev/Common';
 
 let beforeEachCallback = () => {
+    Flag.B = 0;
     Flag.C = 0;
     Flag.D = 0;
     Flag.I = 0;
@@ -21,6 +22,14 @@ let beforeEachCallback = () => {
 
 describe("CPU Jump and Control Instructions", () => {
     beforeEach(beforeEachCallback);
+
+    it("(0x00) should set break and interrupt flags, increase programm counter by two and put it to the stack pointer", () => {
+        chai.assert.strictEqual(Opcode[0x00](), 7);
+        chai.assert.strictEqual(Flag.B, 1);
+        chai.assert.strictEqual(Flag.I, 1);
+        chai.assert.strictEqual(Register.PC, 2);
+        chai.assert.strictEqual(Register.S, Register.PC);
+    });
 
     it("(0x10) should jump if Negative flag isn't set", () => {
         RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
