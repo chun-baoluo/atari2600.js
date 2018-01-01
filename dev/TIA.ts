@@ -157,10 +157,60 @@ class Player extends GameObject {
     public colup: Array<number> = [0, 0, 0];
     public grp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public nusiz: number = 0;
+    private player: number = 0;
     public position: number = null;
 
+    constructor(player: number = 0) {
+        super();
+        this.player = player;
+    };
+
     pixel(scanline: number, clock: number) {
-        if(this.position && this.position <= clock && this.position + 7 > clock && this.grp[(this.position + (clock - this.position)) % this.position] == '1') {
+        if(this.position && this.position <= clock && this.position + 8 > clock && this.grp[((clock - this.position)) % 8] == '1') {
+            return this.setImageData(scanline, clock, this.colup);
+        };
+
+        let drawPlayer: boolean = false;
+
+        switch(this.nusiz) {
+            case 1:
+                if(clock >= 80 * this.player + 16 && clock < 80 * this.player + 24) {
+                    drawPlayer = true;
+                };
+                break;
+            case 2:
+                if(clock >= 80 * this.player + 32 && clock < 80 * this.player + 40) {
+                    drawPlayer = true;
+                };
+                break;
+            case 3:
+                if(clock >= 80 * this.player + 16 && clock < 80 * this.player + 24 || clock >= 80 * this.player + 32 && clock < 80 * this.player + 40) {
+                    drawPlayer = true;
+                };
+                break;
+            case 4:
+                if(clock >= 80 * this.player + 72 && clock < 80 * this.player + 80) {
+                    drawPlayer = true;
+                };
+                break;
+            case 5:
+                if(clock >= 80 * this.player + 8 && clock < 80 * this.player + 16) {
+                    drawPlayer = true;
+                };
+                break;
+            case 6:
+                if(clock >= 80 * this.player + 32 && clock < 80 * this.player + 40 || clock >= 80 * this.player + 72 && clock < 80 * this.player + 80) {
+                    drawPlayer = true;
+                };
+                break;
+            case 7:
+                if(clock >= 80 * this.player + 8 && clock < 80 * this.player + 32) {
+                    drawPlayer = true;
+                };
+                break;
+        };
+
+        if(!this.position && (clock >= 80 * this.player && clock < (80 * this.player + 8) || drawPlayer) && this.grp[(8 + clock) % 8] == '1') {
             return this.setImageData(scanline, clock, this.colup);
         };
     };
@@ -331,9 +381,9 @@ export class TIA {
 
     private static _resp1: boolean = false;
 
-    public static p0: Player = new Player();
+    public static p0: Player = new Player(0);
 
-    public static p1: Player = new Player();
+    public static p1: Player = new Player(1);
 
     public static bk: Background = new Background();
 

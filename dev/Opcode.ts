@@ -3,6 +3,7 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Check if BRK works correctly + shouls stack pointer be an array instead?
+
 export class Opcode {
 
     private static isNextPage(pc1: number, pc2: number) {
