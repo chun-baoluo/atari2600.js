@@ -11,6 +11,7 @@ let beforeEachCallback = () => {
     Flag.D = 0;
     Flag.I = 0;
     Flag.N = 0;
+    Flag.V = 0;
     Flag.Z = 0;
     Register.A = 0;
     Register.PC = 0;
@@ -43,11 +44,22 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Register.PC, 1);
     });
 
+    it("(0x18) should clear the carry flag", () => {
+        Flag.C = 1;
+        chai.assert.strictEqual(Opcode[0x18](), 2);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+
     it("(0x20) should jump to subroutine", () => {
         RAM.readRom(new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]));
 
         chai.assert.strictEqual(Opcode[0x20](), 6);
         chai.assert.strictEqual(Register.PC, 4);
+    });
+
+    it("(0x38) should set the carry flag", () => {
+        chai.assert.strictEqual(Opcode[0x38](), 2);
+        chai.assert.strictEqual(Flag.C, 1);
     });
 
     it("(0x4C) should jump to nnnn", () => {
@@ -57,6 +69,12 @@ describe("CPU Jump and Control Instructions", () => {
 
         Register.PC++;
         chai.assert.strictEqual(Register.PC, 1);
+    });
+
+    it("(0x58) should clear the interrupt disable bit", () => {
+        Flag.I = 1;
+        chai.assert.strictEqual(Opcode[0x58](), 2);
+        chai.assert.strictEqual(Flag.I, 0);
     });
 
     it("(0x60) should return from subroutine", () => {
@@ -98,6 +116,12 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Register.PC, 1);
     });
 
+    it("(0xB8) should clear the overflow flag", () => {
+        Flag.V = 1;
+        chai.assert.strictEqual(Opcode[0xB8](), 2);
+        chai.assert.strictEqual(Flag.V, 0);
+    });
+
     it("(0xD0) should jump if Zero flag isn/'t set", () => {
         RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
 
@@ -110,7 +134,7 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Register.PC, 1);
     });
 
-    it("(0xD8) should clear decimal mode", () => {
+    it("(0xD8) should clear the decimal mode", () => {
         Flag.D = 1;
         chai.assert.strictEqual(Opcode[0xD8](), 2);
         chai.assert.strictEqual(Flag.D, 0);
@@ -130,6 +154,11 @@ describe("CPU Jump and Control Instructions", () => {
         Register.PC = 0;
         chai.assert.strictEqual(Opcode[0xF0](), 3);
         chai.assert.strictEqual(Register.PC, 0);
+    });
+
+    it("(0xF8) should set the decimal mode", () => {
+        chai.assert.strictEqual(Opcode[0xF8](), 2);
+        chai.assert.strictEqual(Flag.D, 1);
     });
 });
 

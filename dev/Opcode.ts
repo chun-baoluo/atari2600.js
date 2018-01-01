@@ -81,6 +81,13 @@ export class Opcode {
         return 6;
     };
 
+    // CLC
+    public static 0x18() {
+        Flag.C = 0;
+
+        return 2;
+    };
+
     // JSR nnnn
     public static 0x20() {
         let low: number = RAM.rom(++Register.PC);
@@ -129,6 +136,13 @@ export class Opcode {
         return 6;
     };
 
+    // SEC
+    public static 0x38() {
+        Flag.C = 1;
+
+        return 2;
+    };
+
     // LSR A
     public static 0x4A() {
         let carry: string = Convert.toBin(Register.A).charAt(7);
@@ -172,6 +186,13 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 6;
+    };
+
+    // CLI
+    public static 0x58() {
+        Flag.I = 0;
+
+        return 2;
     };
 
     // RTS
@@ -422,6 +443,13 @@ export class Opcode {
         return 4;
     };
 
+    // CLV
+    public static 0xB8() {
+        Flag.V = 0;
+
+        return 2;
+    };
+
     // LDA nnnn, X
     public static 0xBD() {
         let low: number = RAM.rom(++Register.PC);
@@ -567,5 +595,12 @@ export class Opcode {
         let num: number = Convert.toInt8(RAM.rom(++Register.PC));
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
+    };
+
+    // SED
+    public static 0xF8() {
+        Flag.D = 1;
+
+        return 2;
     };
 };

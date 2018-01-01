@@ -3,6 +3,7 @@ import { RAM } from './RAM';
 import { CPU } from './CPU';
 
 // TODO: String to number for colors
+// TODO: Move player nusiz position calculation to RAM
 
 abstract class GameObject {
     protected _canvas: any = null;
