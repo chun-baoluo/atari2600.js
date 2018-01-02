@@ -265,6 +265,14 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Flag.Z, 1);
     });
 
+    it("(0xA4) should set register Y to nn, change N and Z flags", () => {
+        RAM.set(0x01, 5);
+        RAM.readRom(new Uint8Array([0xA4, 0x01]));
+
+        chai.assert.strictEqual(Opcode[0xA4](), 3);
+        chai.assert.strictEqual(RAM.get(0x01), Register.Y);
+    });
+
     it("(0xA5) should set register A to nn, change N and Z flags", () => {
         RAM.set(0x01, 5);
         RAM.readRom(new Uint8Array([0xA5, 0x01]));
@@ -355,6 +363,24 @@ describe("CPU Memory and Register Transfers", () => {
 
         chai.assert.strictEqual(Opcode[0xB5](), 4);
         chai.assert.strictEqual(Register.A, 3);
+    });
+
+    it("(0xB9) should set register A to nnnn + Y, change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]));
+        RAM.set(0x32, 0xFA);
+        RAM.set(0x34, 0);
+        Register.Y = 1;
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xB9](), 5);
+        chai.assert.strictEqual(RAM.get(0x32), Register.A);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        chai.assert.strictEqual(Opcode[0xB9](), 5);
+        chai.assert.strictEqual(RAM.get(0x34), Register.A);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
     });
 
     it("(0xBD) should set register A to nnnn + X, change N and Z flags", () => {
@@ -511,6 +537,29 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
+    });
+
+    it("(0x69) should add memory to accumulator with carry, change N, Z, C and V flags", () => {
+        RAM.readRom(new Uint8Array([0x69, 0x00, 0x01]));
+        Register.A = 127;
+        Flag.C = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x69](), 2);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 1);
+
+        Register.A = new Uint8Array([-128])[0];
+        Flag.C = 0;
+
+        chai.assert.strictEqual(Opcode[0x69](), 2);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
     });
 
     it("(0x6A) should rorate right through carry register A, change N, Z and C flags", () => {

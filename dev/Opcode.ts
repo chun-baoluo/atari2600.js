@@ -3,6 +3,7 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Check if BRK works correctly + shouls stack pointer be an array instead?
+// TODO: ADC?
 
 export class Opcode {
 
@@ -220,6 +221,23 @@ export class Opcode {
         return 2;
     };
 
+    // ADC #nn
+    public static 0x69() {
+        let old: number = Register.A;
+
+        Register.A = Convert.toUint8(Register.A + Flag.C + RAM.rom(++Register.PC));
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        Flag.C = (Register.A > 0xFF ? 1 : 0);
+
+        Flag.V = ((~(old ^ RAM.rom(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
+
+        return 2;
+    };
+
     // ROR nn, X
     public static 0x76() {
         let address: number = RAM.rom(++Register.PC) + Register.X;
@@ -350,6 +368,17 @@ export class Opcode {
         return 2;
     };
 
+    // LDY nn
+    public static 0xA4() {
+        Register.Y = RAM.read(RAM.rom(++Register.PC));
+
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+
+        return 3;
+    };
+
     // LDA nn
     public static 0xA5() {
         Register.A = RAM.read(RAM.rom(++Register.PC));
@@ -448,6 +477,21 @@ export class Opcode {
         Flag.V = 0;
 
         return 2;
+    };
+
+    // LDA nnnn, Y
+    public static 0xB9() {
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+
+        Register.A = RAM.read(address + Register.Y);
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 4 + (this.isNextPage(61440 + Register.PC, address + Register.Y) ? 1 : 0);
     };
 
     // LDA nnnn, X
