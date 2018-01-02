@@ -27,6 +27,8 @@ export class RAM {
 
 	public static romSize: number = null;
 
+	public static stack: Array<number> = [];
+
 	public static get(address: number) {
 		return this.memory[address];
 	};
