@@ -30,7 +30,7 @@ describe("Conversion functions", () => {
     });
 
     it("should convert BCD to decimal", () => {
-        chai.assert.strictEqual(Convert.toDec(55), 37);
-        chai.assert.strictEqual(Convert.toDec(41), 29);
+        chai.assert.strictEqual(Convert.toDecBCD(55), 37);
+        chai.assert.strictEqual(Convert.toDecBCD(41), 29);
     });
 });

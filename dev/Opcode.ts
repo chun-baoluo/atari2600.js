@@ -3,8 +3,9 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Check if BRK works correctly + shouls stack pointer be an array instead?
-// TODO: ADC?
+// TODO: ADC? SBC?
 // TODO: Stack pointer and S
+// TODO: Decimal mode for ABD/SBC
 
 export class Opcode {
 
@@ -12,6 +13,28 @@ export class Opcode {
         let left: string = ('000' + pc1.toString(16)).slice(-4);
         let right: string = ('000' + pc2.toString(16)).slice(-4);
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
+    };
+
+    private static ADC(value: number) {
+        let old: number = Register.A;
+
+        let result: number = null;
+
+        if(Flag.D) {
+            result = Convert.toDecBCD(Register.A) + Flag.C + Convert.toDecBCD(value);
+            Flag.C = (result > 99 ? 1 : 0);
+        } else {
+            result = Register.A + Flag.C + value;
+            Flag.C = (result > 0xFF ? 1 : 0);
+        };
+
+        Register.A = Convert.toUint8(result);
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        Flag.V = ((~(old ^ RAM.rom(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
     };
 
     // BRK
@@ -138,6 +161,18 @@ export class Opcode {
         return 2;
     };
 
+    // BMI nnn
+    public static 0x30() {
+        if(Flag.N == 0) {
+            Register.PC++;
+            return 2;
+        };
+
+        let num: number = Convert.toInt8(RAM.rom(++Register.PC));
+
+        return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
+    };
+
     // ROL nn, X
     public static 0x36() {
         let address: number = RAM.rom(++Register.PC) + Register.X;
@@ -168,6 +203,21 @@ export class Opcode {
         Flag.C = 1;
 
         return 2;
+    };
+
+    // AND nnnn, X
+    public static 0x3D() {
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+
+        Register.A = Register.A & RAM.read(address + Register.X);
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 4  + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
     };
 
     // EOR nn
@@ -252,34 +302,14 @@ export class Opcode {
 
     // ADC nn
     public static 0x65() {
-        let old: number = Register.A;
-
-        Register.A = Convert.toUint8(Register.A + Flag.C + RAM.read(RAM.rom(++Register.PC)));
-
-        Flag.Z = (Register.A == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
-
-        Flag.C = (Register.A > 0xFF ? 1 : 0);
-
-        Flag.V = ((~(old ^ RAM.rom(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
+        this.ADC(RAM.read(RAM.rom(++Register.PC)));
 
         return 3;
     };
 
     // ADC #nn
     public static 0x69() {
-        let old: number = Register.A;
-
-        Register.A = Convert.toUint8(Register.A + Flag.C + RAM.rom(++Register.PC));
-
-        Flag.Z = (Register.A == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
-
-        Flag.C = (Register.A > 0xFF ? 1 : 0);
-
-        Flag.V = ((~(old ^ RAM.rom(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
+        this.ADC(RAM.rom(++Register.PC));
 
         return 2;
     };
@@ -337,20 +367,11 @@ export class Opcode {
 
     // ADC nnnn, X
     public static 0x7D() {
-        let old: number = Register.A;
         let low: number = RAM.rom(++Register.PC);
         let high: number = RAM.rom(++Register.PC);
         let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
 
-        Register.A = Convert.toUint8(Register.A + Flag.C + RAM.read(address + Register.X));
-
-        Flag.Z = (Register.A == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
-
-        Flag.C = (Register.A > 0xFF ? 1 : 0);
-
-        Flag.V = ((~(old ^ RAM.rom(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
+        this.ADC(RAM.read(address + Register.X));
 
         return 4  + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
     };
@@ -422,6 +443,17 @@ export class Opcode {
     public static 0x95() {
         RAM.write(RAM.rom(++Register.PC) + Register.X, Register.A);
         return 4;
+    };
+
+    // TYA
+    public static 0x98() {
+        Register.A = Register.Y;
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 2;
     };
 
     // TXS
@@ -579,6 +611,21 @@ export class Opcode {
         return 4 + (this.isNextPage(61440 + Register.PC, address + Register.Y) ? 1 : 0);
     };
 
+    // LDY nnnn, X
+    public static 0xBC() {
+        let low: number = RAM.rom(++Register.PC);
+        let high: number = RAM.rom(++Register.PC);
+        let address: number = ((high & 0xFF) << 8) | (low & 0xFF);
+
+        Register.Y = RAM.read(address + Register.X);
+
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+
+        return 4 + (this.isNextPage(61440 + Register.PC, address + Register.X) ? 1 : 0);
+    };
+
     // LDA nnnn, X
     public static 0xBD() {
         let low: number = RAM.rom(++Register.PC);
@@ -714,6 +761,26 @@ export class Opcode {
         return 2;
     };
 
+    // CPY nn
+    public static 0xE4() {
+        let value: number = RAM.read(RAM.rom(++Register.PC));
+
+        Flag.Z = (Register.Y == value ? 1 : 0);
+
+        Flag.N = (Register.Y < value ? 1 : 0);
+
+        Flag.C = (Register.Y >= value ? 1 : 0);
+
+        return 3;
+    };
+
+    // SBC nn
+    public static 0xE5() {
+        this.ADC(~RAM.read(RAM.rom(++Register.PC)));
+
+        return 3;
+    };
+
     // INC nn
     public static 0xE6() {
         let address: number = RAM.rom(++Register.PC);
@@ -733,6 +800,13 @@ export class Opcode {
         Flag.Z = (Register.X == 0 ? 1 : 0);
 
         Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+
+        return 2;
+    };
+
+    // SBC #nn
+    public static 0xE9() {
+        this.ADC(~RAM.rom(++Register.PC));
 
         return 2;
     };

@@ -8,10 +8,10 @@ export class Convert {
     };
 
     public static toBCD(val: number) {
-        return (val / 10 << 4) | val % 10;
+        return Math.abs((val / 10 << 4) | val % 10) % 100;
     };
 
-    public static toDec(val: number) {
+    public static toDecBCD(val: number) {
         return ((val >> 4) * 10) + (val & 0x0F);
     };
 
