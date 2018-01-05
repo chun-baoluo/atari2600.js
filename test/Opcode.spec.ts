@@ -55,6 +55,7 @@ describe("CPU Jump and Control Instructions", () => {
 
         chai.assert.strictEqual(Opcode[0x20](), 6);
         chai.assert.strictEqual(Register.PC, 4);
+        chai.assert.strictEqual(Register.S, 1);
     });
 
     it("(0x30) should jump if Negative flag is set", () => {
@@ -90,10 +91,10 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x60) should return from subroutine", () => {
-        RAM.stack.push(6);
-
+        // RAM.stack.push(6);
+        Register.S = 2;
         chai.assert.strictEqual(Opcode[0x60](), 6);
-        chai.assert.strictEqual(Register.PC, 6);
+        chai.assert.strictEqual(Register.S, 1);
     });
 
     it("(0x78) should set the interrupt disable bit", () => {
@@ -585,6 +586,27 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 0);
+    });
+
+    it("(0x39) should do AND operation with A and nnnn + Y, change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0x3D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.set(0x32, 0x00);
+        RAM.set(0x33, 0xFF);
+
+        Register.Y = 0x01;
+        Register.A = 0x02;
+
+        chai.assert.strictEqual(Opcode[0x39](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x39](), 5);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
     });
 
     it("(0x3D) should do AND operation with A and nnnn + X, change N and Z flags", () => {

@@ -7,7 +7,7 @@ export class Register {
 	public static A: number = 0; // Accumulator
 	public static P: number = 0; // Processor Counter
 	public static PC: number = 0; // Program Counter
-	public static S: number = 0; // Stack Pointer
+	public static S: number = 0xFF; // Stack Pointer
 	public static X: number = 0; // Index Register X
 	public static Y: number = 0; // Index Register Y
 };
