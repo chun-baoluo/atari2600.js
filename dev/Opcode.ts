@@ -164,11 +164,11 @@ export class Opcode {
     public static 0x20() {
         let address: number = this.next2byteAddress();
 
-        RAM.set(Register.S, Register.PC >> 8);
+        RAM.set(Register.S, (Register.PC - 1) >> 8);
 
         Register.S = (Register.S - 1) & 0xFF;
 
-        RAM.set(Register.S, Register.PC);
+        RAM.set(Register.S, Register.PC - 1);
 
         Register.PC = address - 1;
 
@@ -336,7 +336,7 @@ export class Opcode {
 
     // RTS
     public static 0x60() {
-        Register.PC = RAM.get(Register.S);
+        Register.PC = RAM.get(Register.S) + 1;
 
         Register.S = (Register.S + 1) & 0xFF;
 
