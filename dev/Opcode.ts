@@ -70,6 +70,14 @@ export class Opcode {
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
+    private static ORA(value: number) {
+        Register.A = Register.A | value;
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+    };
+
     // BRK
     public static 0x00() {
         Flag.B = 1;
@@ -90,13 +98,16 @@ export class Opcode {
         return 7;
     };
 
+    // ORA (nn, X)
+    public static 0x01() {
+        this.ORA(RAM.read(RAM.read(RAM.get(++Register.PC) + Register.X)));
+
+        return 6;
+    };
+
     // ORA #nn
     public static 0x09() {
-        Register.A = Register.A | RAM.get(++Register.PC);
-
-        Flag.Z = (Register.A == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        this.ORA(RAM.get(++Register.PC));
 
         return 2;
     };
@@ -339,6 +350,30 @@ export class Opcode {
         this.ADC(RAM.read(RAM.get(++Register.PC)));
 
         return 3;
+    };
+
+    // ROR nn
+    public static 0x66() {
+
+        let address: number = RAM.get(++Register.PC);
+
+        let addressValue: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(addressValue).charAt(7);
+
+        let value = Convert.toUint8(addressValue >>> 1);
+
+        let rotated: string = Flag.C.toString() + Convert.toBin(value).substring(1);
+
+        RAM.write(address, parseInt(rotated, 2));
+
+        Flag.Z = (RAM.get(address) == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(RAM.get(address)) < 0 ? 1 : 0);
+
+        Flag.C = parseInt(carry);
+
+        return 5;
     };
 
     // ADC #nn

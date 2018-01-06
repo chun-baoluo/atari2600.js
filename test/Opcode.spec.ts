@@ -470,6 +470,29 @@ describe("CPU Memory and Register Transfers", () => {
 describe("CPU Arithmetic/Logical Operations", () => {
     beforeEach(beforeEachCallback);
 
+    it("(0x01) should do OR operation with A and (nn, X), change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0x01, 0x32, 0x33]));
+        RAM.set(0x33, 0x38);
+        RAM.set(0x38, 0x00);
+
+        Register.A = 0;
+        Register.X = 1;
+
+        chai.assert.strictEqual(Opcode[0x01](), 6);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+        RAM.set(0x34, 0x39);
+        RAM.set(0x39, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x01](), 6);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
     it("(0x09) should do OR operation with A and #nn, change N and Z flags", () => {
         RAM.readRom(new Uint8Array([0xE0, 0x00, 0xFF]));
 
@@ -726,6 +749,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.C, 0);
         chai.assert.strictEqual(Flag.V, 0);
+    });
+
+    it("(0x66) should rorate right through carry address nn, change N, Z and C flags", () => {
+        RAM.readRom(new Uint8Array([0x66, 0x32, 0x33]));
+        RAM.set(0x32, 0xFF);
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x66](), 5);
+        chai.assert.strictEqual(RAM.get(0x32), 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 0xFE);
+
+        chai.assert.strictEqual(Opcode[0x66](), 5);
+        chai.assert.strictEqual(RAM.get(0x33), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
     });
 
     it("(0x69) should add #nn to accumulator with carry, change N, Z, C and V flags", () => {
