@@ -22,12 +22,12 @@ export class CPU {
 
 		if(this._cycle <= 0) {
 			try {
-				// console.log(RAM.rom(Register.PC).toString(16));
-				this._cycle = Opcode[RAM.rom(Register.PC)]();
+				// console.log(RAM.get(Register.PC).toString(16));
+				this._cycle = Opcode[RAM.get(Register.PC)]();
 			} catch(e) {
-				console.log('Error', RAM.rom(Register.PC).toString(16), Register.PC);
+				console.log('Error', RAM.get(Register.PC).toString(16), Register.PC);
 				throw e;
-			}
+			};
 			Register.PC++;
 		};
 		PIA.tick();

@@ -8,7 +8,7 @@ import { TIA } from '../dev/TIA';
 let beforeEachCallback = () => {
     TIA.canvas = document.createElement('canvas');
     RAM.reset();
-    Register.PC = 0;
+    Register.PC = 61440;
 };
 
 describe("TIA", () => {
@@ -18,9 +18,9 @@ describe("TIA", () => {
         Opcode[0xFA] = function () {
             return 1;
         };
-        
+
         let rom: Uint8Array = new Uint8Array(19912);
-        
+
         RAM.readRom(rom);
 
         for(let i in rom) {
@@ -28,7 +28,7 @@ describe("TIA", () => {
         };
 
         return TIA.nextFrame().then(() => {
-            chai.assert.strictEqual(Register.PC, 262 * 76);
+            chai.assert.strictEqual(Register.PC - 61440, 262 * 76);
         });
     });
 })

@@ -14,8 +14,8 @@ let beforeEachCallback = () => {
     Flag.V = 0;
     Flag.Z = 0;
     Register.A = 0;
-    Register.PC = 0;
-    Register.S = 0;
+    Register.PC = 61440;
+    Register.S = 0xFF;
     Register.X = 0;
     Register.Y = 0;
     RAM.reset();
@@ -28,20 +28,20 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Opcode[0x00](), 7);
         chai.assert.strictEqual(Flag.B, 1);
         chai.assert.strictEqual(Flag.I, 1);
-        // chai.assert.strictEqual(Register.PC, 2);
-        chai.assert.strictEqual(Register.S, Register.PC);
+        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.S, 0xFD);
     });
 
     it("(0x10) should jump if Negative flag isn't set", () => {
-        RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
+        RAM.readRom(new Uint8Array([0x10, -0x01, 0x02]));
 
         chai.assert.strictEqual(Opcode[0x10](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
 
         Flag.N = 1;
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0x10](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0x18) should clear the carry flag", () => {
@@ -54,20 +54,20 @@ describe("CPU Jump and Control Instructions", () => {
         RAM.readRom(new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]));
 
         chai.assert.strictEqual(Opcode[0x20](), 6);
-        chai.assert.strictEqual(Register.PC, 4);
-        chai.assert.strictEqual(Register.S, 1);
+        chai.assert.strictEqual(Register.PC, 61444);
+        chai.assert.strictEqual(Register.S, 0xFE);
     });
 
     it("(0x30) should jump if Negative flag is set", () => {
-        RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
+        RAM.readRom(new Uint8Array([0x30, -0x01, 0x02]));
         Flag.N = 1;
         chai.assert.strictEqual(Opcode[0x30](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
 
         Flag.N = 0;
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0x30](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0x38) should set the carry flag", () => {
@@ -77,11 +77,10 @@ describe("CPU Jump and Control Instructions", () => {
 
     it("(0x4C) should jump to nnnn", () => {
         RAM.readRom(new Uint8Array([0x4C, 0x01, 0xFF]));
-
         chai.assert.strictEqual(Opcode[0x4C](), 3);
 
         Register.PC++;
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 0xFF01);
     });
 
     it("(0x58) should clear the interrupt disable bit", () => {
@@ -92,9 +91,9 @@ describe("CPU Jump and Control Instructions", () => {
 
     it("(0x60) should return from subroutine", () => {
         // RAM.stack.push(6);
-        Register.S = 2;
+        Register.S = 0xFE;
         chai.assert.strictEqual(Opcode[0x60](), 6);
-        chai.assert.strictEqual(Register.S, 1);
+        chai.assert.strictEqual(Register.S, 0xFF);
     });
 
     it("(0x78) should set the interrupt disable bit", () => {
@@ -103,15 +102,15 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x90) should jump if Carry flag isn't set", () => {
-        RAM.readRom(new Uint8Array([0xD0, 0xFF, 0x02]));
+        RAM.readRom(new Uint8Array([0x90, 0xFF, 0x02]));
 
         chai.assert.strictEqual(Opcode[0x90](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
 
         Flag.C = 1;
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0x90](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0xB0) should jump if Carry flag is set", () => {
@@ -120,13 +119,13 @@ describe("CPU Jump and Control Instructions", () => {
         Flag.C = 1;
 
         chai.assert.strictEqual(Opcode[0xB0](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
 
         Flag.C = 0;
 
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0xB0](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0xB8) should clear the overflow flag", () => {
@@ -139,12 +138,12 @@ describe("CPU Jump and Control Instructions", () => {
         RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
 
         chai.assert.strictEqual(Opcode[0xD0](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
 
         Flag.Z = 1;
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0xD0](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0xD8) should clear the decimal mode", () => {
@@ -161,12 +160,12 @@ describe("CPU Jump and Control Instructions", () => {
         RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
 
         chai.assert.strictEqual(Opcode[0xF0](), 2);
-        chai.assert.strictEqual(Register.PC, 1);
+        chai.assert.strictEqual(Register.PC, 61441);
 
         Flag.Z = 1;
-        Register.PC = 0;
+        Register.PC = 61440;
         chai.assert.strictEqual(Opcode[0xF0](), 3);
-        chai.assert.strictEqual(Register.PC, 0);
+        chai.assert.strictEqual(Register.PC, 61440);
     });
 
     it("(0xF8) should set the decimal mode", () => {
@@ -270,12 +269,12 @@ describe("CPU Memory and Register Transfers", () => {
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA0](), 2);
-        chai.assert.strictEqual(Register.Y, RAM.rom(1));
+        chai.assert.strictEqual(Register.Y, RAM.get(61441));
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xA0](), 2);
-        chai.assert.strictEqual(Register.Y, RAM.rom(2));
+        chai.assert.strictEqual(Register.Y, RAM.get(61442));
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
@@ -285,12 +284,12 @@ describe("CPU Memory and Register Transfers", () => {
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA2](), 2);
-        chai.assert.strictEqual(Register.X, RAM.rom(1));
+        chai.assert.strictEqual(Register.X, RAM.get(61441));
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xA2](), 2);
-        chai.assert.strictEqual(Register.X, RAM.rom(2));
+        chai.assert.strictEqual(Register.X, RAM.get(61442));
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
@@ -341,12 +340,12 @@ describe("CPU Memory and Register Transfers", () => {
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA9](), 2);
-        chai.assert.strictEqual(Register.A, RAM.rom(1));
+        chai.assert.strictEqual(Register.A, RAM.get(61441));
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xA9](), 2);
-        chai.assert.strictEqual(Register.A, RAM.rom(2));
+        chai.assert.strictEqual(Register.A, RAM.get(61442));
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });

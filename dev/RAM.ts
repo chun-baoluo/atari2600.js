@@ -6,7 +6,7 @@ import { TIA } from './TIA';
 export class Register {
 	public static A: number = 0; // Accumulator
 	public static P: number = 0; // Processor Counter
-	public static PC: number = 0; // Program Counter
+	public static PC: number = 61440; // Program Counter
 	public static S: number = 0xFF; // Stack Pointer
 	public static X: number = 0; // Index Register X
 	public static Y: number = 0; // Index Register Y
@@ -26,8 +26,6 @@ export class RAM {
 	public static memory: Uint8Array = new Uint8Array(65536);
 
 	public static romSize: number = null;
-
-	public static stack: Array<number> = [];
 
 	public static get(address: number) {
 		return this.memory[address];
@@ -61,10 +59,6 @@ export class RAM {
 
 	public static reset() {
 		this.memory = new Uint8Array(65536);
-	};
-
-	public static rom(address: number) {
-		return this.memory[61440 + address];
 	};
 
 	public static set(address: number, value: number) {
