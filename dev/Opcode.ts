@@ -170,9 +170,18 @@ export class Opcode {
 
         RAM.set(Register.S, Register.PC - 1);
 
+        Register.S = (Register.S - 1) & 0xFF;
+
         Register.PC = address - 1;
 
         return 6;
+    };
+
+    // AND nn
+    public static 0x25() {
+        this.AND(RAM.read(RAM.get(++Register.PC)));
+
+        return 3;
     };
 
     // ROL nn
@@ -273,6 +282,27 @@ export class Opcode {
         return 3;
     };
 
+    // LSR nn
+    public static 0x46() {
+        let address: number = RAM.get(++Register.PC);
+
+        let value: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(value).charAt(7);
+
+        value = Convert.toUint8(value >>> 1);
+
+        RAM.write(address, value);
+
+        Flag.Z = 0;
+
+        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+
+        Flag.C = parseInt(carry);
+
+        return 5;
+    };
+
     // EOR #nn
     public static 0x49() {
         Register.A = Register.A ^ RAM.get(++Register.PC);
@@ -336,6 +366,9 @@ export class Opcode {
 
     // RTS
     public static 0x60() {
+
+        Register.S = (Register.S + 1) & 0xFF;
+
         Register.PC = RAM.get(Register.S) + 1;
 
         Register.S = (Register.S + 1) & 0xFF;
@@ -512,6 +545,14 @@ export class Opcode {
         return 2;
     };
 
+    // STA nnnn, Y
+    public static 0x99() {
+        let address: number = this.next2byteAddress();
+        RAM.write(address + Register.Y, Register.A);
+
+        return 5;
+    };
+
     // TXS
     public static 0x9A() {
         Register.S = Register.X;
@@ -625,6 +666,19 @@ export class Opcode {
         return this.CJMP('C', false);
     };
 
+    // LDA (nn), Y
+    public static 0xB1() {
+        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
+
+        Register.A = RAM.read(address);
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
+    };
+
     // LDA nn, X
     public static 0xB5() {
         Register.A = RAM.read(RAM.get(++Register.PC) + Register.X);
@@ -696,6 +750,13 @@ export class Opcode {
         this.CMP('Y', RAM.get(++Register.PC));
 
         return 2;
+    };
+
+    // CPY nn
+    public static 0xC4() {
+        this.CMP('Y', RAM.read(RAM.get(++Register.PC)));
+
+        return 3;
     };
 
     // CMP nn
@@ -771,9 +832,9 @@ export class Opcode {
         return 2;
     };
 
-    // CPY nn
+    // CPX nn
     public static 0xE4() {
-        this.CMP('Y', RAM.read(RAM.get(++Register.PC)));
+        this.CMP('X', RAM.read(RAM.get(++Register.PC)));
 
         return 3;
     };
