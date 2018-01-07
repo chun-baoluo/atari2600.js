@@ -151,7 +151,29 @@ class Playfield extends GameObject {
 
         return (c ? this.setImageData(scanline, clock, c) : null);
     };
+};
 
+class Ball extends GameObject {
+    public size: number = 1;
+    public enabl: boolean = false;
+
+    pixel(scanline: number, clock: number) {
+
+    };
+};
+
+class Missle extends GameObject {
+    public missle: number = 0;
+    public enam: boolean = false;
+
+    constructor(missle: number) {
+        super();
+        this.missle = missle;
+    };
+
+    pixel(scanline: number, clock: number) {
+
+    };
 };
 
 class Player extends GameObject {
@@ -386,9 +408,17 @@ export class TIA {
 
     public static p1: Player = new Player(1);
 
+    public static m0: Missle = new Missle(0);
+
+    public static m1: Missle = new Missle(1);
+
+    public static pfp: boolean = false;
+
     public static bk: Background = new Background();
 
     public static pf: Playfield = new Playfield();
+
+    public static ball: Ball = new Ball();
 
     public static color(val: string) {
         return this.colorPalette.get(val.slice(0, -1));

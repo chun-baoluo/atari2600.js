@@ -528,6 +528,12 @@ export class Opcode {
         return this.CJMP('C', true);
     };
 
+    // STY nn, X
+    public static 0x94() {
+        RAM.write(RAM.get(++Register.PC) + Register.X, Register.Y);
+        return 4;
+    };
+
     // STA nn, X
     public static 0x95() {
         RAM.write(RAM.get(++Register.PC) + Register.X, Register.A);

@@ -146,6 +146,8 @@ export class RAM {
 		TIA.pf.ctrlpf = ctrlpf;
 		TIA.pf.reflect = (ctrlpf[7] == '1');
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
+		TIA.pfp = (ctrlpf[5] == '1');
+		TIA.ball.size = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
 		return value;
 	};
 
