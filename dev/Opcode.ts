@@ -525,6 +525,14 @@ export class Opcode {
         return 2;
     };
 
+    // ADC nnnn, Y
+    public static 0x79() {
+        let address: number = this.WORD();
+        this.ADC(RAM.read(address + Register.Y));
+
+        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+    };
+
     // ADC nnnn, X
     public static 0x7D() {
         let address: number = this.WORD();
@@ -734,6 +742,19 @@ export class Opcode {
         return 2;
     };
 
+    // LDY nnnn
+    public static 0xAC() {
+        let address: number = this.WORD();
+
+        Register.Y = RAM.read(address);
+
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+
+        return 4;
+    };
+
     // LDA nnnn
     public static 0xAD() {
         let address: number = this.WORD();
@@ -743,6 +764,19 @@ export class Opcode {
         Flag.Z = (Register.A == 0 ? 1 : 0);
 
         Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 4;
+    };
+
+    // LDX nnnn
+    public static 0xAE() {
+        let address: number = this.WORD();
+
+        Register.X = RAM.read(address);
+
+        Flag.Z = (Register.X == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
 
         return 4;
     };
@@ -933,11 +967,32 @@ export class Opcode {
         return 4;
     };
 
+    // DEC nn, X
+    public static 0xD6() {
+        let address: number = RAM.get(++Register.PC);
+        let result: number = RAM.write(address + Register.X, RAM.get(address + Register.X) - 1);
+
+        Flag.Z = (result == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
+
+        return 6;
+    };
+
     // CLD
     public static 0xD8() {
         Flag.D = 0;
 
         return 2;
+    };
+
+    // CMP nnnn, Y
+    public static 0xD9() {
+        let address: number = this.WORD();
+
+        this.CMP('A', RAM.read(address + Register.Y));
+
+        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
     // CMP nnnn, X
@@ -1003,6 +1058,15 @@ export class Opcode {
     // No operator
     public static 0xEA() {
         return 2;
+    };
+
+    // CPX nnnn
+    public static 0xEC() {
+        let address: number = this.WORD();
+
+        this.CMP('X', RAM.read(address));
+
+        return 4;
     };
 
     // BEQ/BZS nnn
