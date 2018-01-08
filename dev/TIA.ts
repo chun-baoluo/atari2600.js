@@ -162,17 +162,31 @@ class Ball extends GameObject {
     };
 };
 
-class Missle extends GameObject {
-    public missle: number = 0;
+class Missile extends GameObject {
+    public colup: Array<number> = [0, 0, 0];
+    public missile: number = 0;
     public enam: boolean = false;
+    public size: number = 0;
+    public sizeCounter = 0;
+    public position: number = null;
 
-    constructor(missle: number) {
+    constructor(missile: number) {
         super();
-        this.missle = missle;
+        this.missile = missile;
     };
 
     pixel(scanline: number, clock: number) {
+        if(this.position && this.position <= clock && this.position + 8 > clock) {
+            return this.setImageData(scanline, clock, this.colup);
+        };
 
+        if(!this.position && this.enam && (this.sizeCounter--) != 0) {
+            return this.setImageData(scanline, clock, this.colup);
+        };
+
+        // if(!this.position && (clock >= 80 * this.player && clock < (80 * this.player + 8) || drawPlayer) && this.grp[(8 + clock) % 8] == '1') {
+        //     return this.setImageData(scanline, clock, this.colup);
+        // };
     };
 };
 
@@ -182,6 +196,7 @@ class Player extends GameObject {
     public nusiz: number = 0;
     private player: number = 0;
     public position: number = null;
+    public refp: boolean = false;
 
     constructor(player: number = 0) {
         super();
@@ -400,6 +415,10 @@ export class TIA {
 
     public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
+    private static _resm0: boolean = false;
+
+    private static _resm1: boolean = false;
+
     private static _resp0: boolean = false;
 
     private static _resp1: boolean = false;
@@ -408,9 +427,9 @@ export class TIA {
 
     public static p1: Player = new Player(1);
 
-    public static m0: Missle = new Missle(0);
+    public static m0: Missile = new Missile(0);
 
-    public static m1: Missle = new Missle(1);
+    public static m1: Missile = new Missile(1);
 
     public static pfp: boolean = false;
 
@@ -444,6 +463,26 @@ export class TIA {
         this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
 
+    public static get resm0() {
+        return this._resm0;
+    };
+
+    public static set resm0(resm0: boolean) {
+        this._resm0 = resm0;
+
+        this.m0.position = (this.clock <= 68 ? null : this.clock - 68);
+    };
+
+    public static get resm1() {
+        return this._resm1;
+    };
+
+    public static set resm1(resm1: boolean) {
+        this._resm1 = resm1;
+
+        this.m1.position = (this.clock <= 68 ? null : this.clock - 68);
+    };
+
     public static get resp0() {
         return this._resp0;
     };
@@ -469,6 +508,9 @@ export class TIA {
         this.ctx.drawImage(this.pf.canvas, 0, 0);
         this.ctx.drawImage(this.p0.canvas, 0, 0);
         this.ctx.drawImage(this.p1.canvas, 0, 0);
+        this.ctx.drawImage(this.m0.canvas, 0, 0);
+        this.ctx.drawImage(this.m1.canvas, 0, 0);
+        this.ctx.drawImage(this.ball.canvas, 0, 0);
     };
 
     public static nextFrame() {

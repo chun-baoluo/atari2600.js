@@ -96,14 +96,18 @@ export class RAM {
 	// NUSIZ0 write
 	private static 0x04(value: number) {
 		if(value === undefined) return;
-		TIA.p0.nusiz = parseInt(Convert.toBin(value).substring(5, 7), 2);
+		let nusiz: Array<string> = Convert.toBin(value).split('');
+		TIA.p0.nusiz = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
+		TIA.m0.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
 
 	// NUSIZ1 write
 	private static 0x05(value: number) {
 		if(value === undefined) return;
-		TIA.p1.nusiz = parseInt(Convert.toBin(value).substring(5, 7), 2);
+		let nusiz: Array<string> = Convert.toBin(value).split('');
+		TIA.p1.nusiz = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
+		TIA.m1.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
 
@@ -113,6 +117,7 @@ export class RAM {
 		let colup0: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
 		TIA.pf.colup0 = colup0;
 		TIA.p0.colup = colup0;
+		TIA.m0.colup = colup0;
 		return value;
 	};
 
@@ -122,6 +127,7 @@ export class RAM {
 		let colup1: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
 		TIA.pf.colup1 = colup1;
 		TIA.p1.colup = colup1;
+		TIA.m1.colup = colup1;
 		return value;
 	};
 
@@ -148,6 +154,20 @@ export class RAM {
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
 		TIA.pfp = (ctrlpf[5] == '1');
 		TIA.ball.size = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
+		return value;
+	};
+
+	// REFP0 write
+	private static 0x0B(value: number) {
+		if(value === undefined) return;
+		TIA.p0.refp = (Convert.toBin(value).charAt(4) == '1');
+		return value;
+	};
+
+	// REFP1 write
+	private static 0x0C(value: number) {
+		if(value === undefined) return;
+		TIA.p1.refp = (Convert.toBin(value).charAt(4) == '1');
 		return value;
 	};
 
@@ -186,6 +206,20 @@ export class RAM {
 		return value;
 	};
 
+	// RESM0 write
+	private static 0x12(value: number) {
+		if(value === undefined) return;
+		TIA.resm0 = true;
+		return value;
+	};
+
+	// RESM1 write
+	private static 0x13(value: number) {
+		if(value === undefined) return;
+		TIA.resm1 = true;
+		return value;
+	};
+
 	// GRP0 write
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
@@ -197,6 +231,29 @@ export class RAM {
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
 		TIA.p1.grp = Convert.toBin(value).split('');
+		return value;
+	};
+
+	// ENAM0 write
+	private static 0x1D(value: number) {
+		if(value === undefined) return;
+		TIA.m0.enam = (Convert.toBin(value).charAt(6) == '1');
+		TIA.m0.sizeCounter = TIA.m0.size;
+		return value;
+	};
+
+	// ENAM1 write
+	private static 0x1E(value: number) {
+		if(value === undefined) return;
+		TIA.m1.enam = (Convert.toBin(value).charAt(6) == '1');
+		TIA.m1.sizeCounter = TIA.m1.size;
+		return value;
+	};
+
+	// ENABL write
+	private static 0x1F(value: number) {
+		if(value === undefined) return;
+		TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
 		return value;
 	};
 
