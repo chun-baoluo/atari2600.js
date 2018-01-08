@@ -12,12 +12,6 @@ export class Opcode {
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
     };
 
-    private static WORD() {
-        let low: number = RAM.get(++Register.PC);
-        let high: number = RAM.get(++Register.PC);
-        return ((high & 0xFF) << 8) | (low & 0xFF);
-    };
-
     private static ADC(value: number) {
         let old: number = Register.A;
 
@@ -75,20 +69,34 @@ export class Opcode {
         Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
     };
 
+    private static POP() {
+        Register.S = (Register.S + 1) & 0xFF;
+
+        return RAM.get(Register.S);
+    };
+
+    private static PUSH(value: number) {
+        RAM.set(Register.S, value);
+
+        Register.S = (Register.S - 1) & 0xFF;
+    };
+
+    private static WORD() {
+        let low: number = RAM.get(++Register.PC);
+        let high: number = RAM.get(++Register.PC);
+        return ((high & 0xFF) << 8) | (low & 0xFF);
+    };
+
     // BRK
     public static 0x00() {
         Flag.B = 1;
         Flag.I = 1;
 
-        RAM.set(Register.S, (Register.PC + 1) >> 8);
+        this.PUSH((Register.PC + 1) >> 8);
 
-        Register.S = (Register.S - 1) & 0xFF;
+        this.PUSH(Register.PC + 1);
 
-        RAM.set(Register.S, Register.PC + 1);
-
-        Register.S = (Register.S - 1) & 0xFF;
-
-        RAM.set(Register.S, Register.P);
+        this.PUSH(Register.P);
 
         Register.PC = RAM.read(0xFFFE);
 
@@ -100,6 +108,13 @@ export class Opcode {
         this.ORA(RAM.read(RAM.read(RAM.get(++Register.PC) + Register.X)));
 
         return 6;
+    };
+
+    // ORA nn
+    public static 0x05() {
+        this.ORA(RAM.read(RAM.get(++Register.PC)));
+
+        return 3;
     };
 
     // ORA #nn
@@ -161,14 +176,8 @@ export class Opcode {
     public static 0x20() {
         let address: number = this.WORD();
 
-        RAM.set(Register.S, (Register.PC - 1) >> 8);
-
-        Register.S = (Register.S - 1) & 0xFF;
-
-        RAM.set(Register.S, Register.PC - 1);
-
-        Register.S = (Register.S - 1) & 0xFF;
-
+        this.PUSH((Register.PC - 1) >> 8);
+        this.PUSH(Register.PC - 1);
         Register.PC = address - 1;
 
         return 6;
@@ -300,6 +309,13 @@ export class Opcode {
         return 5;
     };
 
+    // PHA
+    public static 0x48() {
+        this.PUSH(Register.A);
+
+        return 3;
+    };
+
     // EOR #nn
     public static 0x49() {
         Register.A = Register.A ^ RAM.get(++Register.PC);
@@ -364,13 +380,8 @@ export class Opcode {
     // RTS
     public static 0x60() {
 
-        Register.S = (Register.S + 1) & 0xFF;
-
-        Register.PC = RAM.get(Register.S) + 1;
-
-        Register.S = (Register.S + 1) & 0xFF;
-
-        Register.PC += RAM.get(Register.S) << 8;
+        Register.PC = this.POP() + 1;
+        Register.PC += this.POP() << 8;
 
         return 6;
     };
@@ -404,6 +415,17 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 5;
+    };
+
+    // PLA
+    public static 0x68() {
+        Register.A = this.POP();
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 4;
     };
 
     // ADC #nn
@@ -516,6 +538,14 @@ export class Opcode {
     public static 0x8D() {
         let address: number = this.WORD();
         RAM.write(address, Register.A);
+
+        return 4;
+    };
+
+    // STX nnnn
+    public static 0x8E() {
+        let address: number = this.WORD();
+        RAM.write(address, Register.X);
 
         return 4;
     };
@@ -826,6 +856,15 @@ export class Opcode {
         Flag.D = 0;
 
         return 2;
+    };
+
+    // CMP nnnn, X
+    public static 0xDD() {
+        let address: number = this.WORD();
+
+        this.CMP('A', RAM.read(address + Register.X));
+
+        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
     };
 
     // CPX #nn
