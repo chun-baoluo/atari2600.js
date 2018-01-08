@@ -183,6 +183,21 @@ export class Opcode {
         return 6;
     };
 
+    // BIT nn
+    public static 0x24() {
+        let value: number = RAM.read(RAM.get(++Register.PC));
+
+        let bin: string = Convert.toBin(value);
+
+        Flag.Z = ((Register.A & value) == 0 ? 1 : 0);
+
+        Flag.N = (bin.charAt(0) == '1' ? 1 : 0);
+
+        Flag.V = (bin.charAt(1) == '1' ? 1 : 0);
+
+        return 3;
+    };
+
     // AND nn
     public static 0x25() {
         this.AND(RAM.read(RAM.get(++Register.PC)));
@@ -218,6 +233,30 @@ export class Opcode {
     // AND #nn
     public static 0x29() {
         this.AND(RAM.get(++Register.PC));
+
+        return 2;
+    };
+
+    // ROL A
+    public static 0x2A() {
+
+        let value: number = Register.A;
+
+        let carry: string = Convert.toBin(value).charAt(0);
+
+        value = Convert.toUint8(value << 1);
+
+        let rotated: string = Convert.toBin(value).slice(0, -1) + Flag.C.toString();
+
+        value = Convert.toUint8(parseInt(rotated, 2));
+
+        Register.A = value;
+
+        Flag.Z = (value == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+
+        Flag.C = parseInt(carry);
 
         return 2;
     };
@@ -534,6 +573,14 @@ export class Opcode {
         return 2;
     };
 
+    // STY nnnn
+    public static 0x8C() {
+        let address: number = this.WORD();
+        RAM.write(address, Register.Y);
+
+        return 4;
+    };
+
     // STA nnnn
     public static 0x8D() {
         let address: number = this.WORD();
@@ -564,6 +611,12 @@ export class Opcode {
     // STA nn, X
     public static 0x95() {
         RAM.write(RAM.get(++Register.PC) + Register.X, Register.A);
+        return 4;
+    };
+
+    // STY nn, X
+    public static 0x96() {
+        RAM.write(RAM.get(++Register.PC) + Register.Y, Register.X);
         return 4;
     };
 
@@ -723,6 +776,17 @@ export class Opcode {
         return 4;
     };
 
+    // LDX nn, Y
+    public static 0xB6() {
+        Register.X = RAM.read(RAM.get(++Register.PC) + Register.Y);
+
+        Flag.Z = (Register.X == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+
+        return 4;
+    };
+
     // CLV
     public static 0xB8() {
         Flag.V = 0;
@@ -740,6 +804,17 @@ export class Opcode {
         Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
 
         return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+    };
+
+    // TSX
+    public static 0xBA() {
+        Register.X = Register.S;
+
+        Flag.Z = (Register.X == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+
+        return 2;
     };
 
     // LDY nnnn, X
@@ -849,6 +924,13 @@ export class Opcode {
     // BNE
     public static 0xD0() {
         return this.CJMP('Z', true);
+    };
+
+    // CMP nn, X
+    public static 0xD5() {
+        this.CMP('A', RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
     };
 
     // CLD
