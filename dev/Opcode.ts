@@ -2,9 +2,6 @@ import { Flag, Register, RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Memory mirroring
-// TODO: Check if BRK works correctly + shouls stack pointer be an array instead?
-// TODO: ADC? SBC?
-// TODO: Stack pointer and S
 // TODO: Decimal mode for ABD/SBC
 
 export class Opcode {
@@ -15,7 +12,7 @@ export class Opcode {
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
     };
 
-    private static next2byteAddress() {
+    private static WORD() {
         let low: number = RAM.get(++Register.PC);
         let high: number = RAM.get(++Register.PC);
         return ((high & 0xFF) << 8) | (low & 0xFF);
@@ -162,7 +159,7 @@ export class Opcode {
 
     // JSR nnnn
     public static 0x20() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
 
         RAM.set(Register.S, (Register.PC - 1) >> 8);
 
@@ -255,7 +252,7 @@ export class Opcode {
 
     // AND nnnn, Y
     public static 0x39() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
 
         this.AND(RAM.read(address + Register.Y));
 
@@ -264,7 +261,7 @@ export class Opcode {
 
     // AND nnnn, X
     public static 0x3D() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
 
         this.AND(RAM.read(address + Register.X));
 
@@ -331,7 +328,7 @@ export class Opcode {
 
     // JMP nnnn
     public static 0x4C() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
 
         Register.PC = address - 1;
 
@@ -469,7 +466,7 @@ export class Opcode {
 
     // ADC nnnn, X
     public static 0x7D() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         this.ADC(RAM.read(address + Register.X));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
@@ -517,7 +514,7 @@ export class Opcode {
 
     // STA nnnn
     public static 0x8D() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         RAM.write(address, Register.A);
 
         return 4;
@@ -553,7 +550,7 @@ export class Opcode {
 
     // STA nnnn, Y
     public static 0x99() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         RAM.write(address + Register.Y, Register.A);
 
         return 5;
@@ -656,7 +653,7 @@ export class Opcode {
 
     // LDA nnnn
     public static 0xAD() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
 
         Register.A = RAM.read(address);
 
@@ -705,7 +702,7 @@ export class Opcode {
 
     // LDA nnnn, Y
     public static 0xB9() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         Register.A = RAM.read(address + Register.Y);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
@@ -717,7 +714,7 @@ export class Opcode {
 
     // LDY nnnn, X
     public static 0xBC() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         Register.Y = RAM.read(address + Register.X);
 
         Flag.Z = (Register.Y == 0 ? 1 : 0);
@@ -729,7 +726,7 @@ export class Opcode {
 
     // LDA nnnn, X
     public static 0xBD() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         Register.A = RAM.read(address + Register.X);
 
         Flag.Z = (Register.A == 0 ? 1 : 0);
@@ -741,7 +738,7 @@ export class Opcode {
 
     // LDX nnnn, Y
     public static 0xBE() {
-        let address: number = this.next2byteAddress();
+        let address: number = this.WORD();
         Register.X = RAM.read(address + Register.Y);
 
         Flag.Z = (Register.X == 0 ? 1 : 0);

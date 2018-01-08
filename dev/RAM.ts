@@ -54,7 +54,9 @@ export class RAM {
 		this.memory[0x296] = (Math.random() * 255) >> 0;
 		this.memory[0x297] = (Math.random() * 255) >> 0;
 
-		this.memory.set(rom, 61440);
+		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
+			this.memory.set(rom, i);
+		};
 	};
 
 	public static reset() {
