@@ -11,7 +11,7 @@ export class App {
     };
 
     private handleRom() {
-        for(; Register.PC < RAM.romSize ;) {
+        for(; Register.PC < 61440 + RAM.romSize ;) {
             CPU.pulse();
             CPU.unlock();
 
