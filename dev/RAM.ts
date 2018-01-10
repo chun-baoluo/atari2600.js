@@ -116,27 +116,21 @@ export class RAM {
 	// COLUP0 write
 	private static 0x06(value: number) {
 		if(value === undefined) return;
-		let colup0: Array<number> = TIA.color(Convert.toBin(value));
-		TIA.pf.colup0 = colup0;
-		TIA.p0.colup = colup0;
-		TIA.m0.colup = colup0;
+		TIA.pf.colup0 = TIA.p0.colup = TIA.m0.colup = TIA.color(Convert.toBin(value));
 		return value;
 	};
 
 	// COLUP1 write
 	private static 0x07(value: number) {
 		if(value === undefined) return;
-		let colup1: Array<number> = TIA.color(Convert.toBin(value));
-		TIA.pf.colup1 = colup1;
-		TIA.p1.colup = colup1;
-		TIA.m1.colup = colup1;
+		TIA.pf.colup1 = TIA.p1.colup = TIA.m1.colup = TIA.color(Convert.toBin(value));
 		return value;
 	};
 
 	// COLUPF write
 	private static 0x08(value: number) {
 		if(value === undefined) return;
-		TIA.pf.colupf = TIA.color(Convert.toBin(value));
+		TIA.pf.colupf = TIA.ball.colupf = TIA.color(Convert.toBin(value));
 		return value;
 	};
 
@@ -286,6 +280,13 @@ export class RAM {
 	private static 0x27(value: number) {
 		if(value === undefined) return;
 		TIA.ball.vdelbl = (Convert.toBin(value).charAt(7) == '1');
+		return value;
+	};
+	
+	// HMCLR write
+	private static 0x2B(value: number) {
+		if(value === undefined) return;
+		TIA.p0.hmp = TIA.p1.hmp = TIA.m0.hmm = TIA.m1.hmm = TIA.ball.hmbl = 0;
 		return value;
 	};
 

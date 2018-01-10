@@ -154,8 +154,10 @@ class Playfield extends GameObject {
 };
 
 class Ball extends GameObject {
+    public colupf: Array<number> = [0, 0, 0];
     public size: number = 1;
     public enabl: boolean = false;
+    public hmbl: number = 0;
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
@@ -166,6 +168,7 @@ class Ball extends GameObject {
 class Missile extends GameObject {
     public colup: Array<number> = [0, 0, 0];
     public missile: number = 0;
+    public hmm: number = 0;
     public enam: boolean = false;
     public size: number = 0;
     public sizeCounter = 0;
@@ -190,6 +193,7 @@ class Missile extends GameObject {
 class Player extends GameObject {
     public colup: Array<number> = [0, 0, 0];
     public grp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public hmp: number = 0;
     public nusiz: number = 0;
     private player: number = 0;
     public position: number = null;
