@@ -116,7 +116,7 @@ export class RAM {
 	// COLUP0 write
 	private static 0x06(value: number) {
 		if(value === undefined) return;
-		let colup0: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		let colup0: Array<number> = TIA.color(Convert.toBin(value));
 		TIA.pf.colup0 = colup0;
 		TIA.p0.colup = colup0;
 		TIA.m0.colup = colup0;
@@ -126,7 +126,7 @@ export class RAM {
 	// COLUP1 write
 	private static 0x07(value: number) {
 		if(value === undefined) return;
-		let colup1: Array<number> = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		let colup1: Array<number> = TIA.color(Convert.toBin(value));
 		TIA.pf.colup1 = colup1;
 		TIA.p1.colup = colup1;
 		TIA.m1.colup = colup1;
@@ -136,14 +136,14 @@ export class RAM {
 	// COLUPF write
 	private static 0x08(value: number) {
 		if(value === undefined) return;
-		TIA.pf.colupf = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		TIA.pf.colupf = TIA.color(Convert.toBin(value));
 		return value;
 	};
 
 	// COLUBK write
 	private static 0x09(value: number) {
 		if(value === undefined) return;
-		TIA.bk.colubk = Convert.toColorArray(TIA.color(Convert.toBin(value)));
+		TIA.bk.colubk = TIA.color(Convert.toBin(value));
 		return value;
 	};
 
@@ -225,14 +225,21 @@ export class RAM {
 	// GRP0 write
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
-		TIA.p0.grp = Convert.toBin(value).split('');
+		if(!TIA.p0.vdelp) {
+			TIA.p1.vdelp = false;
+			TIA.p0.grp = Convert.toBin(value).split('');		
+		};
 		return value;
 	};
 
 	// GRP1 write
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
-		TIA.p1.grp = Convert.toBin(value).split('');
+		if(!TIA.p1.vdelp) {
+			TIA.p0.vdelp = false;
+			TIA.ball.vdelbl = false;
+			TIA.p1.grp = Convert.toBin(value).split('');
+		};
 		return value;
 	};
 
@@ -255,7 +262,30 @@ export class RAM {
 	// ENABL write
 	private static 0x1F(value: number) {
 		if(value === undefined) return;
-		TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
+		if(!TIA.ball.vdelbl) {
+			TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
+		};
+		return value;
+	};
+	
+	// VDELP0 write
+	private static 0x25(value: number) {
+		if(value === undefined) return;
+		TIA.p0.vdelp = (Convert.toBin(value).charAt(7) == '1');
+		return value;
+	};
+	
+	// VDELP1 write
+	private static 0x26(value: number) {
+		if(value === undefined) return;
+		TIA.p1.vdelp = (Convert.toBin(value).charAt(7) == '1');
+		return value;
+	};
+	
+	// VDELBL write
+	private static 0x27(value: number) {
+		if(value === undefined) return;
+		TIA.ball.vdelbl = (Convert.toBin(value).charAt(7) == '1');
 		return value;
 	};
 
