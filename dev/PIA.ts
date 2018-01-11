@@ -1,4 +1,5 @@
 import { RAM } from './RAM';
+import { Convert } from './Common';
 
 // TODO: Timer restart after reading from INTIM?
 // TODO: Missing cycle?
@@ -26,6 +27,37 @@ export class PIA {
             active: false,
             interval: 1024
         }
+    };
+    
+    private static keydown(e: any) {
+        let key = e.key;        
+        let swcha: any = Convert.toBin(RAM.get(0x280)).split('');
+        let input1: any = Convert.toBin(RAM.get(0x3C)).split('');
+        
+        if(key == 38) {
+            swcha[3] = '0';
+        } else if(key == 39) {
+            swcha[0] = '0';
+        }  else if(key == 40) {
+            swcha[2] = '0';
+        } else if(key == 37) {
+            swcha[1] = '0';
+        } else if(key == 17) {
+            input1[0] = '0';
+        };
+        
+        RAM.set(0x280, parseInt(swcha.join(''), 2));
+        RAM.set(0x3C, parseInt(input1.join(''), 2));
+    };
+    
+    private static keyup(e: any) {
+        RAM.set(0x280, 0xFF);
+        RAM.set(0x3C, 0xFF);
+    };
+    
+    public static initInputs() {
+        document.addEventListener("keydown", this.keydown, false);
+        document.addEventListener("keyup", this.keyup, false);
     };
     
     public static setTimer(address: number) {

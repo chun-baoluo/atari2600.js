@@ -48,11 +48,17 @@ export class RAM {
 
 		this.memory = new Uint8Array(61440 + rom.length);
 
+		this.memory[0x3C] = 0xFF;
+
+		this.memory[0x280] = 0xFF;
+
 		this.memory[0x284] = (Math.random() * 255) >> 0;
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
 		this.memory[0x296] = (Math.random() * 255) >> 0;
 		this.memory[0x297] = (Math.random() * 255) >> 0;
+		
+		
 
 		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
 			this.memory.set(rom, i);
@@ -141,7 +147,7 @@ export class RAM {
 		return value;
 	};
 
-	// CTRLPF  write
+	// CTRLPF write
 	private static 0x0A(value: number) {
 		if(value === undefined) return;
 		let ctrlpf: Array<string> = Convert.toBin(value).split('');
@@ -149,7 +155,7 @@ export class RAM {
 		TIA.pf.reflect = (ctrlpf[7] == '1');
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
 		TIA.pfp = (ctrlpf[5] == '1');
-		TIA.ball.size = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
+		TIA.ball.size = TIA.ball.sizeCounter = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
 		return value;
 	};
 

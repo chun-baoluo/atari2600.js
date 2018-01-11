@@ -16,7 +16,7 @@ abstract class GameObject {
 
     public get canvas() {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-        this._ctx.putImageData(this._imageData, this.position, 0);
+        this._ctx.putImageData(this._imageData, this.position || 0, 0);
         this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
         return this._canvas;
     };
@@ -161,12 +161,15 @@ class Playfield extends GameObject {
 class Ball extends GameObject {
     public colupf: Array<number> = [0, 0, 0];
     public size: number = 1;
+    public sizeCounter = 0;
     public enabl: boolean = false;
     public hmbl: number = 0;
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
-
+        if(this.enabl && (this.sizeCounter--) != 0) {
+            return this.setImageData(scanline, clock, this.colupf);
+        };
     };
 };
 
@@ -185,13 +188,9 @@ class Missile extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        // if(this.position && this.position <= clock && this.position + 8 > clock) {
-        //     return this.setImageData(scanline, clock, this.colup);
-        // };
-        // 
-        // if(!this.position && this.enam && (this.sizeCounter--) != 0) {
-        //     return this.setImageData(scanline, clock, this.colup);
-        // };
+        if(this.enam && (this.sizeCounter--) != 0) {
+            return this.setImageData(scanline, clock, this.colup);
+        };
     };
 };
 
@@ -212,8 +211,9 @@ class Player extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
+        let offset: number = (this.position == null ? 80 * this.player : 0);
         for(let p of this.pixelRange) {
-            if(clock >= (80 * this.player + p) && clock < (80 * this.player + p + 8) && this.grp[clock % 8] == '1') {
+            if(clock >= (offset + p) && clock < (offset + p + 8) && this.grp[clock % 8] == '1') {
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
@@ -556,30 +556,29 @@ export class TIA {
     };
     
     public static getPixelRange(player: number, value: number) {
-        let offset: number = 80 * player;
-        let range: Array<number> = [offset];
+        let range: Array<number> = [0];
         
         switch(value) {
             case 1:
-                range = [offset, offset + 16];
+                range = [0, 16];
                 break;
             case 2:
-                range = [offset, offset + 32];
+                range = [0, 32];
                 break;
             case 3:
-                range = [offset, offset + 16, offset + 32];
+                range = [0, 16, 32];
                 break;
             case 4:
-                range = [offset, offset + 72];
+                range = [0, 72];
                 break;
             case 5:
-                range = [offset, offset + 8];
+                range = [0, 8];
                 break;
             case 6:
-                range = [offset, offset + 32, offset + 72];
+                range = [0, 32, 72];
                 break;
             case 7:
-                range = [offset, offset + 8, offset + 16, offset + 24];
+                range = [0, 8, 16, 24];
                 break;
         };
         
