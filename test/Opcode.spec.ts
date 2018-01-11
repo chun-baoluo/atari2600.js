@@ -499,6 +499,16 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Opcode[0xB1](), 6);
         chai.assert.strictEqual(RAM.get(0x35), Register.A);
     });
+    
+    it("(0xB5) should set register Y to be equal nn + X", () => {
+        Register.Y = 5;
+        RAM.readRom(new Uint8Array([0xB4, 0x31]));
+        RAM.set(0x32, 3);
+        Register.X = 0x01;
+
+        chai.assert.strictEqual(Opcode[0xB4](), 4);
+        chai.assert.strictEqual(Register.Y, 3);
+    });
 
     it("(0xB5) should set register A to be equal nn + X", () => {
         Register.A = 5;
@@ -711,6 +721,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 1);
         chai.assert.strictEqual(Flag.C, 1);
     });
+    
+    it("(0x19) should do OR operation with A and nnnn + Y, change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0x19, 0x32, 0x00, 0x33, 0x00]));
+        RAM.set(0x32, 0);
+        RAM.set(0x33, 0xFF);
+        Register.A = 0;
+
+        chai.assert.strictEqual(Opcode[0x19](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x19](), 5);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
 
     it("(0x24) should test A and nn, change N, Z and V flags", () => {
         RAM.readRom(new Uint8Array([0x24, 0x32, 0x33]));
@@ -808,6 +837,24 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 0);
+    });
+    
+    it("(0x2C) should test A and nnnn, change N, Z and V flags", () => {
+        RAM.readRom(new Uint8Array([0x2C, 0x32, 0x00, 0x33, 0x00]));
+        RAM.set(0x32, 0x00);
+        RAM.set(0x33, 0xFF);
+
+        Register.A = 1;
+
+        chai.assert.strictEqual(Opcode[0x2C](), 4);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.V, 0);
+
+        chai.assert.strictEqual(Opcode[0x2C](), 4);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.V, 1);
     });
 
     it("(0x36) should rotate left through carry nn + X, change N, Z and C flags", () => {
@@ -970,8 +1017,10 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x65) should add nn to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x65, 0x00, 0x01]));
-        Register.A = 127;
+        RAM.readRom(new Uint8Array([0x65, 0x32, 0x33]));
+        RAM.set(0x32, 2);
+        RAM.set(0x33, 1);
+        Register.A = 125;
         Flag.C = Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0x65](), 3);
@@ -981,7 +1030,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 0);
         chai.assert.strictEqual(Flag.V, 1);
 
-        Register.A = new Uint8Array([-128])[0];
+        Register.A = new Uint8Array([-129])[0];
         Flag.C = 1;
 
         chai.assert.strictEqual(Opcode[0x65](), 3);
@@ -1052,6 +1101,33 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 0);
+    });
+    
+    it("(0x75) should add nn + X to accumulator with carry, change N, Z, C and V flags", () => {
+        RAM.readRom(new Uint8Array([0x75, 0x31, 0x32]));
+        RAM.set(0x32, 2);
+        RAM.set(0x33, 1);
+        Register.A = 125;
+        Flag.C = Flag.Z = 1;
+        Register.X = 0x01
+
+        chai.assert.strictEqual(Opcode[0x75](), 4);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 1);
+
+        Register.A = new Uint8Array([-129])[0];
+    
+        Flag.C = 1;
+
+        chai.assert.strictEqual(Opcode[0x75](), 4);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
     });
 
     it("(0x76) should rorate right through carry nn + X, change N, Z and C flags", () => {
@@ -1463,18 +1539,20 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE5) should substract nn from accumulator with borrow, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0xE5, 0x00, 0x01]));
+        RAM.readRom(new Uint8Array([0xF5, 0x32, 0x33]));
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 2);
         Register.A = 128;
         Flag.C = Flag.Z = 0;
 
         chai.assert.strictEqual(Opcode[0xE5](), 3);
-        chai.assert.strictEqual(Register.A, 127);
+        chai.assert.strictEqual(Register.A, 126);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.C, 0);
         chai.assert.strictEqual(Flag.V, 0);
 
-        Register.A = new Uint8Array([-128])[0];
+        Register.A = new Uint8Array([-126])[0];
         Flag.C = 1;
 
         chai.assert.strictEqual(Opcode[0xE5](), 3);
@@ -1571,5 +1649,31 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
+    });
+    
+    it("(0xF5) should substract nn + X from accumulator with borrow, change N, Z, C and V flags", () => {
+        RAM.readRom(new Uint8Array([0xF5, 0x31, 0x32]));
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 2);
+        Register.A = 126;
+        Register.X = 0x01;
+        Flag.C = Flag.Z = 0;
+
+        chai.assert.strictEqual(Opcode[0xF5](), 4);
+        chai.assert.strictEqual(Register.A, 124);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
+
+        Register.A = new Uint8Array([-126])[0];
+        Flag.C = 1;
+
+        chai.assert.strictEqual(Opcode[0xF5](), 4);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
     });
 });

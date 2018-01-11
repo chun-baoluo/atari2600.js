@@ -171,6 +171,15 @@ export class Opcode {
 
         return 2;
     };
+    
+    // ORA nnnn, Y
+    public static 0x19() {
+        let address: number = this.WORD();
+        
+        this.ORA(RAM.read(address + Register.Y));
+
+        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+    };
 
     // JSR nnnn
     public static 0x20() {
@@ -259,6 +268,21 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 2;
+    };
+    
+    // BIT nnnn
+    public static 0x2C() {
+        let value: number = RAM.read(this.WORD());
+
+        let bin: string = Convert.toBin(value);
+
+        Flag.Z = ((Register.A & value) == 0 ? 1 : 0);
+
+        Flag.N = (bin.charAt(0) == '1' ? 1 : 0);
+
+        Flag.V = (bin.charAt(1) == '1' ? 1 : 0);
+
+        return 4;
     };
 
     // BMI nnn
@@ -491,6 +515,13 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 2;
+    };
+    
+    // ADC nn, X
+    public static 0x75() {
+        this.ADC(RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
     };
 
     // ROR nn, X
@@ -798,6 +829,17 @@ export class Opcode {
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
+    
+    // LDY nn, X
+    public static 0xB4() {
+        Register.Y = RAM.read(RAM.get(++Register.PC) + Register.X);
+
+        Flag.Z = (Register.Y == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+
+        return 4;
+    };
 
     // LDA nn, X
     public static 0xB5() {
@@ -1072,6 +1114,13 @@ export class Opcode {
     // BEQ/BZS nnn
     public static 0xF0() {
         return this.CJMP('Z', false);
+    };
+    
+    // SBC nn, X
+    public static 0xF5() {
+        this.ADC(~RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
     };
 
     // SED

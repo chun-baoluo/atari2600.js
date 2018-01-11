@@ -2,12 +2,14 @@ import { RomReader } from './RomReader';
 import { CPU } from './CPU';
 import { Register, RAM } from './RAM';
 import { TIA } from './TIA';
+import { PIA } from './PIA';
 
 export class App {
 
     constructor(canvas: any) {
         this.handleRom = this.handleRom.bind(this);
         TIA.canvas = canvas;
+        PIA.initInputs();
     };
 
     private handleRom() {
