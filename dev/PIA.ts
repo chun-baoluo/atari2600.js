@@ -12,23 +12,19 @@ export class PIA {
     private static timers: any = {
         0x294: {
             active: false,
-            interval: 1,
-            value: 0
+            interval: 1
         },
         0x295: {
             active: false,
-            interval: 8,
-            value: 0
+            interval: 8
         },
         0x296: {
             active: false,
-            interval: 64,
-            value: 0
+            interval: 64
         },
         0x297: {
             active: false,
-            interval: 1024,
-            value: 0
+            interval: 1024
         }
     };
     

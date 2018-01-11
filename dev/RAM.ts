@@ -99,7 +99,7 @@ export class RAM {
 	private static 0x04(value: number) {
 		if(value === undefined) return;
 		let nusiz: Array<string> = Convert.toBin(value).split('');
-		TIA.p0.nusiz = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
+		TIA.p1.pixelRange = TIA.getPixelRange(0, parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
 		TIA.m0.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
@@ -108,7 +108,7 @@ export class RAM {
 	private static 0x05(value: number) {
 		if(value === undefined) return;
 		let nusiz: Array<string> = Convert.toBin(value).split('');
-		TIA.p1.nusiz = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
+		TIA.p1.pixelRange = TIA.getPixelRange(0, parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
 		TIA.m1.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};

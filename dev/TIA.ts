@@ -5,13 +5,18 @@ import { CPU } from './CPU';
 // TODO: String to number for colors
 // TODO: Move player nusiz position calculation to RAM
 
+interface GameObject {
+    position?: number;
+};
+
 abstract class GameObject {
     protected _canvas: any = null;
     protected _ctx: any = null;
     protected _imageData: any = null;
 
     public get canvas() {
-        this._ctx.putImageData(this._imageData, 0, 0);
+        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.putImageData(this._imageData, this.position, 0);
         this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
         return this._canvas;
     };
@@ -180,13 +185,13 @@ class Missile extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        if(this.position && this.position <= clock && this.position + 8 > clock) {
-            return this.setImageData(scanline, clock, this.colup);
-        };
-
-        if(!this.position && this.enam && (this.sizeCounter--) != 0) {
-            return this.setImageData(scanline, clock, this.colup);
-        };
+        // if(this.position && this.position <= clock && this.position + 8 > clock) {
+        //     return this.setImageData(scanline, clock, this.colup);
+        // };
+        // 
+        // if(!this.position && this.enam && (this.sizeCounter--) != 0) {
+        //     return this.setImageData(scanline, clock, this.colup);
+        // };
     };
 };
 
@@ -199,6 +204,7 @@ class Player extends GameObject {
     public position: number = null;
     public refp: boolean = false;
     public vdelp: boolean = false;
+    public pixelRange: Array<number> = [0];
 
     constructor(player: number = 0) {
         super();
@@ -206,52 +212,10 @@ class Player extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        if(this.position && this.position <= clock && this.position + 8 > clock && this.grp[((clock - this.position)) % 8] == '1') {
-            return this.setImageData(scanline, clock, this.colup);
-        };
-
-        let drawPlayer: boolean = false;
-
-        switch(this.nusiz) {
-            case 1:
-                if(clock >= 80 * this.player + 16 && clock < 80 * this.player + 24) {
-                    drawPlayer = true;
-                };
-                break;
-            case 2:
-                if(clock >= 80 * this.player + 32 && clock < 80 * this.player + 40) {
-                    drawPlayer = true;
-                };
-                break;
-            case 3:
-                if(clock >= 80 * this.player + 16 && clock < 80 * this.player + 24 || clock >= 80 * this.player + 32 && clock < 80 * this.player + 40) {
-                    drawPlayer = true;
-                };
-                break;
-            case 4:
-                if(clock >= 80 * this.player + 72 && clock < 80 * this.player + 80) {
-                    drawPlayer = true;
-                };
-                break;
-            case 5:
-                if(clock >= 80 * this.player + 8 && clock < 80 * this.player + 16) {
-                    drawPlayer = true;
-                };
-                break;
-            case 6:
-                if(clock >= 80 * this.player + 32 && clock < 80 * this.player + 40 || clock >= 80 * this.player + 72 && clock < 80 * this.player + 80) {
-                    drawPlayer = true;
-                };
-                break;
-            case 7:
-                if(clock >= 80 * this.player + 8 && clock < 80 * this.player + 32) {
-                    drawPlayer = true;
-                };
-                break;
-        };
-
-        if(!this.position && (clock >= 80 * this.player && clock < (80 * this.player + 8) || drawPlayer) && this.grp[(8 + clock) % 8] == '1') {
-            return this.setImageData(scanline, clock, this.colup);
+        for(let p of this.pixelRange) {
+            if(clock >= (80 * this.player + p) && clock < (80 * this.player + p + 8) && this.grp[clock % 8] == '1') {
+                return this.setImageData(scanline, clock, this.colup);
+            };
         };
     };
 };
@@ -525,7 +489,6 @@ export class TIA {
         this.ctx.drawImage(this.m0.canvas, 0, 0);
         this.ctx.drawImage(this.p1.canvas, 0, 0);
         this.ctx.drawImage(this.m1.canvas, 0, 0);
-        
     };
 
     public static nextFrame() {
@@ -587,5 +550,39 @@ export class TIA {
         this.pf.pixel(scanline, clock);
         this.p0.pixel(scanline, clock);
         this.p1.pixel(scanline, clock);
+        this.m0.pixel(scanline, clock);
+        this.m1.pixel(scanline, clock);
+        this.ball.pixel(scanline, clock);
+    };
+    
+    public static getPixelRange(player: number, value: number) {
+        let offset: number = 80 * player;
+        let range: Array<number> = [offset];
+        
+        switch(value) {
+            case 1:
+                range = [offset, offset + 16];
+                break;
+            case 2:
+                range = [offset, offset + 32];
+                break;
+            case 3:
+                range = [offset, offset + 16, offset + 32];
+                break;
+            case 4:
+                range = [offset, offset + 72];
+                break;
+            case 5:
+                range = [offset, offset + 8];
+                break;
+            case 6:
+                range = [offset, offset + 32, offset + 72];
+                break;
+            case 7:
+                range = [offset, offset + 8, offset + 16, offset + 24];
+                break;
+        };
+        
+        return range;
     };
 };
