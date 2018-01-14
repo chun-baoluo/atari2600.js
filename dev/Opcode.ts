@@ -110,6 +110,12 @@ export class Opcode {
         return 6;
     };
 
+    // NOP
+    public static 0x04() {
+        Register.PC++;
+        return 3;
+    };
+
     // ORA nn
     public static 0x05() {
         this.ORA(RAM.read(RAM.get(++Register.PC)));
@@ -171,11 +177,11 @@ export class Opcode {
 
         return 2;
     };
-    
+
     // ORA nnnn, Y
     public static 0x19() {
         let address: number = this.WORD();
-        
+
         this.ORA(RAM.read(address + Register.Y));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
@@ -269,7 +275,7 @@ export class Opcode {
 
         return 2;
     };
-    
+
     // BIT nnnn
     public static 0x2C() {
         let value: number = RAM.read(this.WORD());
@@ -338,6 +344,12 @@ export class Opcode {
         this.AND(RAM.read(address + Register.X));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+    };
+
+    // NOP
+    public static 0x44() {
+        Register.PC++;
+        return 3;
     };
 
     // EOR nn
@@ -449,6 +461,12 @@ export class Opcode {
         return 6;
     };
 
+    // NOP
+    public static 0x64() {
+        Register.PC++;
+        return 3;
+    };
+
     // ADC nn
     public static 0x65() {
         this.ADC(RAM.read(RAM.get(++Register.PC)));
@@ -516,7 +534,7 @@ export class Opcode {
 
         return 2;
     };
-    
+
     // ADC nn, X
     public static 0x75() {
         this.ADC(RAM.read(RAM.get(++Register.PC) + Register.X));
@@ -829,7 +847,20 @@ export class Opcode {
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
-    
+
+    // LAX (nn),Y
+    private static 0xB3() {
+        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
+
+        Register.A = Register.X = RAM.read(address);
+
+        Flag.Z = (Register.A == 0 ? 1 : 0);
+
+        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+
+        return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
+    };
+
     // LDY nn, X
     public static 0xB4() {
         Register.Y = RAM.read(RAM.get(++Register.PC) + Register.X);
@@ -1097,7 +1128,7 @@ export class Opcode {
         return 2;
     };
 
-    // No operator
+    // NOP
     public static 0xEA() {
         return 2;
     };
@@ -1115,7 +1146,7 @@ export class Opcode {
     public static 0xF0() {
         return this.CJMP('Z', false);
     };
-    
+
     // SBC nn, X
     public static 0xF5() {
         this.ADC(~RAM.read(RAM.get(++Register.PC) + Register.X));
