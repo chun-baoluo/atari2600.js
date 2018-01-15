@@ -13,18 +13,10 @@ export class App {
     };
 
     private handleRom() {
-        for(; Register.PC < 61440 + RAM.romSize ;) {
-            CPU.pulse();
-            CPU.unlock();
-
-            if(TIA.expectNewFrame) {
-                TIA.nextFrame().then(() => {
-                    requestAnimationFrame(this.handleRom);
-                });
-                console.log('NEW FRAME');
-                break;
-            };
-        };
+        TIA.nextFrame().then(() => {
+            requestAnimationFrame(this.handleRom);
+            console.log('NEW FRAME');
+        });
     };
 
     public processFile(file: any)  {

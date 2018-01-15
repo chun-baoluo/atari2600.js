@@ -30,7 +30,7 @@ abstract class GameObject {
 
         this._canvas.width = 160;
 
-        this._canvas.height = 192;
+        this._canvas.height = 212;
 
         this._ctx = this._canvas.getContext('2d');
 
@@ -369,18 +369,6 @@ export class TIA {
 
     private static _canvas: any = null;
 
-    public static ctx: any = null;
-
-    public static clock: number = 0;
-
-	public static imageData: any = null;
-
-    public static expectNewFrame: boolean = false;
-
-    public static nusiz0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
     private static _resm0: boolean = false;
 
     private static _resm1: boolean = false;
@@ -388,22 +376,36 @@ export class TIA {
     private static _resp0: boolean = false;
 
     private static _resp1: boolean = false;
+    
+    public static ball: Ball = new Ball();
+    
+    public static bk: Background = new Background();
+
+    public static ctx: any = null;
+
+    public static clock: number = 0;
+
+	public static imageData: any = null;
+
+    public static expectNewFrame: boolean = false;
+    
+    public static m0: Missile = new Missile(0);
+
+    public static m1: Missile = new Missile(1);
+
+    public static nusiz0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+
+    public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
     public static p0: Player = new Player(0);
 
     public static p1: Player = new Player(1);
 
-    public static m0: Missile = new Missile(0);
-
-    public static m1: Missile = new Missile(1);
-
-    public static pfp: boolean = false;
-
-    public static bk: Background = new Background();
-
     public static pf: Playfield = new Playfield();
 
-    public static ball: Ball = new Ball();
+    public static pfp: boolean = false;
+    
+    public static scanline: number = 0;
 
     public static color(val: string) {
         return this.colorPalette.get(val.slice(0, -1));
@@ -418,7 +420,7 @@ export class TIA {
 
         this._canvas.width = 160;
 
-        this._canvas.height = 192;
+        this._canvas.height = 212;
 
         this.ctx = canvas.getContext('2d');
 
@@ -492,57 +494,33 @@ export class TIA {
     };
 
     public static nextFrame() {
-        return new Promise((resolve: Function) => {
-            for(let scanline = 0; scanline < 3; scanline++) {
-                for(this.clock = 0; this.clock < 228; this.clock += 3) {
-                    CPU.pulse();
-                };
-
-                CPU.unlock();
-            };
-
-            for(let scanline = 0; scanline < 37; scanline++) {
-                for(this.clock = 0; this.clock < 228; this.clock += 3) {
-                    CPU.pulse();
-                };
-
-                CPU.unlock();
-            };
-
-            for(let scanline = 0; scanline < 192; scanline++) {
-                for(this.clock = 0; this.clock < 68; this.clock += 3) {
-                    CPU.pulse();
-                };
-
-                let counter: number = 2;
-                for(this.clock = 68; this.clock < 228; this.clock += 1) {
-                    this.pixel(scanline, this.clock - 68);
-
-                    if(counter > 2) {
-                        counter = 0;
+            return new Promise((resolve: Function) => {
+                for(this.scanline = 0; this.scanline < 262; this.scanline++) {
+                    for(this.clock = 0; this.clock < 68; this.clock += 3) {
                         CPU.pulse();
                     };
-
-                    counter++;
+    
+                    let counter: number = 2;
+                    for(this.clock = 68; this.clock < 228; this.clock += 1) {
+                        if(this.scanline > 30 && this.scanline < 242) {
+                            this.pixel(this.scanline - 30, this.clock - 68);
+                        };
+    
+                        if(counter > 2) {
+                            counter = 0;
+                            CPU.pulse();
+                        };
+    
+                        counter++;
+                    };
+    
+                    CPU.unlock();
                 };
-
-                CPU.unlock();
-            };
-
-            this.draw();
-
-            for(let scanline = 0; scanline < 30; scanline++) {
-                for(this.clock = 0; this.clock < 228; this.clock += 3) {
-                    CPU.pulse();
-                };
-
-                CPU.unlock();
-            };
-
-            this.expectNewFrame = false;
-
-            resolve(true);
-        });
+                
+                this.draw();
+    
+                resolve(true);
+            });
     };
 
     private static pixel(scanline: number, clock: number) {

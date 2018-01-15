@@ -89,7 +89,7 @@ export class RAM {
 	private static 0x00(value: number) {
 		if(value === undefined) return;
 		if(Convert.toBin(this.memory[0x00]).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
-			TIA.expectNewFrame = true;
+			TIA.scanline = 0;
 		};
 		return value;
 	};
