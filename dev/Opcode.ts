@@ -11,6 +11,14 @@ export class Opcode {
         let right: string = ('000' + pc2.toString(16)).slice(-4);
         return left.charAt(0) != right.charAt(0) || left.charAt(1) != right.charAt(1);
     };
+    
+    private static isZero(value: number) {
+        return (value == 0 ? 1 : 0)
+    };
+    
+    private static isNegative(value: number) {
+        return (Convert.toInt8(value) < 0 ? 1 : 0);
+    };
 
     private static ADC(value: number) {
         let old: number = Register.A;
@@ -27,9 +35,9 @@ export class Opcode {
 
         Register.A = Convert.toUint8(result);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         Flag.V = ((~(old ^ RAM.get(Register.PC)) & (old ^ Register.A) & 0x80) == Register.A ? 1 : 0);
     };
@@ -37,9 +45,9 @@ export class Opcode {
     private static AND(value: number) {
         Register.A = Register.A & value;
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
     };
 
     private static CMP(name: string, value: number) {
@@ -64,9 +72,9 @@ export class Opcode {
     private static ORA(value: number) {
         Register.A = Register.A | value;
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
     };
 
     private static POP() {
@@ -148,9 +156,9 @@ export class Opcode {
 
         Register.A = Convert.toUint8(Register.A << 1);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         Flag.C = parseInt(carry);
 
@@ -183,9 +191,9 @@ export class Opcode {
 
         RAM.write(address, value);
 
-        Flag.Z = (value == 0 ? 1 : 0);
+        Flag.Z = this.isZero(value);
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -234,7 +242,7 @@ export class Opcode {
 
         let bin: string = Convert.toBin(value);
 
-        Flag.Z = ((Register.A & value) == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A & value);
 
         Flag.N = (bin.charAt(0) == '1' ? 1 : 0);
 
@@ -266,9 +274,9 @@ export class Opcode {
 
         RAM.write(address, value);
 
-        Flag.Z = (value == 0 ? 1 : 0);
+        Flag.Z = this.isZero(value);
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -297,9 +305,9 @@ export class Opcode {
 
         Register.A = value;
 
-        Flag.Z = (value == 0 ? 1 : 0);
+        Flag.Z = this.isZero(value);
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -312,7 +320,7 @@ export class Opcode {
 
         let bin: string = Convert.toBin(value);
 
-        Flag.Z = ((Register.A & value) == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A & value);
 
         Flag.N = (bin.charAt(0) == '1' ? 1 : 0);
 
@@ -342,9 +350,9 @@ export class Opcode {
 
         RAM.write(address, value);
 
-        Flag.Z = (value == 0 ? 1 : 0);
+        Flag.Z = this.isZero(value);
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -386,9 +394,9 @@ export class Opcode {
     public static 0x45() {
         Register.A = Register.A ^ RAM.read(RAM.get(++Register.PC));
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 3;
     };
@@ -407,7 +415,7 @@ export class Opcode {
 
         Flag.Z = 0;
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -425,9 +433,9 @@ export class Opcode {
     public static 0x49() {
         Register.A = Register.A ^ RAM.get(++Register.PC);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 2;
     };
@@ -440,7 +448,7 @@ export class Opcode {
 
         Flag.Z = 0;
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         Flag.C = parseInt(carry);
 
@@ -473,7 +481,7 @@ export class Opcode {
 
         Flag.Z = 0;
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -524,9 +532,9 @@ export class Opcode {
 
         RAM.write(address, parseInt(rotated, 2));
 
-        Flag.Z = (RAM.get(address) == 0 ? 1 : 0);
+        Flag.Z = this.isZero(RAM.get(address));
 
-        Flag.N = (Convert.toInt8(RAM.get(address)) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(RAM.get(address));
 
         Flag.C = parseInt(carry);
 
@@ -537,9 +545,9 @@ export class Opcode {
     public static 0x68() {
         Register.A = this.POP();
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 4;
     };
@@ -561,9 +569,9 @@ export class Opcode {
 
         Register.A = Convert.toUint8(parseInt(rotated, 2));
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         Flag.C = parseInt(carry);
 
@@ -598,9 +606,9 @@ export class Opcode {
 
         RAM.write(address, value);
 
-        Flag.Z = (value == 0 ? 1 : 0);
+        Flag.Z = this.isZero(value);
 
-        Flag.N = (Convert.toInt8(value) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(value);
 
         Flag.C = parseInt(carry);
 
@@ -652,9 +660,9 @@ export class Opcode {
     public static 0x88() {
         Register.Y = Convert.toUint8(Register.Y - 1);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 2;
     };
@@ -663,9 +671,9 @@ export class Opcode {
     public static 0x8A() {
         Register.A = Register.X;
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 2;
     };
@@ -721,17 +729,16 @@ export class Opcode {
     public static 0x98() {
         Register.A = Register.Y;
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 2;
     };
 
     // STA nnnn, Y
     public static 0x99() {
-        let address: number = this.WORD();
-        RAM.write(address + Register.Y, Register.A);
+        RAM.write(this.WORD() + Register.Y, Register.A);
 
         return 5;
     };
@@ -747,9 +754,9 @@ export class Opcode {
     public static 0xA0() {
         Register.Y = RAM.get(++Register.PC);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 2;
     };
@@ -758,9 +765,9 @@ export class Opcode {
     public static 0xA2() {
         Register.X = RAM.get(++Register.PC);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 2;
     };
@@ -769,9 +776,9 @@ export class Opcode {
     public static 0xA4() {
         Register.Y = RAM.read(RAM.get(++Register.PC));
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 3;
     };
@@ -780,9 +787,9 @@ export class Opcode {
     public static 0xA5() {
         Register.A = RAM.read(RAM.get(++Register.PC));
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 3;
     };
@@ -791,9 +798,9 @@ export class Opcode {
     public static 0xA6() {
         Register.X = RAM.read(RAM.get(++Register.PC));
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 3;
     };
@@ -802,9 +809,9 @@ export class Opcode {
     public static 0xA8() {
         Register.Y = Register.A;
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 2;
     };
@@ -813,9 +820,9 @@ export class Opcode {
     public static 0xA9() {
         Register.A = RAM.get(++Register.PC);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 2;
     };
@@ -824,48 +831,42 @@ export class Opcode {
     public static 0xAA() {
         Register.X = Register.A;
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 2;
     };
 
     // LDY nnnn
     public static 0xAC() {
-        let address: number = this.WORD();
+        Register.Y = RAM.read(this.WORD());
 
-        Register.Y = RAM.read(address);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 4;
     };
 
     // LDA nnnn
     public static 0xAD() {
-        let address: number = this.WORD();
+        Register.A = RAM.read(this.WORD());
 
-        Register.A = RAM.read(address);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 4;
     };
 
     // LDX nnnn
     public static 0xAE() {
-        let address: number = this.WORD();
+        Register.X = RAM.read(this.WORD());
 
-        Register.X = RAM.read(address);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
-
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 4;
     };
@@ -881,9 +882,9 @@ export class Opcode {
 
         Register.A = RAM.read(address);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -894,9 +895,9 @@ export class Opcode {
 
         Register.A = Register.X = RAM.read(address);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -905,9 +906,9 @@ export class Opcode {
     public static 0xB4() {
         Register.Y = RAM.read(RAM.get(++Register.PC) + Register.X);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 4;
     };
@@ -916,9 +917,9 @@ export class Opcode {
     public static 0xB5() {
         Register.A = RAM.read(RAM.get(++Register.PC) + Register.X);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 4;
     };
@@ -927,9 +928,9 @@ export class Opcode {
     public static 0xB6() {
         Register.X = RAM.read(RAM.get(++Register.PC) + Register.Y);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 4;
     };
@@ -944,11 +945,12 @@ export class Opcode {
     // LDA nnnn, Y
     public static 0xB9() {
         let address: number = this.WORD();
+        
         Register.A = RAM.read(address + Register.Y);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
@@ -957,9 +959,9 @@ export class Opcode {
     public static 0xBA() {
         Register.X = Register.S;
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 2;
     };
@@ -967,11 +969,12 @@ export class Opcode {
     // LDY nnnn, X
     public static 0xBC() {
         let address: number = this.WORD();
+        
         Register.Y = RAM.read(address + Register.X);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 4 + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
     };
@@ -979,11 +982,12 @@ export class Opcode {
     // LDA nnnn, X
     public static 0xBD() {
         let address: number = this.WORD();
+        
         Register.A = RAM.read(address + Register.X);
 
-        Flag.Z = (Register.A == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.A);
 
-        Flag.N = (Convert.toInt8(Register.A) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.A);
 
         return 4 + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
     };
@@ -993,9 +997,9 @@ export class Opcode {
         let address: number = this.WORD();
         Register.X = RAM.read(address + Register.Y);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
@@ -1024,11 +1028,12 @@ export class Opcode {
     // DEC nn
     public static 0xC6() {
         let address: number = RAM.get(++Register.PC);
+        
         let result: number = RAM.write(address, RAM.get(address) - 1);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = this.isZero(result);
 
-        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(result);
 
         return 5;
     };
@@ -1037,9 +1042,9 @@ export class Opcode {
     public static 0xC8() {
         Register.Y = Convert.toUint8(Register.Y + 1);
 
-        Flag.Z = (Register.Y == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.Y);
 
-        Flag.N = (Convert.toInt8(Register.Y) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.Y);
 
         return 2;
     };
@@ -1061,9 +1066,9 @@ export class Opcode {
     public static 0xCA() {
         Register.X = Convert.toUint8(Register.X - 1);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 2;
     };
@@ -1083,11 +1088,12 @@ export class Opcode {
     // DEC nn, X
     public static 0xD6() {
         let address: number = RAM.get(++Register.PC);
+        
         let result: number = RAM.write(address + Register.X, RAM.get(address + Register.X) - 1);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = this.isZero(result);
 
-        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(result);
 
         return 6;
     };
@@ -1141,11 +1147,12 @@ export class Opcode {
     // INC nn
     public static 0xE6() {
         let address: number = RAM.get(++Register.PC);
+        
         let result: number = RAM.write(address, RAM.get(address) + 1);
 
-        Flag.Z = (result == 0 ? 1 : 0);
+        Flag.Z = this.isZero(result);
 
-        Flag.N = (Convert.toInt8(result) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(result);
 
         return 5;
     };
@@ -1154,9 +1161,9 @@ export class Opcode {
     public static 0xE8() {
         Register.X = Convert.toUint8(Register.X + 1);
 
-        Flag.Z = (Register.X == 0 ? 1 : 0);
+        Flag.Z = this.isZero(Register.X);
 
-        Flag.N = (Convert.toInt8(Register.X) < 0 ? 1 : 0);
+        Flag.N = this.isNegative(Register.X);
 
         return 2;
     };
@@ -1175,9 +1182,7 @@ export class Opcode {
 
     // CPX nnnn
     public static 0xEC() {
-        let address: number = this.WORD();
-
-        this.CMP('X', RAM.read(address));
+        this.CMP('X', RAM.read(this.WORD()));
 
         return 4;
     };
