@@ -82,6 +82,18 @@ describe("CPU Jump and Control Instructions", () => {
         Register.PC++;
         chai.assert.strictEqual(Register.PC, 0xFF01);
     });
+    
+    it("(0x50) should jump if overflow flag isn't set", () => {
+        RAM.readRom(new Uint8Array([0x50, -0x01, 0x02]));
+
+        chai.assert.strictEqual(Opcode[0x50](), 3);
+        chai.assert.strictEqual(Register.PC, 61440);
+
+        Flag.V = 1;
+        Register.PC = 61440;
+        chai.assert.strictEqual(Opcode[0x50](), 2);
+        chai.assert.strictEqual(Register.PC, 61441);
+    });
 
     it("(0x58) should clear the interrupt disable bit", () => {
         Flag.I = 1;
@@ -176,6 +188,13 @@ describe("CPU Jump and Control Instructions", () => {
 
 describe("CPU Memory and Register Transfers", () => {
     beforeEach(beforeEachCallback);
+
+    it("(0x08) should push register P to the stack", () => {
+        Register.P = 0x05;
+
+        chai.assert.strictEqual(Opcode[0x08](), 3);
+        chai.assert.strictEqual(RAM.get(0xFF), Register.P);
+    });
 
     it("(0x48) should push register A to the stack", () => {
         Register.A = 0x05;
@@ -701,6 +720,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 1);
         chai.assert.strictEqual(Flag.C, 1);
     });
+    
+    it("(0x0D) should do OR operation with A and nnnn, change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0x0D, 0x32, 0x00, 0x33, 0x00]));
+        RAM.set(0x32, 0);
+        RAM.set(0x33, 0xFF);
+        Register.A = 0;
+
+        chai.assert.strictEqual(Opcode[0x0D](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x0D](), 5);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
 
     it("(0x16) should left shift nn + X, change N, Z and C flags", () => {
         RAM.readRom(new Uint8Array([0x16, 0x31, 0x32]));
@@ -723,10 +761,11 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x19) should do OR operation with A and nnnn + Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x19, 0x32, 0x00, 0x33, 0x00]));
+        RAM.readRom(new Uint8Array([0x19, 0x31, 0x00, 0x32, 0x00]));
         RAM.set(0x32, 0);
         RAM.set(0x33, 0xFF);
         Register.A = 0;
+        Register.Y = 0x01;
 
         chai.assert.strictEqual(Opcode[0x19](), 5);
         chai.assert.strictEqual(Register.A, 0);
@@ -736,6 +775,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         Register.A = 128;
 
         chai.assert.strictEqual(Opcode[0x19](), 5);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+    
+    it("(0x1D) should do OR operation with A and nnnn + X, change N and Z flags", () => {
+        RAM.readRom(new Uint8Array([0x1D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.set(0x32, 0);
+        RAM.set(0x33, 0xFF);
+        Register.A = 0;
+        Register.X = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x1D](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x1D](), 5);
         chai.assert.strictEqual(Register.A, 0xFF);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);

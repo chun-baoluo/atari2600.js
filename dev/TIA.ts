@@ -30,7 +30,7 @@ abstract class GameObject {
 
         this._canvas.width = 160;
 
-        this._canvas.height = 212;
+        this._canvas.height = 222;
 
         this._ctx = this._canvas.getContext('2d');
 
@@ -420,7 +420,7 @@ export class TIA {
 
         this._canvas.width = 160;
 
-        this._canvas.height = 212;
+        this._canvas.height = 222;
 
         this.ctx = canvas.getContext('2d');
 
@@ -502,7 +502,7 @@ export class TIA {
     
                     let counter: number = 2;
                     for(this.clock = 68; this.clock < 228; this.clock += 1) {
-                        if(this.scanline > 30 && this.scanline < 242) {
+                        if(this.scanline > 30 && this.scanline < 252) {
                             this.pixel(this.scanline - 30, this.clock - 68);
                         };
     

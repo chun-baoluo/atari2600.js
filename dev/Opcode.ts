@@ -122,6 +122,13 @@ export class Opcode {
 
         return 3;
     };
+    
+    // PHP
+    public static 0x08() {
+        this.PUSH(Register.P);
+
+        return 3;
+    };
 
     // ORA #nn
     public static 0x09() {
@@ -143,6 +150,15 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 2;
+    };
+    
+    // ORA nnnn
+    public static 0x0D() {
+        let address: number = this.WORD();
+
+        this.ORA(RAM.read(address));
+
+        return 4  + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // BPL nnn
@@ -185,6 +201,15 @@ export class Opcode {
         this.ORA(RAM.read(address + Register.Y));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+    };
+    
+    // ORA nnnn, X
+    public static 0x1D() {
+        let address: number = this.WORD();
+
+        this.ORA(RAM.read(address + Register.X));
+
+        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
     };
 
     // JSR nnnn
@@ -424,6 +449,11 @@ export class Opcode {
         Register.PC = address - 1;
 
         return 3;
+    };
+    
+    // BVC nnn 
+    public static 0x50() {
+        return this.CJMP('V', true);
     };
 
     // LSR nn, X
