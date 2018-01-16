@@ -90,14 +90,17 @@ export class Opcode {
     // BRK
     public static 0x00() {
         Flag.B = 1;
+        
+        let flags: number = parseInt('' + Flag.N + Flag.V + Flag.U + Flag.B + Flag.D + Flag.I + Flag.Z + Flag.C, 2);
+        
         Flag.I = 1;
 
         this.PUSH((Register.PC + 1) >> 8);
 
         this.PUSH(Register.PC + 1);
 
-        this.PUSH(Register.P);
-
+        this.PUSH(flags);
+        
         Register.PC = RAM.read(0xFFFE);
 
         return 7;
@@ -125,7 +128,9 @@ export class Opcode {
     
     // PHP
     public static 0x08() {
-        this.PUSH(Register.P);
+        let flags: number = parseInt('' + Flag.N + Flag.V + 1 + 1 + Flag.D + Flag.I + Flag.Z + Flag.C, 2);
+        
+        this.PUSH(flags);
 
         return 3;
     };
@@ -563,6 +568,11 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 2;
+    };
+    
+    // BVS nnn 
+    public static 0x70() {
+        return this.CJMP('V', false);
     };
 
     // ADC nn, X

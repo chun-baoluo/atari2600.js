@@ -5,7 +5,6 @@ import { TIA } from './TIA';
 
 export class Register {
 	public static A: number = 0; // Accumulator
-	public static P: number = 0; // Processor Counter
 	public static PC: number = 61440; // Program Counter
 	public static S: number = 0xFF; // Stack Pointer
 	public static X: number = 0; // Index Register X
@@ -20,6 +19,7 @@ export class Flag {
 	public static N: number = 0; // Negative/Sign
 	public static V: number = 0; // Overflow
 	public static Z: number = 0; // Zero
+	public static U: number = 0; // Unused flag
 };
 
 export class RAM {

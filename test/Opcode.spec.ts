@@ -25,9 +25,11 @@ describe("CPU Jump and Control Instructions", () => {
     beforeEach(beforeEachCallback);
 
     it("(0x00) should set break and interrupt flags, increase programm counter by two and put it to the stack pointer", () => {
+        Flag.C = 1;
         chai.assert.strictEqual(Opcode[0x00](), 7);
         chai.assert.strictEqual(Flag.B, 1);
         chai.assert.strictEqual(Flag.I, 1);
+        chai.assert.strictEqual(RAM.get(Register.S + 1), parseInt('' + Flag.N + Flag.V + Flag.U + 1 + Flag.D + 0 + Flag.Z + Flag.C, 2));
         chai.assert.strictEqual(Register.PC, 0);
         chai.assert.strictEqual(Register.S, 0xFC);
     });
@@ -106,6 +108,18 @@ describe("CPU Jump and Control Instructions", () => {
         Register.S = 0xFD;
         chai.assert.strictEqual(Opcode[0x60](), 6);
         chai.assert.strictEqual(Register.S, 0xFF);
+    });
+    
+    it("(0x70) should jump if overflow flag is set", () => {
+        RAM.readRom(new Uint8Array([0x70, -0x01, 0x02]));
+        Flag.V = 1;
+        chai.assert.strictEqual(Opcode[0x70](), 3);
+        chai.assert.strictEqual(Register.PC, 61440);
+
+        Flag.V = 0;
+        Register.PC = 61440;
+        chai.assert.strictEqual(Opcode[0x70](), 2);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0x78) should set the interrupt disable bit", () => {
@@ -190,10 +204,11 @@ describe("CPU Memory and Register Transfers", () => {
     beforeEach(beforeEachCallback);
 
     it("(0x08) should push register P to the stack", () => {
-        Register.P = 0x05;
+        Flag.C = 1;
+        Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0x08](), 3);
-        chai.assert.strictEqual(RAM.get(0xFF), Register.P);
+        chai.assert.strictEqual(RAM.get(0xFF), 51);
     });
 
     it("(0x48) should push register A to the stack", () => {
