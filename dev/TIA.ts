@@ -2,9 +2,6 @@ import { Convert } from './Common';
 import { RAM } from './RAM';
 import { CPU } from './CPU';
 
-// TODO: String to number for colors
-// TODO: Move player nusiz position calculation to RAM
-
 interface GameObject {
     position?: number;
 };
@@ -16,7 +13,7 @@ abstract class GameObject {
 
     public get canvas() {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-        this._ctx.putImageData(this._imageData, this.position || 0, 0);
+        this._ctx.putImageData(this._imageData, 0, 0);
         this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
         return this._canvas;
     };
@@ -211,9 +208,9 @@ class Player extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        let offset: number = (this.position == null ? 80 * this.player : 0);
+        let offset: number = (!this.position ? 80 * this.player : 0);
         for(let p of this.pixelRange) {
-            if(clock >= (offset + p) && clock < (offset + p + 8) && this.grp[clock % 8] == '1') {
+            if(clock >= ((this.position || offset) + p) && clock < ((this.position || offset) + p + 8) && this.grp[(clock - this.position) % 8] == '1') {
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
@@ -431,44 +428,28 @@ export class TIA {
         this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
 
-    public static get resm0() {
-        return this._resm0;
-    };
-
     public static set resm0(resm0: boolean) {
         this._resm0 = resm0;
 
-        this.m0.position = (this.clock <= 68 ? null : this.clock - 68);
-    };
-
-    public static get resm1() {
-        return this._resm1;
+        this.m0.position = (this.clock <= 68 ? 2 : this.clock - 68);
     };
 
     public static set resm1(resm1: boolean) {
         this._resm1 = resm1;
 
-        this.m1.position = (this.clock <= 68 ? null : this.clock - 68);
-    };
-
-    public static get resp0() {
-        return this._resp0;
+        this.m1.position = (this.clock <= 68 ? 2 : this.clock - 68);
     };
 
     public static set resp0(resp0: boolean) {
         this._resp0 = resp0;
 
-        this.p0.position = (this.clock <= 68 ? null : this.clock - 68);
-    };
-
-    public static get resp1() {
-        return this._resp1;
+        this.p0.position = (this.clock <= 68 ? 3 : this.clock - 68);
     };
 
     public static set resp1(resp1: boolean) {
         this._resp1 = resp1;
 
-        this.p1.position = (this.clock <= 68 ? null : this.clock - 68);
+        this.p1.position = (this.clock <= 68 ? 3 : this.clock - 68);
     };
 
     private static draw() {

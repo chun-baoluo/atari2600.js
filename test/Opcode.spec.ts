@@ -1755,19 +1755,15 @@ describe("CPU Arithmetic/Logical Operations", () => {
 describe("CPU Illegal Opcodes", () => {
     beforeEach(beforeEachCallback);
 
-    it("(0x04) should do NOP", () => {
+    it("(0x04, 0x44, 0x64) should do NOP", () => {
         chai.assert.strictEqual(Opcode[0x04](), 3);
         chai.assert.strictEqual(Register.PC, 61441);
     });
-
-    it("(0x44) should do NOP", () => {
-        chai.assert.strictEqual(Opcode[0x44](), 3);
-        chai.assert.strictEqual(Register.PC, 61441);
-    });
-
-    it("(0x64) should do NOP", () => {
-        chai.assert.strictEqual(Opcode[0x64](), 3);
-        chai.assert.strictEqual(Register.PC, 61441);
+    
+    it("(0x1C, 0x3C, 0x5C, 0x7C, 0xDC, 0xFC) should do NOP", () => {
+        RAM.readRom(new Uint8Array([0x1C, 0x31, 0x32]));
+        chai.assert.strictEqual(Opcode[0x1C](), 5);
+        chai.assert.strictEqual(Register.PC, 61442);
     });
 
     it("(0xB3) should do LAX with (nn) and Y, change Z and N flags", () => {

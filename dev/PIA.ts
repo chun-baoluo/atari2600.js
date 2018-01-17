@@ -30,7 +30,7 @@ export class PIA {
     };
     
     private static keydown(e: any) {
-        let key = e.key;        
+        let key = e.keyCode;        
         let swcha: any = Convert.toBin(RAM.get(0x280)).split('');
         let input1: any = Convert.toBin(RAM.get(0x3C)).split('');
         

@@ -216,6 +216,11 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
     
+    // NOP
+    public static 0x1C() {    
+        return 4  + (this.isNextPage(Register.PC, this.WORD() + Register.X) ? 1 : 0);
+    };
+    
     // ORA nnnn, X
     public static 0x1D() {
         let address: number = this.WORD();
@@ -374,6 +379,11 @@ export class Opcode {
 
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
+    
+    // NOP
+    public static 0x3C() {    
+        return this[0x1C]();
+    };
 
     // AND nnnn, X
     public static 0x3D() {
@@ -386,8 +396,7 @@ export class Opcode {
 
     // NOP
     public static 0x44() {
-        Register.PC++;
-        return 3;
+        return this[0x04]();
     };
 
     // EOR nn
@@ -494,6 +503,11 @@ export class Opcode {
 
         return 2;
     };
+    
+    // NOP
+    public static 0x5C() {    
+        return this[0x1C]();
+    };
 
     // RTS
     public static 0x60() {
@@ -506,8 +520,7 @@ export class Opcode {
 
     // NOP
     public static 0x64() {
-        Register.PC++;
-        return 3;
+        return this[0x04]();
     };
 
     // ADC nn
@@ -628,6 +641,11 @@ export class Opcode {
         this.ADC(RAM.read(address + Register.Y));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+    };
+    
+    // NOP
+    public static 0x7C() {    
+        return this[0x1C]();
     };
 
     // ADC nnnn, X
@@ -1113,6 +1131,11 @@ export class Opcode {
 
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
+    
+    // NOP
+    public static 0xDC() {    
+        return this[0x1C]();
+    };
 
     // CMP nnnn, X
     public static 0xDD() {
@@ -1204,5 +1227,10 @@ export class Opcode {
         Flag.D = 1;
 
         return 2;
+    };
+    
+    // NOP
+    public static 0xFC() {    
+        return this[0x1C]();
     };
 };
