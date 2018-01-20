@@ -165,7 +165,7 @@ class Ball extends GameObject {
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
-        if(this.enabl && (this.sizeCounter--) != 0) {
+        if(this.enabl && clock >= this.position && clock < this.position + this.size) {
             return this.setImageData(scanline, clock, this.colupf);
         };
     };
@@ -186,7 +186,7 @@ class Missile extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        if(this.enam && (this.sizeCounter--) != 0) {
+        if(this.enam && clock >= this.position && clock < this.position + this.size) {
             return this.setImageData(scanline, clock, this.colup);
         };
     };
@@ -210,6 +210,7 @@ class Player extends GameObject {
 
     pixel(scanline: number, clock: number) {
         let offset: number = (!this.position ? 80 * this.player : 0);
+
         for(let p of this.pixelRange) {
             if(clock >= ((this.position || offset) + p) && clock < ((this.position || offset) + p + 8) && this.grp[(clock - this.position) % 8] == '1') {
                 return this.setImageData(scanline, clock, this.colup);

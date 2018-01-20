@@ -230,21 +230,21 @@ export class RAM {
 	// GRP0 write
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
-		if(!TIA.p0.vdelp) {
+		//if(!TIA.p0.vdelp) {
 			TIA.p1.vdelp = false;
 			TIA.p0.grp = Convert.toBin(value).split('');
-		};
+		//};
 		return value;
 	};
 
 	// GRP1 write
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
-		if(!TIA.p1.vdelp) {
+		//if(!TIA.p1.vdelp) {
 			TIA.p0.vdelp = false;
 			TIA.ball.vdelbl = false;
 			TIA.p1.grp = Convert.toBin(value).split('');
-		};
+		//};
 		return value;
 	};
 
@@ -273,6 +273,46 @@ export class RAM {
 		return value;
 	};
 
+	// HMP0 write
+	private static 0x20(value: number) {
+		if(value === undefined) return;
+		let bit: Array<string> = Convert.toBin(value).split('');
+		TIA.p0.hmp = parseInt(bit[1] + bit[2] + bit[3], 2) - (bit[0] == '1' ? 8 : 0);
+		return value;
+	};
+
+	// HMP1 write
+	private static 0x21(value: number) {
+		if(value === undefined) return;
+		let bit: Array<string> = Convert.toBin(value).split('');
+		TIA.p1.hmp = parseInt(bit[1] + bit[2] + bit[3], 2) - (bit[0] == '1' ? 8 : 0);
+		return value;
+	};
+
+	// HMM0 write
+	private static 0x22(value: number) {
+		if(value === undefined) return;
+		let bit: Array<string> = Convert.toBin(value).split('');
+		TIA.m0.hmm = parseInt(bit[1] + bit[2] + bit[3], 2) - (bit[0] == '1' ? 8 : 0);
+		return value;
+	};
+
+	// HMM1 write
+	private static 0x23(value: number) {
+		if(value === undefined) return;
+		let bit: Array<string> = Convert.toBin(value).split('');
+		TIA.m1.hmm = parseInt(bit[1] + bit[2] + bit[3], 2) - (bit[0] == '1' ? 8 : 0);
+		return value;
+	};
+
+	// HMBL write
+	private static 0x24(value: number) {
+		if(value === undefined) return;
+		let bit: Array<string> = Convert.toBin(value).split('');
+		TIA.ball.hmbl = parseInt(bit[1] + bit[2] + bit[3], 2) - (bit[0] == '1' ? 8 : 0);
+		return value;
+	};
+
 	// VDELP0 write
 	private static 0x25(value: number) {
 		if(value === undefined) return;
@@ -291,6 +331,17 @@ export class RAM {
 	private static 0x27(value: number) {
 		if(value === undefined) return;
 		TIA.ball.vdelbl = (Convert.toBin(value).charAt(7) == '1');
+		return value;
+	};
+
+	// HMOVE write
+	private static 0x2A(value: number) {
+		if(value === undefined) return;
+		TIA.p0.position -= TIA.p0.hmp;
+		TIA.p1.position -= TIA.p1.hmp;
+		TIA.m0.position -= TIA.m0.hmm;
+		TIA.m1.position -= TIA.m1.hmm;
+		TIA.ball.position -= TIA.ball.hmbl;
 		return value;
 	};
 
