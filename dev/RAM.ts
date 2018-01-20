@@ -48,17 +48,15 @@ export class RAM {
 
 		this.memory = new Uint8Array(61440 + rom.length);
 
-		this.memory[0x3C] = 0xFF;
-
-		this.memory[0x280] = 0xFF;
+		for(let i = 0; i < 61440; i++) {
+			this.memory[i] = 0xFF;
+		};
 
 		this.memory[0x284] = (Math.random() * 255) >> 0;
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
 		this.memory[0x296] = (Math.random() * 255) >> 0;
 		this.memory[0x297] = (Math.random() * 255) >> 0;
-		
-		
 
 		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
 			this.memory.set(rom, i);
@@ -88,7 +86,7 @@ export class RAM {
 	// VSYNC write
 	private static 0x00(value: number) {
 		if(value === undefined) return;
-		if(Convert.toBin(this.memory[0x00]).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
+		if(TIA.scanline != 0 && Convert.toBin(this.memory[0x00]).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
 			TIA.scanline = 0;
 		};
 		return value;
@@ -197,28 +195,35 @@ export class RAM {
 	// RESP0 write
 	private static 0x10(value: number) {
 		if(value === undefined) return;
-		TIA.resp0 = true;
+		TIA.p0.position = (TIA.clock <= 68 ? 3 : TIA.clock - 68);
 		return value;
 	};
 
 	// RESP1 write
 	private static 0x11(value: number) {
 		if(value === undefined) return;
-		TIA.resp1 = true;
+		TIA.p1.position = (TIA.clock <= 68 ? 3 : TIA.clock - 68);
 		return value;
 	};
 
 	// RESM0 write
 	private static 0x12(value: number) {
 		if(value === undefined) return;
-		TIA.resm0 = true;
+		TIA.m0.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
 		return value;
 	};
 
 	// RESM1 write
 	private static 0x13(value: number) {
 		if(value === undefined) return;
-		TIA.resm1 = true;
+		TIA.m1.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
+		return value;
+	};
+
+	// RESBL write
+	private static 0x14(value: number) {
+		if(value === undefined) return;
+		TIA.ball.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
 		return value;
 	};
 
@@ -227,7 +232,7 @@ export class RAM {
 		if(value === undefined) return;
 		if(!TIA.p0.vdelp) {
 			TIA.p1.vdelp = false;
-			TIA.p0.grp = Convert.toBin(value).split('');		
+			TIA.p0.grp = Convert.toBin(value).split('');
 		};
 		return value;
 	};
@@ -267,28 +272,28 @@ export class RAM {
 		};
 		return value;
 	};
-	
+
 	// VDELP0 write
 	private static 0x25(value: number) {
 		if(value === undefined) return;
 		TIA.p0.vdelp = (Convert.toBin(value).charAt(7) == '1');
 		return value;
 	};
-	
+
 	// VDELP1 write
 	private static 0x26(value: number) {
 		if(value === undefined) return;
 		TIA.p1.vdelp = (Convert.toBin(value).charAt(7) == '1');
 		return value;
 	};
-	
+
 	// VDELBL write
 	private static 0x27(value: number) {
 		if(value === undefined) return;
 		TIA.ball.vdelbl = (Convert.toBin(value).charAt(7) == '1');
 		return value;
 	};
-	
+
 	// HMCLR write
 	private static 0x2B(value: number) {
 		if(value === undefined) return;

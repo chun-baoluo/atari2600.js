@@ -157,10 +157,11 @@ class Playfield extends GameObject {
 
 class Ball extends GameObject {
     public colupf: Array<number> = [0, 0, 0];
-    public size: number = 1;
-    public sizeCounter = 0;
     public enabl: boolean = false;
     public hmbl: number = 0;
+    public position: number = null;
+    public size: number = 1;
+    public sizeCounter = 0;
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
@@ -366,16 +367,8 @@ export class TIA {
 
     private static _canvas: any = null;
 
-    private static _resm0: boolean = false;
-
-    private static _resm1: boolean = false;
-
-    private static _resp0: boolean = false;
-
-    private static _resp1: boolean = false;
-    
     public static ball: Ball = new Ball();
-    
+
     public static bk: Background = new Background();
 
     public static ctx: any = null;
@@ -385,7 +378,7 @@ export class TIA {
 	public static imageData: any = null;
 
     public static expectNewFrame: boolean = false;
-    
+
     public static m0: Missile = new Missile(0);
 
     public static m1: Missile = new Missile(1);
@@ -401,7 +394,7 @@ export class TIA {
     public static pf: Playfield = new Playfield();
 
     public static pfp: boolean = false;
-    
+
     public static scanline: number = 0;
 
     public static color(val: string) {
@@ -428,30 +421,6 @@ export class TIA {
         this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
 
-    public static set resm0(resm0: boolean) {
-        this._resm0 = resm0;
-
-        this.m0.position = (this.clock <= 68 ? 2 : this.clock - 68);
-    };
-
-    public static set resm1(resm1: boolean) {
-        this._resm1 = resm1;
-
-        this.m1.position = (this.clock <= 68 ? 2 : this.clock - 68);
-    };
-
-    public static set resp0(resp0: boolean) {
-        this._resp0 = resp0;
-
-        this.p0.position = (this.clock <= 68 ? 3 : this.clock - 68);
-    };
-
-    public static set resp1(resp1: boolean) {
-        this._resp1 = resp1;
-
-        this.p1.position = (this.clock <= 68 ? 3 : this.clock - 68);
-    };
-
     private static draw() {
         if(this.pfp) {
             this.ctx.drawImage(this.bk.canvas, 0, 0);
@@ -461,10 +430,10 @@ export class TIA {
             this.ctx.drawImage(this.m0.canvas, 0, 0);
             this.ctx.drawImage(this.pf.canvas, 0, 0);
             this.ctx.drawImage(this.ball.canvas, 0, 0);
-        
+
             return;
         };
-        
+
         this.ctx.drawImage(this.bk.canvas, 0, 0);
         this.ctx.drawImage(this.pf.canvas, 0, 0);
         this.ctx.drawImage(this.ball.canvas, 0, 0);
@@ -480,26 +449,26 @@ export class TIA {
                     for(this.clock = 0; this.clock < 68; this.clock += 3) {
                         CPU.pulse();
                     };
-    
+
                     let counter: number = 2;
                     for(this.clock = 68; this.clock < 228; this.clock += 1) {
                         if(this.scanline > 30 && this.scanline < 252) {
                             this.pixel(this.scanline - 30, this.clock - 68);
                         };
-    
+
                         if(counter > 2) {
                             counter = 0;
                             CPU.pulse();
                         };
-    
+
                         counter++;
                     };
-    
+
                     CPU.unlock();
                 };
-                
+
                 this.draw();
-    
+
                 resolve(true);
             });
     };
@@ -513,10 +482,10 @@ export class TIA {
         this.m1.pixel(scanline, clock);
         this.ball.pixel(scanline, clock);
     };
-    
+
     public static getPixelRange(player: number, value: number) {
         let range: Array<number> = [0];
-        
+
         switch(value) {
             case 1:
                 range = [0, 16];
@@ -540,7 +509,7 @@ export class TIA {
                 range = [0, 8, 16, 24];
                 break;
         };
-        
+
         return range;
     };
 };
