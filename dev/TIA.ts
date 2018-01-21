@@ -18,10 +18,6 @@ abstract class GameObject {
         return this._canvas;
     };
 
-    public set canvas(canvas: any) {
-        this._canvas = canvas;
-    };
-
     constructor() {
         this._canvas = document.createElement('canvas');
 
@@ -202,7 +198,7 @@ class Player extends GameObject {
     public refp: boolean = false;
     public vdelp: boolean = false;
     public pixelRange: Array<number> = [0];
-
+    
     constructor(player: number = 0) {
         super();
         this.player = player;
@@ -212,7 +208,9 @@ class Player extends GameObject {
         let offset: number = (!this.position ? 80 * this.player : 0);
 
         for(let p of this.pixelRange) {
-            if(clock >= ((this.position || offset) + p) && clock < ((this.position || offset) + p + 8) && this.grp[(clock - this.position) % 8] == '1') {
+            let startingPosition: number = ((this.position || offset) + p);
+
+            if(clock >= startingPosition && clock < startingPosition + 8 && this.grp[(clock - this.position) % 8] == '1') {
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
@@ -400,10 +398,6 @@ export class TIA {
 
     public static color(val: string) {
         return this.colorPalette.get(val.slice(0, -1));
-    };
-
-    public static get canvas() {
-        return this._canvas;
     };
 
     public static set canvas(canvas: any) {
