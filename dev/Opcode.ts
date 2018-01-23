@@ -179,6 +179,15 @@ export class Opcode {
         return this.CJMP('N', true);
     };
 
+    // ORA (nn), Y
+    public static 0x11() {
+        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
+
+        this.ORA(RAM.read(address));
+
+        return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
+    };
+
     // ASL nn, X
     public static 0x16() {
         let address: number = RAM.get(++Register.PC) + Register.X;
@@ -1256,5 +1265,13 @@ export class Opcode {
     // NOP
     public static 0xFC() {
         return this[0x1C]();
+    };
+
+    // SBC nnnn, X
+    public static 0xFD() {
+        let address = this.WORD() + Register.X;
+        this.ADC(~RAM.read(address));
+
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 };
