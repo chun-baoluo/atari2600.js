@@ -1786,6 +1786,24 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Register.PC, 61442);
     });
 
+    it("(0xA7) should do LAX with nn, change Z and N flags", () => {
+        RAM.readRom(new Uint8Array([0xA7, 0x32, 0x33]));
+        RAM.set(0x32, 128);
+        RAM.set(0x33, 0);
+
+        chai.assert.strictEqual(Opcode[0xA7](), 3);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Register.A, Register.X);
+
+        chai.assert.strictEqual(Opcode[0xA7](), 3);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Register.A, Register.X);
+    });
+
     it("(0xB3) should do LAX with (nn) and Y, change Z and N flags", () => {
         RAM.readRom(new Uint8Array([0xB3, 0x31, 0x32]));
         RAM.set(0x31, 0x33);

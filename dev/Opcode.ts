@@ -823,6 +823,17 @@ export class Opcode {
         return 3;
     };
 
+    // LAX nn
+    public static 0xA7() {
+        Register.A = Register.X = RAM.read(RAM.get(++Register.PC));
+
+        Flag.Z = this.isZero(Register.A);
+
+        Flag.N = this.isNegative(Register.A);
+
+        return 3;
+    };
+
     // TAY
     public static 0xA8() {
         Register.Y = Register.A;
