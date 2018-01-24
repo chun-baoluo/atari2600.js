@@ -25,8 +25,6 @@ export class Flag {
 export class RAM {
 	public static memory: Uint8Array = new Uint8Array(65536);
 
-	public static romSize: number = null;
-
 	public static get(address: number) {
 		return this.memory[address];
 	};
@@ -42,9 +40,17 @@ export class RAM {
 	};
 
 	public static readRom(rom: Uint8Array) {
-		this.reset();
+		let romSize = rom.length;
+		let original: Uint8Array = rom;
 
-		this.romSize = rom.length;
+		for(let i = romSize; i < 0x1000; i += romSize) {
+			let old: Uint8Array = rom;
+			rom = new Uint8Array(i + romSize);
+			rom.set(old, 0);
+			rom.set(original, i);
+		};
+
+		this.reset();
 
 		this.memory = new Uint8Array(61440 + rom.length);
 

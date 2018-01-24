@@ -707,24 +707,21 @@ export class Opcode {
 
     // STY nnnn
     public static 0x8C() {
-        let address: number = this.WORD();
-        RAM.write(address, Register.Y);
+        RAM.write(this.WORD(), Register.Y);
 
         return 4;
     };
 
     // STA nnnn
     public static 0x8D() {
-        let address: number = this.WORD();
-        RAM.write(address, Register.A);
+        RAM.write(this.WORD(), Register.A);
 
         return 4;
     };
 
     // STX nnnn
     public static 0x8E() {
-        let address: number = this.WORD();
-        RAM.write(address, Register.X);
+        RAM.write(this.WORD(), Register.X);
 
         return 4;
     };
@@ -775,6 +772,13 @@ export class Opcode {
         Register.S = Register.X;
 
         return 2;
+    };
+
+    // STA nnnn, X
+    public static 0x9D() {
+        RAM.write(this.WORD() + Register.X, Register.A);
+
+        return 5;
     };
 
     // LDY #nn
