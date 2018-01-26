@@ -3,6 +3,7 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Decimal mode for ABD/SBC
+// TODO: Check if combined ALU-opcodes work properly
 
 export class Opcode {
 
@@ -1076,6 +1077,21 @@ export class Opcode {
         Flag.Z = this.isZero(result);
 
         Flag.N = this.isNegative(result);
+
+        return 5;
+    };
+
+    // DCP op
+    public static 0xC7() {
+        let address: number = RAM.get(++Register.PC);
+
+        let value: number = RAM.write(address, RAM.get(address) - 1);
+
+        Flag.Z = (Register.A == value ? 1 : 0);
+
+        Flag.N = (Register.A < value ? 1 : 0);
+
+        Flag.C = (Register.A >= value ? 1 : 0);
 
         return 5;
     };

@@ -12,7 +12,6 @@ abstract class GameObject {
     protected _imageData: any = null;
 
     public get canvas() {
-        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this._ctx.putImageData(this._imageData, 0, 0);
         this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
         return this._canvas;
@@ -198,7 +197,7 @@ class Player extends GameObject {
     public refp: boolean = false;
     public vdelp: boolean = false;
     public pixelRange: Array<number> = [0];
-    
+
     constructor(player: number = 0) {
         super();
         this.player = player;

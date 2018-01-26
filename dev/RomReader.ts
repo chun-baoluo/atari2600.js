@@ -3,8 +3,6 @@ export class RomReader {
 
     rom: Uint8Array;
 
-    romSize: number;
-    
     reader: FileReader = new FileReader();
 
     constructor(file: any, callback: Function) {

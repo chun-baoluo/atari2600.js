@@ -5,7 +5,7 @@ import { TIA } from './TIA';
 
 export class Register {
 	public static A: number = 0; // Accumulator
-	public static PC: number = 61440; // Program Counter
+	public static PC: number = 0xF000; // Program Counter
 	public static S: number = 0xFF; // Stack Pointer
 	public static X: number = 0; // Index Register X
 	public static Y: number = 0; // Index Register Y
@@ -67,6 +67,9 @@ export class RAM {
 		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
 			this.memory.set(rom, i);
 		};
+
+		// Reset vector
+		Register.PC = ((this.memory[0xFFFD] & 0xFF) << 8) | (this.memory[0xFFFC] & 0xFF);
 	};
 
 	public static reset() {

@@ -21,7 +21,12 @@ describe("TIA", () => {
 
         let rom: Uint8Array = new Uint8Array(19912);
 
+        RAM.memory[0x0FFC] = 0;
+        RAM.memory[0x0FFD] = 0xF0;
+
         RAM.readRom(rom);
+
+        Register.PC = 0xF000;
 
         for(let i in rom) {
             RAM.set(61440 + parseInt(i), 0xFA);

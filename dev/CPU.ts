@@ -25,7 +25,7 @@ export class CPU {
 				// console.log(RAM.get(Register.PC).toString(16));
 				this._cycle = Opcode[RAM.get(Register.PC)]();
 			} catch(e) {
-				console.log('Error', RAM.get(Register.PC).toString(16), Register.PC);
+				console.log('Error', RAM.get(Register.PC).toString(16), Register.PC.toString(16));
 				throw e;
 			};
 			Register.PC++;

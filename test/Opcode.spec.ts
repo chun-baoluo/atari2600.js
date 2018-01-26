@@ -35,7 +35,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x10) should jump if Negative flag isn't set", () => {
-        RAM.readRom(new Uint8Array([0x10, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0x10, -0x01, 0x02]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0x10](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -53,7 +53,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x20) should jump to subroutine", () => {
-        RAM.readRom(new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]));
+        RAM.memory.set(new Uint8Array([0x20, 0x05, 0xF0, 0xA5, 0x01, 0x60]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0x20](), 6);
         chai.assert.strictEqual(Register.PC, 61444);
@@ -61,7 +61,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x30) should jump if Negative flag is set", () => {
-        RAM.readRom(new Uint8Array([0x30, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0x30, -0x01, 0x02]), 0xF000);
         Flag.N = 1;
         chai.assert.strictEqual(Opcode[0x30](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -78,7 +78,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x4C) should jump to nnnn", () => {
-        RAM.readRom(new Uint8Array([0x4C, 0x01, 0xFF]));
+        RAM.memory.set(new Uint8Array([0x4C, 0x01, 0xFF]), 0xF000);
         chai.assert.strictEqual(Opcode[0x4C](), 3);
 
         Register.PC++;
@@ -86,7 +86,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x50) should jump if overflow flag isn't set", () => {
-        RAM.readRom(new Uint8Array([0x50, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0x50, -0x01, 0x02]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0x50](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -111,7 +111,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x70) should jump if overflow flag is set", () => {
-        RAM.readRom(new Uint8Array([0x70, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0x70, -0x01, 0x02]), 0xF000);
         Flag.V = 1;
         chai.assert.strictEqual(Opcode[0x70](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -128,7 +128,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x90) should jump if Carry flag isn't set", () => {
-        RAM.readRom(new Uint8Array([0x90, 0xFF, 0x02]));
+        RAM.memory.set(new Uint8Array([0x90, 0xFF, 0x02]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0x90](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -140,7 +140,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0xB0) should jump if Carry flag is set", () => {
-        RAM.readRom(new Uint8Array([0xB0, 0xFF, 0x02]));
+        RAM.memory.set(new Uint8Array([0xB0, 0xFF, 0x02]), 0xF000);
 
         Flag.C = 1;
 
@@ -161,7 +161,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0xD0) should jump if Zero flag isn/'t set", () => {
-        RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0xD0, -0x01, 0x02]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0xD0](), 3);
         chai.assert.strictEqual(Register.PC, 61440);
@@ -183,7 +183,7 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0xF0) should jump if Zero flag is set", () => {
-        RAM.readRom(new Uint8Array([0xD0, -0x01, 0x02]));
+        RAM.memory.set(new Uint8Array([0xD0, -0x01, 0x02]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0xF0](), 2);
         chai.assert.strictEqual(Register.PC, 61441);
@@ -236,7 +236,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x84) should set an address value (nn) to be equal register Y", () => {
         RAM.set(0x32, 2);
-        RAM.readRom(new Uint8Array([0x84, 0x32]));
+        RAM.memory.set(new Uint8Array([0x84, 0x32]), 0xF000);
         Register.Y = 5;
 
         chai.assert.strictEqual(Opcode[0x84](), 3);
@@ -245,7 +245,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x85) should set an address value (nn) to be equal register A", () => {
         RAM.set(0x32, 2);
-        RAM.readRom(new Uint8Array([0x85, 0x32]));
+        RAM.memory.set(new Uint8Array([0x85, 0x32]), 0xF000);
         Register.A = 5;
 
         chai.assert.strictEqual(Opcode[0x85](), 3);
@@ -254,7 +254,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x86) should set an address value (nn) to be equal register X", () => {
         RAM.set(0x32, 0);
-        RAM.readRom(new Uint8Array([0x86, 0x32]));
+        RAM.memory.set(new Uint8Array([0x86, 0x32]), 0xF000);
         Register.X = 5;
 
         chai.assert.strictEqual(Opcode[0x86](), 3);
@@ -280,7 +280,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0x8C) should set an address value (nnnn) to be equal register Y", () => {
-        RAM.readRom(new Uint8Array([0x8C, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x8C, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0);
         Register.Y = 5;
 
@@ -290,7 +290,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x8D) should set an address value (nnnn) to be equal register A", () => {
         RAM.set(0x01, 0);
-        RAM.readRom(new Uint8Array([0x85, 0x01, 0x00]));
+        RAM.memory.set(new Uint8Array([0x85, 0x01, 0x00]), 0xF000);
         Register.A = 5;
 
         chai.assert.strictEqual(Opcode[0x8D](), 4);
@@ -299,7 +299,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x8E) should set an address value (nnnn) to be equal register X", () => {
         RAM.set(0x01, 0);
-        RAM.readRom(new Uint8Array([0x8E, 0x01, 0x00]));
+        RAM.memory.set(new Uint8Array([0x8E, 0x01, 0x00]), 0xF000);
         Register.X = 5;
 
         chai.assert.strictEqual(Opcode[0x8E](), 4);
@@ -308,7 +308,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x94) should set an address value + X register to be equal register Y", () => {
         RAM.set(0x32, 0);
-        RAM.readRom(new Uint8Array([0x94, 0x31]));
+        RAM.memory.set(new Uint8Array([0x94, 0x31]), 0xF000);
         Register.X = 0x01;
         Register.Y = 5;
 
@@ -318,7 +318,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0x95) should set an address value + X register to be equal register A", () => {
         RAM.set(0x32, 0);
-        RAM.readRom(new Uint8Array([0x95, 0x31]));
+        RAM.memory.set(new Uint8Array([0x95, 0x31]), 0xF000);
         Register.X = 0x01;
         Register.A = 5;
 
@@ -327,7 +327,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0x96) should set an address value + Y register to be equal register X", () => {
-        RAM.readRom(new Uint8Array([0x96, 0x31]));
+        RAM.memory.set(new Uint8Array([0x96, 0x31]), 0xF000);
         RAM.set(0x32, 0);
         Register.Y = 0x01;
         Register.X = 5;
@@ -354,7 +354,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0x99) should set an address value (nnnn + Y) to be equal register A", () => {
-        RAM.readRom(new Uint8Array([0x99, 0x31, 0x00]));
+        RAM.memory.set(new Uint8Array([0x99, 0x31, 0x00]), 0xF000);
         Register.Y = 0x01;
         RAM.set(0x32, 0);
         Register.A = 5;
@@ -370,7 +370,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0x9D) should set an address value [nnnn + X] to be equal register A", () => {
-        RAM.readRom(new Uint8Array([0x85, 0x31, 0x00]));
+        RAM.memory.set(new Uint8Array([0x85, 0x31, 0x00]), 0xF000);
         RAM.set(0x32, 0);
         Register.A = 0x05;
         Register.X = 0x01;
@@ -380,7 +380,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xA0) should set register Y to #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xA0, 0xFF, 0]));
+        RAM.memory.set(new Uint8Array([0xA0, 0xFF, 0]), 0xF000);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA0](), 2);
@@ -395,7 +395,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xA2) should set register X to #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xA2, 0xFF, 0]));
+        RAM.memory.set(new Uint8Array([0xA2, 0xFF, 0]), 0xF000);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA2](), 2);
@@ -411,7 +411,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0xA4) should set register Y to nn, change N and Z flags", () => {
         RAM.set(0x01, 5);
-        RAM.readRom(new Uint8Array([0xA4, 0x01]));
+        RAM.memory.set(new Uint8Array([0xA4, 0x01]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0xA4](), 3);
         chai.assert.strictEqual(RAM.get(0x01), Register.Y);
@@ -419,7 +419,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0xA5) should set register A to nn, change N and Z flags", () => {
         RAM.set(0x01, 5);
-        RAM.readRom(new Uint8Array([0xA5, 0x01]));
+        RAM.memory.set(new Uint8Array([0xA5, 0x01]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0xA5](), 3);
         chai.assert.strictEqual(RAM.get(0x01), Register.A);
@@ -427,7 +427,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0xA6) should set register X to nn, change N and Z flags", () => {
         RAM.set(0x01, 5);
-        RAM.readRom(new Uint8Array([0xA6, 0x01]));
+        RAM.memory.set(new Uint8Array([0xA6, 0x01]), 0xF000);
 
         chai.assert.strictEqual(Opcode[0xA6](), 3);
         chai.assert.strictEqual(RAM.get(0x01), Register.X);
@@ -451,7 +451,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xA9) should set register A to #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xA9, 0xFF, 0]));
+        RAM.memory.set(new Uint8Array([0xA9, 0xFF, 0]), 0xF000);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xA9](), 2);
@@ -483,7 +483,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xAC) should set register Y to nnnn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAC, 0x01, 0x00, 0x02, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAC, 0x01, 0x00, 0x02, 0x00]), 0xF000);
         RAM.set(0x01, 0xFA);
         RAM.set(0x02, 0);
         Flag.Z = 1;
@@ -500,7 +500,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xAD) should set register A to nnnn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAD, 0x01, 0x00, 0x02, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAD, 0x01, 0x00, 0x02, 0x00]), 0xF000);
         RAM.set(0x01, 0xFA);
         RAM.set(0x02, 0);
         Flag.Z = 1;
@@ -517,7 +517,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xAE) should set register X to nnnn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAE, 0x01, 0x00, 0x02, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAE, 0x01, 0x00, 0x02, 0x00]), 0xF000);
         RAM.set(0x01, 0xFA);
         RAM.set(0x02, 0);
         Flag.Z = 1;
@@ -534,11 +534,10 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xB1) should set register A to (nn), Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xB1, 0x32]));
+        RAM.memory.set(new Uint8Array([0xB1, 0x32]), 0xF000);
         RAM.set(0x32, 0x33);
         RAM.set(0x35, 0x36);
         Register.Y = 0x02;
-
 
         chai.assert.strictEqual(Opcode[0xB1](), 6);
         chai.assert.strictEqual(RAM.get(0x35), Register.A);
@@ -546,7 +545,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0xB5) should set register Y to be equal nn + X", () => {
         Register.Y = 5;
-        RAM.readRom(new Uint8Array([0xB4, 0x31]));
+        RAM.memory.set(new Uint8Array([0xB4, 0x31]), 0xF000);
         RAM.set(0x32, 3);
         Register.X = 0x01;
 
@@ -556,7 +555,7 @@ describe("CPU Memory and Register Transfers", () => {
 
     it("(0xB5) should set register A to be equal nn + X", () => {
         Register.A = 5;
-        RAM.readRom(new Uint8Array([0xB5, 0x31]));
+        RAM.memory.set(new Uint8Array([0xB5, 0x31]), 0xF000);
         RAM.set(0x32, 3);
         Register.X = 0x01;
 
@@ -565,7 +564,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xB6) should set register X to be equal nn + Y", () => {
-        RAM.readRom(new Uint8Array([0xB6, 0x31]));
+        RAM.memory.set(new Uint8Array([0xB6, 0x31]), 0xF000);
         RAM.set(0x32, 3);
         Register.X = 5;
         Register.Y = 0x01;
@@ -575,7 +574,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xB9) should set register A to nnnn + Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0xFA);
         RAM.set(0x34, 0);
         Register.Y = 1;
@@ -611,7 +610,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xBC) should set register Y to nnnn + X, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0xFA);
         RAM.set(0x34, 0);
         Register.X = 1;
@@ -629,7 +628,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xBD) should set register A to nnnn + X, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0xFA);
         RAM.set(0x34, 0);
         Register.X = 1;
@@ -647,7 +646,7 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xBE) should set register X to nnnn + Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0xAD, 0x31, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0xFA);
         RAM.set(0x34, 0);
         Register.Y = 1;
@@ -669,7 +668,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     beforeEach(beforeEachCallback);
 
     it("(0x01) should do OR operation with A and (nn, X), change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x01, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x01, 0x32, 0x33]), 0xF000);
         RAM.set(0x33, 0x38);
         RAM.set(0x38, 0x00);
 
@@ -692,7 +691,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x05) should do OR operation with A and nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x05, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x05, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0);
         RAM.set(0x33, 0xFF);
         Register.A = 0;
@@ -711,7 +710,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x09) should do OR operation with A and #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xE0, 0x00, 0xFF]));
+        RAM.memory.set(new Uint8Array([0xE0, 0x00, 0xFF]), 0xF000);
 
         Register.A = 0;
 
@@ -747,7 +746,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x0D) should do OR operation with A and nnnn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x0D, 0x32, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0x0D, 0x32, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0);
         RAM.set(0x33, 0xFF);
         Register.A = 0;
@@ -766,7 +765,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x11) should do OR operation with A and [[nn]+Y], change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x11, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x11, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0x37);
         RAM.set(0x38, 0x00);
 
@@ -789,7 +788,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x16) should left shift nn + X, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x16, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x16, 0x31, 0x32]), 0xF000);
         Register.X = 0x01;
         RAM.set(0x32, 0xFF);
 
@@ -809,7 +808,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x19) should do OR operation with A and nnnn + Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x19, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x19, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0);
         RAM.set(0x33, 0xFF);
         Register.A = 0;
@@ -829,7 +828,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x1D) should do OR operation with A and nnnn + X, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x1D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x1D, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0);
         RAM.set(0x33, 0xFF);
         Register.A = 0;
@@ -849,7 +848,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x24) should test A and nn, change N, Z and V flags", () => {
-        RAM.readRom(new Uint8Array([0x24, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x24, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0x00);
         RAM.set(0x33, 0xFF);
 
@@ -867,7 +866,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x25) should do AND operation with A and nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xE0, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0xE0, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0x01);
         RAM.set(0x33, 0xFF);
 
@@ -887,7 +886,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x26) should rotate left through carry nn, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x36, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x36, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0xFF);
 
         chai.assert.strictEqual(Opcode[0x26](), 5);
@@ -908,7 +907,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x29) should do AND operation with A and #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xE0, 0x01, 0xFF]));
+        RAM.memory.set(new Uint8Array([0xE0, 0x01, 0xFF]), 0xF000);
 
         Register.A = 0x02;
 
@@ -926,7 +925,6 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x2A) should rotate left through carry register A, change N, Z and C flags", () => {
-
         Register.A = 0xFF;
 
         chai.assert.strictEqual(Opcode[0x2A](), 2);
@@ -947,7 +945,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x2C) should test A and nnnn, change N, Z and V flags", () => {
-        RAM.readRom(new Uint8Array([0x2C, 0x32, 0x00, 0x33, 0x00]));
+        RAM.memory.set(new Uint8Array([0x2C, 0x32, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0x00);
         RAM.set(0x33, 0xFF);
 
@@ -965,7 +963,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x36) should rotate left through carry nn + X, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x36, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x36, 0x31, 0x32]), 0xF000);
         Register.X = 0x01;
         RAM.set(0x32, 0xFF);
 
@@ -987,7 +985,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x39) should do AND operation with A and nnnn + Y, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x3D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x3D, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0x00);
         RAM.set(0x33, 0xFF);
 
@@ -1008,7 +1006,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x3D) should do AND operation with A and nnnn + X, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x3D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x3D, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0x00);
         RAM.set(0x33, 0xFF);
 
@@ -1029,7 +1027,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x45) should do XOR operation with A and nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x45, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x45, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 1);
         RAM.set(0x33, 1);
 
@@ -1059,7 +1057,6 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
 
-
         chai.assert.strictEqual(Opcode[0x46](), 5);
         chai.assert.strictEqual(RAM.get(0x33), 127);
         chai.assert.strictEqual(Flag.N, 0);
@@ -1068,7 +1065,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x49) should do XOR operation with A and #nn, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0x49, 0x01, 0x01]));
+        RAM.memory.set(new Uint8Array([0x49, 0x01, 0x01]), 0xF000);
 
         Register.A = 0x01;
 
@@ -1104,7 +1101,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x56) should right shift nn + X, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x56, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x56, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 0x01);
         Register.X = 0x01;
 
@@ -1124,7 +1121,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x65) should add nn to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x65, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x65, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 2);
         RAM.set(0x33, 1);
         Register.A = 125;
@@ -1149,7 +1146,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x66) should rorate right through carry address nn, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x66, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x66, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0xFF);
         Flag.N = Flag.Z = 1;
 
@@ -1169,7 +1166,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x69) should add #nn to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x69, 0x00, 0x01]));
+        RAM.memory.set(new Uint8Array([0x69, 0x00, 0x01]), 0xF000);
         Register.A = 127;
         Flag.C = Flag.Z = 1;
 
@@ -1211,7 +1208,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x75) should add nn + X to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x75, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x75, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 2);
         RAM.set(0x33, 1);
         Register.A = 125;
@@ -1238,7 +1235,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x76) should rorate right through carry nn + X, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x56, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x56, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 0xFF);
         Register.X = 0x01;
         Flag.N = Flag.Z = 1;
@@ -1259,7 +1256,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x79) should add nnnn + Y to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x79, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x79, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0x01);
         RAM.set(0x33, 0x01);
         Register.A = 127;
@@ -1285,7 +1282,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x7D) should add nnnn + X to accumulator with carry, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0x7D, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0x7D, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 0x01);
         RAM.set(0x33, 0x01);
         Register.A = 127;
@@ -1315,7 +1312,6 @@ describe("CPU Arithmetic/Logical Operations", () => {
         Register.Y = value;
         Flag.Z = 1;
 
-
         chai.assert.strictEqual(Opcode[0x88](), 2);
         chai.assert.strictEqual(Register.Y, value - 1);
         chai.assert.strictEqual(Flag.N, 1);
@@ -1331,7 +1327,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xC0) should compare results of Y - #nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xE0, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xE0, 0x32, 0x32, 0x36]), 0xF000);
         Register.Y = 0x07;
         Flag.Z = 1;
 
@@ -1356,7 +1352,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xC4) should compare results of Y - nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xC4, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xC4, 0x32, 0x32, 0x36]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.Y = 0x07;
@@ -1383,7 +1379,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xC5) should compare results of A - nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xC5, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xC5, 0x32, 0x32, 0x36]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.A = 0x07;
@@ -1410,7 +1406,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xC6) should decrement nn by one, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xE6, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0xE6, 0x32, 0x33]), 0xF000);
         Flag.Z = 1;
 
         RAM.set(0x32, 0xFA);
@@ -1448,7 +1444,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xC9) should compare results of A - #nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xC9, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xC9, 0x32, 0x32, 0x36]), 0xF000);
         Register.A = 0x07;
         Flag.Z = 1;
 
@@ -1492,7 +1488,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xD5) should compare results of A - [nn + X], set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xC5, 0x31, 0x31, 0x35]));
+        RAM.memory.set(new Uint8Array([0xC5, 0x31, 0x31, 0x35]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.X = 0x01;
@@ -1520,7 +1516,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xD6) should decrement [nn + X] by one, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xD6, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0xD6, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 0xFA);
         RAM.set(0x33, 0x01);
         Register.X = 0x01;
@@ -1538,7 +1534,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xD9) should compare results of A - [nnnn + Y], set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xD9, 0x31, 0x00, 0x31, 0x00, 0x35, 0x00]));
+        RAM.memory.set(new Uint8Array([0xD9, 0x31, 0x00, 0x31, 0x00, 0x35, 0x00]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.Y = 0x01;
@@ -1566,7 +1562,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xDD) should compare results of A - [nnnn + X], set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xDD, 0x31, 0x00, 0x31, 0x00, 0x35, 0x00]));
+        RAM.memory.set(new Uint8Array([0xDD, 0x31, 0x00, 0x31, 0x00, 0x35, 0x00]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.X = 0x01;
@@ -1594,7 +1590,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE0) should compare results of X - #nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xE0, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xE0, 0x32, 0x32, 0x36]), 0xF000);
         Register.X = 0x07;
         Flag.Z = 1;
 
@@ -1619,7 +1615,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE4) should compare results of X - nn, set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xC5, 0x32, 0x32, 0x36]));
+        RAM.memory.set(new Uint8Array([0xC5, 0x32, 0x32, 0x36]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.X = 0x07;
@@ -1646,7 +1642,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE5) should substract nn from accumulator with borrow, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0xE5, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0xE5, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 1);
         RAM.set(0x33, 2);
         Register.A = 128;
@@ -1671,7 +1667,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE6) should increment nn by one, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xE6, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0xE6, 0x32, 0x33]), 0xF000);
         Flag.Z = 1;
 
         RAM.set(0x32, 0xFA);
@@ -1709,7 +1705,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xE9) should substract #nn from accumulator with borrow, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0xE9, 0x00, 0x01]));
+        RAM.memory.set(new Uint8Array([0xE9, 0x00, 0x01]), 0xF000);
         Register.A = 128;
         Flag.C = Flag.Z = 0;
 
@@ -1732,7 +1728,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xEC) should compare results of X - [nnnn], set N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0xDD, 0x32, 0x00, 0x32, 0x00, 0x36, 0x00]));
+        RAM.memory.set(new Uint8Array([0xDD, 0x32, 0x00, 0x32, 0x00, 0x36, 0x00]), 0xF000);
         RAM.set(0x32, 0x32);
         RAM.set(0x36, 0x36);
         Register.X = 0x07;
@@ -1759,7 +1755,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xF5) should substract nn + X from accumulator with borrow, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0xF5, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0xF5, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 1);
         RAM.set(0x33, 2);
         Register.A = 126;
@@ -1785,7 +1781,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xF6) should increment nn + X by one, change N and Z flags", () => {
-        RAM.readRom(new Uint8Array([0xF6, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0xF6, 0x31, 0x32]), 0xF000);
         Register.X = 0x01;
         Flag.Z = 1;
 
@@ -1805,7 +1801,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0xFD) should substract nnnn + X from accumulator with borrow, change N, Z, C and V flags", () => {
-        RAM.readRom(new Uint8Array([0xFD, 0x31, 0x00, 0x32, 0x00]));
+        RAM.memory.set(new Uint8Array([0xFD, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         RAM.set(0x32, 1);
         RAM.set(0x33, 2);
         Register.A = 126;
@@ -1840,13 +1836,13 @@ describe("CPU Illegal Opcodes", () => {
     });
 
     it("(0x1C, 0x3C, 0x5C, 0x7C, 0xDC, 0xFC) should do NOP", () => {
-        RAM.readRom(new Uint8Array([0x1C, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0x1C, 0x31, 0x32]), 0xF000);
         chai.assert.strictEqual(Opcode[0x1C](), 5);
         chai.assert.strictEqual(Register.PC, 61442);
     });
 
     it("(0xA7) should do LAX with nn, change Z and N flags", () => {
-        RAM.readRom(new Uint8Array([0xA7, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0xA7, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 128);
         RAM.set(0x33, 0);
 
@@ -1884,5 +1880,26 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Register.A, Register.X);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 1);
+    });
+
+    it("(0xC7) should decrement nn by one, change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xC7, 0x32, 0x33]), 0xF000);
+        RAM.set(0x32, 0xFA);
+        RAM.set(0x33, 0x01);
+        Flag.Z = Flag.C = 1;
+
+        chai.assert.strictEqual(Opcode[0xC7](), 5);
+        chai.assert.strictEqual(RAM.get(0x32), 0xF9);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+
+        Flag.N = 0;
+
+        chai.assert.strictEqual(Opcode[0xC7](), 5);
+        chai.assert.strictEqual(RAM.get(0x33), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
     });
 });
