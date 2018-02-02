@@ -16,6 +16,7 @@ export class CPU {
 	};
 
 	public static pulse() {
+		PIA.tick();
 		if(this._locked) {
 			return false;
 		};
@@ -30,7 +31,6 @@ export class CPU {
 			};
 			Register.PC++;
 		};
-		PIA.tick();
 		this._cycle--;
 
 	};

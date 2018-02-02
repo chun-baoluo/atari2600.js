@@ -2,7 +2,11 @@ const webpack = require('webpack');
 
 module.exports = (env={ type: 'dev'}) => {
     let plugins = [
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.optimize.ModuleConcatenationPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.optimize.AggressiveMergingPlugin(),
     ];
 
     return {
@@ -26,7 +30,7 @@ module.exports = (env={ type: 'dev'}) => {
 
         output: {
             path: __dirname + '/output',
-            publicPath: './',
+            publicPath: '/',
             filename: '[name].js',
             libraryTarget: "var",
             library: 'Atari2600'
