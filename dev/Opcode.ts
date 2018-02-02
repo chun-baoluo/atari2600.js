@@ -189,6 +189,13 @@ export class Opcode {
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
+    // ORA nn, X
+    public static 0x15() {
+        this.ORA(RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
+    };
+
     // ASL nn, X
     public static 0x16() {
         let address: number = RAM.get(++Register.PC) + Register.X;
@@ -340,6 +347,13 @@ export class Opcode {
         Flag.N = (bin.charAt(0) == '1' ? 1 : 0);
 
         Flag.V = (bin.charAt(1) == '1' ? 1 : 0);
+
+        return 4;
+    };
+
+    // AND nnnn
+    public static 0x2D() {
+        this.AND(RAM.read(this.WORD()));
 
         return 4;
     };
@@ -1280,6 +1294,14 @@ export class Opcode {
         Flag.D = 1;
 
         return 2;
+    };
+
+    // SBC nnnn, Y
+    public static 0xF9() {
+        let address = this.WORD() + Register.Y;
+        this.ADC(~RAM.read(address));
+
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP

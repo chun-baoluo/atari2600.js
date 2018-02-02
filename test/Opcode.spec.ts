@@ -787,6 +787,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
     });
 
+    it("(0x15) should do OR operation with A and nn + X, change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x15, 0x31, 0x32]), 0xF000);
+        RAM.set(0x32, 0);
+        RAM.set(0x33, 0xFF);
+        Register.X = 0x01;
+        Register.A = 0;
+
+        chai.assert.strictEqual(Opcode[0x15](), 4);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x15](), 4);
+        chai.assert.strictEqual(Register.A, 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
     it("(0x16) should left shift nn + X, change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x16, 0x31, 0x32]), 0xF000);
         Register.X = 0x01;
@@ -960,6 +980,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.V, 1);
+    });
+
+    it("(0x2D) should do AND operation with A and nnnn, change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x3D, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 0x00);
+        RAM.set(0x33, 0xFF);
+
+        Register.A = 0x02;
+
+        chai.assert.strictEqual(Opcode[0x2D](), 4);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x2D](), 4);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
     });
 
     it("(0x36) should rotate left through carry nn + X, change N, Z and C flags", () => {
@@ -1798,6 +1838,32 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(RAM.get(0x33), 0);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
+    });
+
+    it("(0xF9) should substract nnnn + Y from accumulator with borrow, change N, Z, C and V flags", () => {
+        RAM.memory.set(new Uint8Array([0xFD, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 2);
+        Register.A = 126;
+        Register.Y = 0x01;
+        Flag.C = Flag.Z = 0;
+
+        chai.assert.strictEqual(Opcode[0xF9](), 5);
+        chai.assert.strictEqual(Register.A, 124);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
+
+        Register.A = new Uint8Array([-126])[0];
+        Flag.C = 1;
+
+        chai.assert.strictEqual(Opcode[0xF9](), 5);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
     });
 
     it("(0xFD) should substract nnnn + X from accumulator with borrow, change N, Z, C and V flags", () => {
