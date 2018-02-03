@@ -438,33 +438,33 @@ export class TIA {
     };
 
     public static nextFrame() {
-            return new Promise((resolve: Function) => {
-                for(this.scanline = 0; this.scanline < 262; this.scanline++) {
-                    for(this.clock = 0; this.clock < 68; this.clock += 3) {
+        return new Promise((resolve: Function) => {
+            for(this.scanline = 0; this.scanline < 262; this.scanline++) {
+                for(this.clock = 0; this.clock < 68; this.clock += 3) {
+                    CPU.pulse();
+                };
+
+                let counter: number = 2;
+                for(this.clock = 68; this.clock < 228; this.clock += 1) {
+                    if(this.scanline > 30 && this.scanline < 252) {
+                        this.pixel(this.scanline - 30, this.clock - 68);
+                    };
+
+                    if(counter > 2) {
+                        counter = 0;
                         CPU.pulse();
                     };
 
-                    let counter: number = 2;
-                    for(this.clock = 68; this.clock < 228; this.clock += 1) {
-                        if(this.scanline > 30 && this.scanline < 252) {
-                            this.pixel(this.scanline - 30, this.clock - 68);
-                        };
-
-                        if(counter > 2) {
-                            counter = 0;
-                            CPU.pulse();
-                        };
-
-                        counter++;
-                    };
-
-                    CPU.unlock();
+                    counter++;
                 };
 
-                this.draw();
+                CPU.unlock();
+            };
 
-                resolve(true);
-            });
+            this.draw();
+
+            resolve(true);
+        });
     };
 
     private static pixel(scanline: number, clock: number) {

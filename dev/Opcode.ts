@@ -70,6 +70,14 @@ export class Opcode {
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
 
+    private static EOR(value: number) {
+        Register.A = Register.A ^ value;
+
+        Flag.Z = this.isZero(Register.A);
+
+        Flag.N = this.isNegative(Register.A);
+    };
+
     private static ORA(value: number) {
         Register.A = Register.A | value;
 
@@ -133,6 +141,27 @@ export class Opcode {
         this.ORA(RAM.read(RAM.get(++Register.PC)));
 
         return 3;
+    };
+
+    // ASL nn
+    public static 0x06() {
+        let address: number = RAM.get(++Register.PC);
+
+        let value: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(value).charAt(0);
+
+        value = Convert.toUint8(value << 1);
+
+        RAM.write(address, value);
+
+        Flag.Z = this.isZero(value);
+
+        Flag.N = this.isNegative(value);
+
+        Flag.C = parseInt(carry);
+
+        return 5;
     };
 
     // PHP
@@ -363,6 +392,13 @@ export class Opcode {
         return this.CJMP('N', false);
     };
 
+    // AND nn, X
+    public static 0x35() {
+        this.AND(RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
+    };
+
     // ROL nn, X
     public static 0x36() {
         let address: number = RAM.get(++Register.PC) + Register.X;
@@ -425,11 +461,7 @@ export class Opcode {
 
     // EOR nn
     public static 0x45() {
-        Register.A = Register.A ^ RAM.read(RAM.get(++Register.PC));
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.EOR(RAM.read(RAM.get(++Register.PC)));
 
         return 3;
     };
@@ -464,11 +496,7 @@ export class Opcode {
 
     // EOR #nn
     public static 0x49() {
-        Register.A = Register.A ^ RAM.get(++Register.PC);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.EOR(RAM.get(++Register.PC));
 
         return 2;
     };
@@ -526,6 +554,15 @@ export class Opcode {
         Flag.I = 0;
 
         return 2;
+    };
+
+    // EOR nnnn, Y
+    public static 0x59() {
+        let address: number = this.WORD() + Register.Y;
+
+        this.EOR(RAM.read(address));
+
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP
@@ -613,6 +650,13 @@ export class Opcode {
         Flag.C = parseInt(carry);
 
         return 2;
+    };
+
+    // ADC nnnn
+    public static 0x6D() {
+        this.ADC(RAM.read(this.WORD()));
+
+        return 4;
     };
 
     // BVS nnn
@@ -805,6 +849,17 @@ export class Opcode {
         Flag.N = this.isNegative(Register.Y);
 
         return 2;
+    };
+
+    // LDA (nn, X)
+    public static 0xA1() {
+        Register.A = RAM.read(RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        Flag.Z = this.isZero(Register.A);
+
+        Flag.N = this.isNegative(Register.A);
+
+        return 6;
     };
 
     // LDX #nn
@@ -1143,6 +1198,13 @@ export class Opcode {
         Flag.N = this.isNegative(Register.X);
 
         return 2;
+    };
+
+    // CMP nnnn
+    public static 0xCD() {
+        this.CMP('A', RAM.read(this.WORD()));
+
+        return 4;
     };
 
     // BNE
