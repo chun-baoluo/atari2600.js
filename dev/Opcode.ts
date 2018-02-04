@@ -530,6 +530,13 @@ export class Opcode {
         return this.CJMP('V', true);
     };
 
+    // EOR nn, X
+    public static 0x55() {
+        this.EOR(RAM.read(RAM.get(++Register.PC) + Register.X));
+
+        return 4;
+    };
+
     // LSR nn, X
     public static 0x56() {
         let address: number = RAM.get(++Register.PC) + Register.X;

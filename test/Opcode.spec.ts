@@ -1190,6 +1190,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 1);
     });
 
+    it("(0x55) should do XOR operation with A and [nn + X], change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x55, 0x31, 0x32]), 0xF000);
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 1);
+        Register.X = 0x01;
+        Register.A = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x55](), 4);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x55](), 4);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
     it("(0x56) should right shift nn + X, change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x56, 0x31, 0x32]), 0xF000);
         RAM.set(0x32, 0x01);
