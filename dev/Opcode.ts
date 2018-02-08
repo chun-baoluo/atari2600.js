@@ -50,6 +50,22 @@ export class Opcode {
 
         Flag.N = this.isNegative(Register.A);
     };
+    
+    private static ASL(address: number) {
+        let value: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(value).charAt(0);
+
+        value = Convert.toUint8(value << 1);
+
+        RAM.write(address, value);
+
+        Flag.Z = this.isZero(value);
+
+        Flag.N = this.isNegative(value);
+
+        Flag.C = parseInt(carry);    
+    };
 
     private static CMP(name: string, value: number) {
         Flag.Z = (Register[name] == value ? 1 : 0);
@@ -77,6 +93,22 @@ export class Opcode {
 
         Flag.N = this.isNegative(Register.A);
     };
+    
+    private static LSR(address: number) {
+        let value: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(value).charAt(7);
+
+        value = Convert.toUint8(value >>> 1);
+
+        RAM.write(address, value);
+
+        Flag.Z = 0;
+
+        Flag.N = this.isNegative(value);
+
+        Flag.C = parseInt(carry);
+    };
 
     private static ORA(value: number) {
         Register.A = Register.A | value;
@@ -84,6 +116,42 @@ export class Opcode {
         Flag.Z = this.isZero(Register.A);
 
         Flag.N = this.isNegative(Register.A);
+    };
+    
+    private static ROL(address: number) {
+        let value: number = RAM.read(address);
+        
+        let carry: string = Convert.toBin(value).charAt(0);
+
+        value = Convert.toUint8(value << 1);
+
+        let rotated: string = Convert.toBin(value).slice(0, -1) + Flag.C.toString();
+
+        RAM.write(address, parseInt(rotated, 2));
+
+        Flag.Z = this.isZero(RAM.get(address));
+
+        Flag.N = this.isNegative(RAM.get(address));
+
+        Flag.C = parseInt(carry);
+    };
+    
+    private static ROR(address: number) {
+        let addressValue: number = RAM.read(address);
+
+        let carry: string = Convert.toBin(addressValue).charAt(7);
+
+        let value = Convert.toUint8(addressValue >>> 1);
+
+        let rotated: string = Flag.C.toString() + Convert.toBin(value).substring(1);
+
+        RAM.write(address, parseInt(rotated, 2));
+
+        Flag.Z = this.isZero(RAM.get(address));
+
+        Flag.N = this.isNegative(RAM.get(address));
+
+        Flag.C = parseInt(carry);
     };
 
     private static POP() {
@@ -145,21 +213,7 @@ export class Opcode {
 
     // ASL nn
     public static 0x06() {
-        let address: number = RAM.get(++Register.PC);
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(0);
-
-        value = Convert.toUint8(value << 1);
-
-        RAM.write(address, value);
-
-        Flag.Z = this.isZero(value);
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.ASL(RAM.get(++Register.PC));
 
         return 5;
     };
@@ -227,21 +281,7 @@ export class Opcode {
 
     // ASL nn, X
     public static 0x16() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(0);
-
-        value = Convert.toUint8(value << 1);
-
-        RAM.write(address, value);
-
-        Flag.Z = this.isZero(value);
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.ASL(RAM.get(++Register.PC) + Register.X);
 
         return 6;
     };
@@ -311,25 +351,7 @@ export class Opcode {
 
     // ROL nn
     public static 0x26() {
-        let address: number = RAM.get(++Register.PC);
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(0);
-
-        value = Convert.toUint8(value << 1);
-
-        let rotated: string = Convert.toBin(value).slice(0, -1) + Flag.C.toString();
-
-        value = Convert.toUint8(parseInt(rotated, 2));
-
-        RAM.write(address, value);
-
-        Flag.Z = this.isZero(value);
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.ROL(RAM.get(++Register.PC));
 
         return 5;
     };
@@ -401,25 +423,7 @@ export class Opcode {
 
     // ROL nn, X
     public static 0x36() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(0);
-
-        value = Convert.toUint8(value << 1);
-
-        let rotated: string = Convert.toBin(value).slice(0, -1) + Flag.C.toString();
-
-        value = Convert.toUint8(parseInt(rotated, 2));
-
-        RAM.write(address, value);
-
-        Flag.Z = this.isZero(value);
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.ROL(RAM.get(++Register.PC) + Register.X);
 
         return 6;
     };
@@ -468,21 +472,7 @@ export class Opcode {
 
     // LSR nn
     public static 0x46() {
-        let address: number = RAM.get(++Register.PC);
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(7);
-
-        value = Convert.toUint8(value >>> 1);
-
-        RAM.write(address, value);
-
-        Flag.Z = 0;
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.LSR(RAM.get(++Register.PC));
 
         return 5;
     };
@@ -524,6 +514,13 @@ export class Opcode {
 
         return 3;
     };
+    
+    // LSR nnnn
+    public static 0x4E() {
+        this.LSR(this.WORD());
+
+        return 6;
+    };
 
     // BVC nnn
     public static 0x50() {
@@ -539,19 +536,7 @@ export class Opcode {
 
     // LSR nn, X
     public static 0x56() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
-        let value: number = RAM.read(address);
-        let carry: string = Convert.toBin(value).charAt(7);
-
-        value = Convert.toUint8(value >>> 1);
-
-        RAM.write(address, value);
-
-        Flag.Z = 0;
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
+        this.LSR(RAM.get(++Register.PC) + Register.X);
 
         return 6;
     };
@@ -600,24 +585,7 @@ export class Opcode {
 
     // ROR nn
     public static 0x66() {
-
-        let address: number = RAM.get(++Register.PC);
-
-        let addressValue: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(addressValue).charAt(7);
-
-        let value = Convert.toUint8(addressValue >>> 1);
-
-        let rotated: string = Flag.C.toString() + Convert.toBin(value).substring(1);
-
-        RAM.write(address, parseInt(rotated, 2));
-
-        Flag.Z = this.isZero(RAM.get(address));
-
-        Flag.N = this.isNegative(RAM.get(address));
-
-        Flag.C = parseInt(carry);
+        this.ROR(RAM.get(++Register.PC));
 
         return 5;
     };
@@ -680,26 +648,8 @@ export class Opcode {
 
     // ROR nn, X
     public static 0x76() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
-
-        let value: number = RAM.read(address);
-
-        let carry: string = Convert.toBin(value).charAt(7);
-
-        value = Convert.toUint8(value >>> 1);
-
-        let rotated: string = Flag.C.toString() + Convert.toBin(value).substring(1);
-
-        value = Convert.toUint8(parseInt(rotated, 2));
-
-        RAM.write(address, value);
-
-        Flag.Z = this.isZero(value);
-
-        Flag.N = this.isNegative(value);
-
-        Flag.C = parseInt(carry);
-
+        this.ROR(RAM.get(++Register.PC) + Register.X);
+        
         return 6;
     };
 

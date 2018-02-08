@@ -22,8 +22,7 @@ module.exports = (env={ type: 'dev'}) => {
             loaders: [
                 {
                     test: /\.ts$/,
-                    loader: 'ts-loader',
-                    exclude: /dev-old/
+                    loader: 'ts-loader'
                 }
             ]
         },

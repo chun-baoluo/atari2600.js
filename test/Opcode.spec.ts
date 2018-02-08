@@ -1137,7 +1137,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x46) should right shift nn, change N, Z and C flags", () => {
-        RAM.readRom(new Uint8Array([0x46, 0x32, 0x33]));
+        RAM.memory.set(new Uint8Array([0x46, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0x01);
         RAM.set(0x33, 0xFF);
 
@@ -1185,6 +1185,24 @@ describe("CPU Arithmetic/Logical Operations", () => {
 
         chai.assert.strictEqual(Opcode[0x4A](), 2);
         chai.assert.strictEqual(Register.A, 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
+    
+    it("(0x4E) should right shift nnnn, change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x4E, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 0x01);
+        RAM.set(0x33, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x4E](), 6);
+        chai.assert.strictEqual(RAM.get(0x32), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        chai.assert.strictEqual(Opcode[0x4E](), 6);
+        chai.assert.strictEqual(RAM.get(0x33), 127);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
@@ -2068,7 +2086,7 @@ describe("CPU Illegal Opcodes", () => {
     });
 
     it("(0xB3) should do LAX with (nn) and Y, change Z and N flags", () => {
-        RAM.readRom(new Uint8Array([0xB3, 0x31, 0x32]));
+        RAM.memory.set(new Uint8Array([0xB3, 0x31, 0x32]), 0xF000);
         RAM.set(0x31, 0x33);
         RAM.set(0x34, 0x00);
 
