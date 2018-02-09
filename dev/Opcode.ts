@@ -193,7 +193,9 @@ export class Opcode {
 
     // ORA (nn, X)
     public static 0x01() {
-        this.ORA(RAM.read(RAM.read(RAM.get(++Register.PC) + Register.X)));
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1  + Register.X) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC) + Register.X) & 0xFF));
+        
+        this.ORA(RAM.read(address));
 
         return 6;
     };
@@ -272,8 +274,8 @@ export class Opcode {
 
     // ORA (nn), Y
     public static 0x11() {
-        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
-
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC)) & 0xFF)) + Register.Y;
+        
         this.ORA(RAM.read(address));
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
@@ -840,7 +842,9 @@ export class Opcode {
 
     // LDA (nn, X)
     public static 0xA1() {
-        Register.A = RAM.read(RAM.read(RAM.get(++Register.PC) + Register.X));
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1  + Register.X) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC) + Register.X) & 0xFF));
+        
+        Register.A = RAM.read(address);
 
         Flag.Z = this.isZero(Register.A);
 
@@ -977,7 +981,7 @@ export class Opcode {
 
     // LDA (nn), Y
     public static 0xB1() {
-        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC)) & 0xFF)) + Register.Y;
 
         Register.A = RAM.read(address);
 
@@ -988,9 +992,9 @@ export class Opcode {
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
-    // LAX (nn),Y
+    // LAX (nn), Y
     private static 0xB3() {
-        let address: number = RAM.read(RAM.get(++Register.PC)) + Register.Y;
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC)) & 0xFF)) + Register.Y;
 
         Register.A = Register.X = RAM.read(address);
 
