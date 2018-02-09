@@ -190,6 +190,7 @@ class Missile extends GameObject {
 class Player extends GameObject {
     public colup: Array<number> = [0, 0, 0];
     public grp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public prevGrp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public hmp: number = 0;
     public nusiz: number = 0;
     private player: number = 0;
@@ -202,14 +203,17 @@ class Player extends GameObject {
         super();
         this.player = player;
     };
-
+    
     pixel(scanline: number, clock: number) {
         let offset: number = (!this.position ? 80 * this.player : 0);
-
+        
+        let grp: Array<string> = (this.vdelp ? this.prevGrp : this.grp);
+    
         for(let p of this.pixelRange) {
             let startingPosition: number = ((this.position || offset) + p);
-
-            if(clock >= startingPosition && clock < startingPosition + 8 && this.grp[(clock - this.position) % 8] == '1') {
+    
+            if(clock >= startingPosition && clock < startingPosition + 8 && grp[(clock - (this.position || offset)) % 8] == '1') {
+                
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
@@ -477,7 +481,7 @@ export class TIA {
         this.ball.pixel(scanline, clock);
     };
 
-    public static getPixelRange(player: number, value: number) {
+    public static getPixelRange(value: number) {
         let range: Array<number> = [0];
 
         switch(value) {

@@ -198,7 +198,7 @@ export class Opcode {
         return 6;
     };
 
-    // NOP
+    // NOP nn
     public static 0x04() {
         Register.PC++;
         return 3;
@@ -309,7 +309,7 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0x1C() {
         return 4  + (this.isNextPage(Register.PC, this.WORD() + Register.X) ? 1 : 0);
     };
@@ -458,7 +458,7 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0x3C() {
         return this[0x1C]();
     };
@@ -472,7 +472,7 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nn
     public static 0x44() {
         return this[0x04]();
     };
@@ -571,7 +571,7 @@ export class Opcode {
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0x5C() {
         return this[0x1C]();
     };
@@ -585,7 +585,7 @@ export class Opcode {
         return 6;
     };
 
-    // NOP
+    // NOP nn
     public static 0x64() {
         return this[0x04]();
     };
@@ -682,7 +682,7 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0x7C() {
         return this[0x1C]();
     };
@@ -693,6 +693,17 @@ export class Opcode {
         this.ADC(RAM.read(address + Register.X));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+    };
+    
+    // NOP #nn
+    public static 0x80() {
+        Register.PC++;
+        return 2;
+    };
+    
+    // NOP #nn
+    public static 0x82() {
+        return this[0x80]();
     };
 
     // STY nn
@@ -722,6 +733,11 @@ export class Opcode {
         Flag.N = this.isNegative(Register.Y);
 
         return 2;
+    };
+    
+    // NOP #nn
+    public static 0x89() {
+        return this[0x80]();
     };
 
     // TXA
@@ -1093,6 +1109,11 @@ export class Opcode {
 
         return 2;
     };
+    
+    // NOP #nn
+    public static 0xC2() {
+        return this[0x80]();
+    };
 
     // CPY nn
     public static 0xC4() {
@@ -1170,6 +1191,13 @@ export class Opcode {
 
         return 2;
     };
+    
+    // CPY nnnn
+    public static 0xCC() {
+        this.CMP('Y', RAM.read(this.WORD()));
+
+        return 4;
+    };
 
     // CMP nnnn
     public static 0xCD() {
@@ -1219,7 +1247,7 @@ export class Opcode {
         return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0xDC() {
         return this[0x1C]();
     };
@@ -1238,6 +1266,11 @@ export class Opcode {
         this.CMP('X', RAM.get(++Register.PC));
 
         return 2;
+    };
+    
+    // NOP #nn
+    public static 0xE2() {
+        return this[0x80]();
     };
 
     // CPX nn
@@ -1337,7 +1370,7 @@ export class Opcode {
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
-    // NOP
+    // NOP nnnn, X
     public static 0xFC() {
         return this[0x1C]();
     };

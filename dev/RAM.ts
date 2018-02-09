@@ -112,7 +112,7 @@ export class RAM {
 	private static 0x04(value: number) {
 		if(value === undefined) return;
 		let nusiz: Array<string> = Convert.toBin(value).split('');
-		TIA.p1.pixelRange = TIA.getPixelRange(0, parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
+		TIA.p1.pixelRange = TIA.getPixelRange(parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
 		TIA.m0.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
@@ -121,7 +121,7 @@ export class RAM {
 	private static 0x05(value: number) {
 		if(value === undefined) return;
 		let nusiz: Array<string> = Convert.toBin(value).split('');
-		TIA.p1.pixelRange = TIA.getPixelRange(0, parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
+		TIA.p1.pixelRange = TIA.getPixelRange(parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
 		TIA.m1.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
@@ -240,7 +240,8 @@ export class RAM {
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
 		//if(!TIA.p0.vdelp) {
-			TIA.p1.vdelp = false;
+			//TIA.p1.vdelp = false;
+			TIA.p1.prevGrp = TIA.p1.grp;
 			TIA.p0.grp = Convert.toBin(value).split('');
 		//};
 		return value;
@@ -250,8 +251,9 @@ export class RAM {
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
 		//if(!TIA.p1.vdelp) {
-			TIA.p0.vdelp = false;
-			TIA.ball.vdelbl = false;
+			//TIA.p0.vdelp = false;
+			//TIA.ball.vdelbl = false;
+			TIA.p0.prevGrp = TIA.p0.grp;
 			TIA.p1.grp = Convert.toBin(value).split('');
 		//};
 		return value;

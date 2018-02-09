@@ -1698,6 +1698,33 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
+    
+    it("(0xCC) should compare results of Y - nnnn, set N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xCC, 0x32, 0x00, 0x32, 0x00, 0x36, 0x00]), 0xF000);
+        RAM.set(0x32, 0x32);
+        RAM.set(0x36, 0x36);
+        Register.Y = 0x07;
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xCC](), 4);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+
+        Register.Y = 0x32;
+
+        chai.assert.strictEqual(Opcode[0xCC](), 4);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        Register.Y = 0x38;
+
+        chai.assert.strictEqual(Opcode[0xCC](), 4);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0xD9) should compare results of A - [nnnn], set N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0xD9, 0x32, 0x00, 0x32, 0x00, 0x36, 0x00]), 0xF000);
@@ -2104,6 +2131,11 @@ describe("CPU Illegal Opcodes", () => {
         RAM.memory.set(new Uint8Array([0x1C, 0x31, 0x32]), 0xF000);
         chai.assert.strictEqual(Opcode[0x1C](), 5);
         chai.assert.strictEqual(Register.PC, 61442);
+    });
+    
+    it("(0x80, 0x82, 0x89, 0xC2, 0xE2) should do NOP", () => {
+        chai.assert.strictEqual(Opcode[0x80](), 2);
+        chai.assert.strictEqual(Register.PC, 61441);
     });
 
     it("(0xA7) should do LAX with nn, change Z and N flags", () => {
