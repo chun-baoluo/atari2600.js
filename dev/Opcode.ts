@@ -257,6 +257,13 @@ export class Opcode {
 
         return 4  + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
+    
+    // ASL nnnn
+    public static 0x0E() {
+        this.ASL(this.WORD());
+
+        return 6;
+    };
 
     // BPL nnn
     public static 0x10() {
@@ -314,6 +321,13 @@ export class Opcode {
         this.ORA(RAM.read(address + Register.X));
 
         return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+    };
+    
+    // ASL nnnn, X
+    public static 0x1E() {
+        this.ASL(this.WORD() + Register.X);
+
+        return 7;
     };
 
     // JSR nnnn

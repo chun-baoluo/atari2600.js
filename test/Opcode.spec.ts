@@ -792,6 +792,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
     });
+    
+    it("(0x0E) should left shift nnnn, change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x0E, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x0E](), 6);
+        chai.assert.strictEqual(RAM.get(0x32), 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 128);
+
+        chai.assert.strictEqual(Opcode[0x0E](), 6);
+        chai.assert.strictEqual(RAM.get(0x33), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0x11) should do OR operation with A and [[nn]+Y], change N and Z flags", () => {
         RAM.memory.set(new Uint8Array([0x11, 0x32, 0x33]), 0xF000);
@@ -894,6 +913,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 0xFF);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
+    });
+    
+    it("(0x1E) should left shift [nnnn + X], change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x1E, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        Register.X = 0x01;
+        RAM.set(0x32, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x1E](), 7);
+        chai.assert.strictEqual(RAM.get(0x32), 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 128);
+
+        chai.assert.strictEqual(Opcode[0x1E](), 7);
+        chai.assert.strictEqual(RAM.get(0x33), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
     });
 
     it("(0x24) should test A and nn, change N, Z and V flags", () => {
