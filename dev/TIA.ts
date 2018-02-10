@@ -152,6 +152,7 @@ class Playfield extends GameObject {
 
 class Ball extends GameObject {
     public colupf: Array<number> = [0, 0, 0];
+    public prevEnabl: boolean = false;
     public enabl: boolean = false;
     public hmbl: number = 0;
     public position: number = null;
@@ -160,7 +161,7 @@ class Ball extends GameObject {
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
-        if(this.enabl && clock >= this.position && clock < this.position + this.size) {
+        if((this.vdelbl ? this.prevEnabl : this.enabl) && clock >= this.position && clock < this.position + this.size) {
             return this.setImageData(scanline, clock, this.colupf);
         };
     };
@@ -202,18 +203,18 @@ class Player extends GameObject {
     constructor(player: number = 0) {
         super();
         this.player = player;
+        this.position = 80 * player;
     };
-    
+
     pixel(scanline: number, clock: number) {
-        let offset: number = (!this.position ? 80 * this.player : 0);
-        
         let grp: Array<string> = (this.vdelp ? this.prevGrp : this.grp);
-    
+        let currentPos: number = (this.refp ? 7 - (clock - this.position) : (clock - this.position));
+
         for(let p of this.pixelRange) {
-            let startingPosition: number = ((this.position || offset) + p);
-    
-            if(clock >= startingPosition && clock < startingPosition + 8 && grp[(clock - (this.position || offset)) % 8] == '1') {
-                
+            let startingPosition: number = this.position + p;
+
+            if(clock >= startingPosition && clock < startingPosition + 8 && grp[currentPos % 8] == '1') {
+
                 return this.setImageData(scanline, clock, this.colup);
             };
         };

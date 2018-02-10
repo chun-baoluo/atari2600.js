@@ -14,7 +14,7 @@ export class Register {
 export class Flag {
 	public static B: number = 0; // Break flag
 	public static C: number = 0; // Carry
-	public static D: number = 1; // Decimal mode
+	public static D: number = 0; // Decimal mode
 	public static I: number = 0; // Interrupt disable bit
 	public static N: number = 0; // Negative/Sign
 	public static V: number = 0; // Overflow
@@ -239,23 +239,17 @@ export class RAM {
 	// GRP0 write
 	private static 0x1B(value: number) {
 		if(value === undefined) return;
-		//if(!TIA.p0.vdelp) {
-			//TIA.p1.vdelp = false;
-			TIA.p1.prevGrp = TIA.p1.grp;
-			TIA.p0.grp = Convert.toBin(value).split('');
-		//};
+		TIA.p1.prevGrp = TIA.p1.grp;
+		TIA.p0.grp = Convert.toBin(value).split('');
 		return value;
 	};
 
 	// GRP1 write
 	private static 0x1C(value: number) {
 		if(value === undefined) return;
-		//if(!TIA.p1.vdelp) {
-			//TIA.p0.vdelp = false;
-			//TIA.ball.vdelbl = false;
-			TIA.p0.prevGrp = TIA.p0.grp;
-			TIA.p1.grp = Convert.toBin(value).split('');
-		//};
+		TIA.p0.prevGrp = TIA.p0.grp;
+		TIA.ball.prevEnabl = TIA.ball.enabl;
+		TIA.p1.grp = Convert.toBin(value).split('');
 		return value;
 	};
 
@@ -278,9 +272,7 @@ export class RAM {
 	// ENABL write
 	private static 0x1F(value: number) {
 		if(value === undefined) return;
-		if(!TIA.ball.vdelbl) {
-			TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
-		};
+		TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
 		return value;
 	};
 
