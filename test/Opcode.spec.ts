@@ -110,6 +110,25 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Register.S, 0xFF);
     });
 
+    it("(0x6C) should jump to [nnnn]", () => {
+        RAM.memory.set(new Uint8Array([0x6C, 0xF0, 0x00, 0xFF, 0x03]), 0xF000);
+        RAM.set(0xF0, 0xD8);
+        RAM.set(0xF1, 0xF7);
+
+        chai.assert.strictEqual(Opcode[0x6C](), 5);
+
+        Register.PC++;
+        chai.assert.strictEqual(Register.PC, 0xF7D8);
+
+        Register.PC = 0xF002;
+        RAM.set(0x03FF, 0x01);
+        RAM.set(0x0300, 0xFF);
+        chai.assert.strictEqual(Opcode[0x6C](), 5);
+
+        Register.PC++;
+        chai.assert.strictEqual(Register.PC, 0xFF01);
+    });
+
     it("(0x70) should jump if overflow flag is set", () => {
         RAM.memory.set(new Uint8Array([0x70, -0x01, 0x02]), 0xF000);
         Flag.V = 1;
@@ -792,7 +811,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
     });
-    
+
     it("(0x0E) should left shift nnnn, change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x0E, 0x32, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0xFF);
@@ -914,7 +933,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
     });
-    
+
     it("(0x1E) should left shift [nnnn + X], change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x1E, 0x31, 0x00, 0x32, 0x00]), 0xF000);
         Register.X = 0x01;
@@ -1228,7 +1247,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
     });
-    
+
     it("(0x4E) should right shift nnnn, change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x4E, 0x32, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0x01);
@@ -1698,7 +1717,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
-    
+
     it("(0xCC) should compare results of Y - nnnn, set N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0xCC, 0x32, 0x00, 0x32, 0x00, 0x36, 0x00]), 0xF000);
         RAM.set(0x32, 0x32);
@@ -2127,12 +2146,17 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Register.PC, 61441);
     });
 
+    it("(0x0C) should do NOP", () => {
+        chai.assert.strictEqual(Opcode[0x0C](), 4);
+        chai.assert.strictEqual(Register.PC, 61442);
+    });
+
     it("(0x1C, 0x3C, 0x5C, 0x7C, 0xDC, 0xFC) should do NOP", () => {
         RAM.memory.set(new Uint8Array([0x1C, 0x31, 0x32]), 0xF000);
         chai.assert.strictEqual(Opcode[0x1C](), 5);
         chai.assert.strictEqual(Register.PC, 61442);
     });
-    
+
     it("(0x80, 0x82, 0x89, 0xC2, 0xE2) should do NOP", () => {
         chai.assert.strictEqual(Opcode[0x80](), 2);
         chai.assert.strictEqual(Register.PC, 61441);
