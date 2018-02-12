@@ -58,6 +58,8 @@ export class RAM {
 			this.memory[i] = 0xFF;
 		};
 
+		this.memory[0x283] = 0x00;
+
 		this.memory[0x284] = (Math.random() * 255) >> 0;
 		this.memory[0x294] = (Math.random() * 255) >> 0;
 		this.memory[0x295] = (Math.random() * 255) >> 0;
@@ -112,7 +114,7 @@ export class RAM {
 	private static 0x04(value: number) {
 		if(value === undefined) return;
 		let nusiz: Array<string> = Convert.toBin(value).split('');
-		TIA.p1.pixelRange = TIA.getPixelRange(parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
+		TIA.p0.pixelRange = TIA.getPixelRange(parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2));
 		TIA.m0.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
@@ -162,7 +164,7 @@ export class RAM {
 		TIA.pf.reflect = (ctrlpf[7] == '1');
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
 		TIA.pfp = (ctrlpf[5] == '1');
-		TIA.ball.size = TIA.ball.sizeCounter = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
+		TIA.ball.size = Math.pow(2, 2 * parseInt(ctrlpf[2]) + parseInt(ctrlpf[3]));
 		return value;
 	};
 
@@ -257,7 +259,6 @@ export class RAM {
 	private static 0x1D(value: number) {
 		if(value === undefined) return;
 		TIA.m0.enam = (Convert.toBin(value).charAt(6) == '1');
-		TIA.m0.sizeCounter = TIA.m0.size;
 		return value;
 	};
 
@@ -265,7 +266,6 @@ export class RAM {
 	private static 0x1E(value: number) {
 		if(value === undefined) return;
 		TIA.m1.enam = (Convert.toBin(value).charAt(6) == '1');
-		TIA.m1.sizeCounter = TIA.m1.size;
 		return value;
 	};
 

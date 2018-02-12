@@ -2,7 +2,6 @@ import { RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Timer restart after reading from INTIM?
-// TODO: Missing cycle?
 
 export class PIA {
 
@@ -32,10 +31,11 @@ export class PIA {
     private static keydown(e: any) {
         let key = e.keyCode;
         let swcha: any = Convert.toBin(RAM.get(0x280)).split('');
+        let swchb: any = Convert.toBin(RAM.get(0x282)).split('');
         let inpt4: any = Convert.toBin(RAM.get(0x3C)).split('');
         let inpt5: any = Convert.toBin(RAM.get(0x3D)).split('');
 
-        if(key == 38) {
+        if(key == 38) { // Player 0
             swcha[3] = '0';
         } else if(key == 39) {
             swcha[0] = '0';
@@ -45,7 +45,7 @@ export class PIA {
             swcha[1] = '0';
         } else if(key == 17) {
             inpt4[0] = '0';
-        } else if(key == 87) {
+        } else if(key == 87) { // Player 1
             swcha[7] = '0';
         } else if(key == 65) {
             swcha[5] = '0';
@@ -53,11 +53,20 @@ export class PIA {
             swcha[6] = '0';
         } else if(key == 68) {
             swcha[4] = '0';
-        } else if(key == 17) {
+        } else if(key == 16) {
             inpt5[0] = '0';
+        } else if(key == 191) { // Switches
+            swchb[7] = (swchb[7] == '0' ? '1' : '0');
+        } else if(key == 190) {
+            swchb[6] = (swchb[6] == '0' ? '1' : '0');
+        } else if(key == 78) {
+            swchb[1] = (swchb[1] == '0' ? '1' : '0');
+        } else if(key == 77) {
+            swchb[0] = (swchb[0] == '0' ? '1' : '0');
         };
 
         RAM.set(0x280, parseInt(swcha.join(''), 2));
+        RAM.set(0x282, parseInt(swchb.join(''), 2));
         RAM.set(0x3C, parseInt(inpt4.join(''), 2));
         RAM.set(0x3D, parseInt(inpt5.join(''), 2));
     };

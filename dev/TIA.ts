@@ -157,7 +157,6 @@ class Ball extends GameObject {
     public hmbl: number = 0;
     public position: number = null;
     public size: number = 1;
-    public sizeCounter = 0;
     public vdelbl: boolean = false;
 
     pixel(scanline: number, clock: number) {
@@ -173,7 +172,6 @@ class Missile extends GameObject {
     public hmm: number = 0;
     public enam: boolean = false;
     public size: number = 0;
-    public sizeCounter = 0;
     public position: number = null;
 
     constructor(missile: number) {
