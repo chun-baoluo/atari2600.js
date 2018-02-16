@@ -324,6 +324,18 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Opcode[0x8E](), 4);
         chai.assert.strictEqual(RAM.get(0x01), Register.X);
     });
+    
+    it("(0x91) should set an address value [WORD[nn]+y] to be equal register A", () => {
+        RAM.memory.set(new Uint8Array([0x91, 0x32]), 0xF000);
+        RAM.set(0x32, 0x35);
+        RAM.set(0x33, 0x00);
+        RAM.set(0x37, 0x36);
+        Register.Y = 0x02;
+        Register.A = 0x05;
+
+        chai.assert.strictEqual(Opcode[0x91](), 6);
+        chai.assert.strictEqual(RAM.get(0x37), Register.A);
+    });
 
     it("(0x94) should set an address value + X register to be equal register Y", () => {
         RAM.set(0x32, 0);

@@ -799,6 +799,15 @@ export class Opcode {
     public static 0x90() {
         return this.CJMP('C', true);
     };
+    
+    // STA (nn), Y
+    public static 0x91() {
+        let address: number = (((RAM.read(RAM.get(++Register.PC) + 1) & 0xFF) << 8) | (RAM.read(RAM.get(Register.PC)) & 0xFF)) + Register.Y;
+
+        RAM.write(address, Register.A);
+
+        return 6;
+    };
 
     // STY nn, X
     public static 0x94() {
