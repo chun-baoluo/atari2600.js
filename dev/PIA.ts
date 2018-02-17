@@ -4,28 +4,17 @@ import { Convert } from './Common';
 // TODO: Timer restart after reading from INTIM?
 
 export class PIA {
+    public static prevTimer: number = null;
 
-    private static timer: number = null;
+    public static timer: number = null;
 
-    private static cycle: number = 0;
+    public static cycle: number = 0;
 
-    private static timers: any = {
-        0x294: {
-            active: false,
-            interval: 1
-        },
-        0x295: {
-            active: false,
-            interval: 8
-        },
-        0x296: {
-            active: false,
-            interval: 64
-        },
-        0x297: {
-            active: false,
-            interval: 1024
-        }
+    public static timerIntervals: any = {
+        0x294: 1,
+        0x295: 8,
+        0x296: 64,
+        0x297: 1024
     };
 
     private static keydown(e: any) {
@@ -84,24 +73,24 @@ export class PIA {
 
     public static setTimer(address: number) {
         this.timer = address;
-        this.cycle = this.timers[address].interval;
+        this.cycle = this.timerIntervals[address];
         RAM.set(0x284, RAM.get(address));
     };
 
     public static tick() {
         for(let i: number = 0x294; i <= 0x297; i++) {
             if(this.timer != i) {
-                RAM.set(i, RAM.get(i) - 1);
                 continue;
             };
 
             if(this.timer && this.cycle == 0) {
-                let before: number = RAM.get(i);
-                let after: number = RAM.set(i, RAM.get(i) - 1);
+                let before: number = RAM.get(0x284);
+                let after: number = RAM.set(0x284, RAM.get(0x284) - 1);;
 
-                this.setTimer(i);
+                this.cycle = this.timerIntervals[i];
 
                 if(before == 0 && after == 0xFF) {
+                    this.prevTimer = i;
                     this.timer = null;
                     this.cycle = 0;
                     RAM.set(0x285, 192);

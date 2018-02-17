@@ -390,6 +390,15 @@ export class RAM {
 		return value;
 	};
 
+	private static 0x284() {
+		if(!PIA.timer) {
+			PIA.timer = PIA.prevTimer || 0x296;
+			PIA.cycle = PIA.timerIntervals[PIA.prevTimer || 0x296];
+		};
+
+		return this.memory[0x284];
+	};
+
 	// INSTAT read
 	private static 0x285() {
 		let bits: Array<string> = Convert.toBin(this.memory[0x285]).split('');

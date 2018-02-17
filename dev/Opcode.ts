@@ -70,9 +70,9 @@ export class Opcode {
     private static CMP(name: string, value: number) {
         Flag.Z = (Register[name] == value ? 1 : 0);
 
-        Flag.N = (Register[name] < value ? 1 : 0);
+        Flag.N = this.isNegative(Register[name] - value);
 
-        Flag.C = (Register[name] >= value ? 1 : 0);
+        Flag.C = (Register[name] - value >= 0 ? 1 : 0);
     };
 
     private static CJMP(name: string, value: boolean) {
@@ -109,7 +109,7 @@ export class Opcode {
 
         Flag.C = parseInt(carry);
     };
-    
+
     private static next2BYTES() {
         let low: number = RAM.get(++Register.PC);
         let high: number = RAM.get(++Register.PC);
@@ -171,7 +171,7 @@ export class Opcode {
 
         Register.S = (Register.S - 1) & 0xFF;
     };
-    
+
     private static WORD(address: number) {
         return ((RAM.read(address + 1) & 0xFF) << 8) | (RAM.read(address) & 0xFF);
     };
@@ -801,7 +801,7 @@ export class Opcode {
     public static 0x90() {
         return this.CJMP('C', true);
     };
-    
+
     // STA (nn), Y
     public static 0x91() {
         RAM.write(this.WORD(RAM.get(++Register.PC)) + Register.Y, Register.A);
