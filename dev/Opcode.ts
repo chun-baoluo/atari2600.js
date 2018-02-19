@@ -1184,9 +1184,9 @@ export class Opcode {
 
         Flag.Z = (Register.A == value ? 1 : 0);
 
-        Flag.N = (Register.A < value ? 1 : 0);
+        Flag.N = this.isNegative(Register.A - value);
 
-        Flag.C = (Register.A >= value ? 1 : 0);
+        Flag.C = (Register.A - value >= 0 ? 1 : 0);
 
         return 5;
     };
@@ -1204,13 +1204,7 @@ export class Opcode {
 
     // CMP #nn
     public static 0xC9() {
-        let value: number = RAM.get(++Register.PC);
-
-        Flag.Z = (Register.A == value ? 1 : 0);
-
-        Flag.N = (Register.A < value ? 1 : 0);
-
-        Flag.C = (Register.A >= value ? 1 : 0);
+        this.CMP('A', RAM.get(++Register.PC));
 
         return 2;
     };

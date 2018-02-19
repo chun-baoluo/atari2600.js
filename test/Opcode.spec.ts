@@ -324,7 +324,7 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(Opcode[0x8E](), 4);
         chai.assert.strictEqual(RAM.get(0x01), Register.X);
     });
-    
+
     it("(0x91) should set an address value [WORD[nn]+y] to be equal register A", () => {
         RAM.memory.set(new Uint8Array([0x91, 0x32]), 0xF000);
         RAM.set(0x32, 0x35);
@@ -2223,7 +2223,7 @@ describe("CPU Illegal Opcodes", () => {
 
         chai.assert.strictEqual(Opcode[0xC7](), 5);
         chai.assert.strictEqual(RAM.get(0x32), 0xF9);
-        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 0);
 
