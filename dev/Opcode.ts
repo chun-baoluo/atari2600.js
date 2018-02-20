@@ -265,7 +265,7 @@ export class Opcode {
 
         this.ORA(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // ASL nnnn
@@ -312,25 +312,25 @@ export class Opcode {
 
     // ORA nnnn, Y
     public static 0x19() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.Y;
 
-        this.ORA(RAM.read(address + Register.Y));
+        this.ORA(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP nnnn, X
     public static 0x1C() {
-        return 4  + (this.isNextPage(Register.PC, this.next2BYTES() + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, this.next2BYTES() + Register.X) ? 1 : 0);
     };
 
     // ORA nnnn, X
     public static 0x1D() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES()  + Register.X;
 
-        this.ORA(RAM.read(address + Register.X));
+        this.ORA(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // ASL nnnn, X
@@ -378,6 +378,27 @@ export class Opcode {
         this.ROL(RAM.get(++Register.PC));
 
         return 5;
+    };
+
+    // PLP
+    public static 0x28() {
+        let val: Array<string> = Convert.toBin(this.POP()).split('');
+
+        Flag.N = parseInt(val[0]);
+
+        Flag.V = parseInt(val[1]);
+
+        Flag.B = parseInt(val[3]);
+
+        Flag.D = parseInt(val[4]);
+
+        Flag.I = parseInt(val[5]);
+
+        Flag.Z = parseInt(val[6]);
+
+        Flag.C = parseInt(val[7]);
+
+        return 4;
     };
 
     // AND #nn
@@ -461,11 +482,11 @@ export class Opcode {
 
     // AND nnnn, Y
     public static 0x39() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.Y;
 
-        this.AND(RAM.read(address + Register.Y));
+        this.AND(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP nnnn, X
@@ -475,11 +496,11 @@ export class Opcode {
 
     // AND nnnn, X
     public static 0x3D() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.X;
 
-        this.AND(RAM.read(address + Register.X));
+        this.AND(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP nn
@@ -588,7 +609,6 @@ export class Opcode {
 
     // RTS
     public static 0x60() {
-
         Register.PC = this.POP() + 1;
         Register.PC += this.POP() << 8;
 
@@ -701,10 +721,10 @@ export class Opcode {
 
     // ADC nnnn, Y
     public static 0x79() {
-        let address: number = this.next2BYTES();
-        this.ADC(RAM.read(address + Register.Y));
+        let address: number = this.next2BYTES() + Register.Y;
+        this.ADC(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4  + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP nnnn, X
@@ -714,10 +734,10 @@ export class Opcode {
 
     // ADC nnnn, X
     public static 0x7D() {
-        let address: number = this.next2BYTES();
-        this.ADC(RAM.read(address + Register.X));
+        let address: number = this.next2BYTES() + Register.X;
+        this.ADC(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP #nn
@@ -821,7 +841,7 @@ export class Opcode {
         return 4;
     };
 
-    // STY nn, X
+    // STX nn, Y
     public static 0x96() {
         RAM.write(RAM.get(++Register.PC) + Register.Y, Register.X);
         return 4;
@@ -1077,15 +1097,15 @@ export class Opcode {
 
     // LDA nnnn, Y
     public static 0xB9() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.Y;
 
-        Register.A = RAM.read(address + Register.Y);
+        Register.A = RAM.read(address);
 
         Flag.Z = this.isZero(Register.A);
 
         Flag.N = this.isNegative(Register.A);
 
-        return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // TSX
@@ -1101,40 +1121,41 @@ export class Opcode {
 
     // LDY nnnn, X
     public static 0xBC() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.X;
 
-        Register.Y = RAM.read(address + Register.X);
+        Register.Y = RAM.read(address);
 
         Flag.Z = this.isZero(Register.Y);
 
         Flag.N = this.isNegative(Register.Y);
 
-        return 4 + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // LDA nnnn, X
     public static 0xBD() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES() + Register.X;
 
-        Register.A = RAM.read(address + Register.X);
+        Register.A = RAM.read(address);
 
         Flag.Z = this.isZero(Register.A);
 
         Flag.N = this.isNegative(Register.A);
 
-        return 4 + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // LDX nnnn, Y
     public static 0xBE() {
-        let address: number = this.next2BYTES();
-        Register.X = RAM.read(address + Register.Y);
+        let address: number = this.next2BYTES() + Register.Y;
+
+        Register.X = RAM.read(address);
 
         Flag.Z = this.isZero(Register.X);
 
         Flag.N = this.isNegative(Register.X);
 
-        return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // CPY #nn
@@ -1182,7 +1203,7 @@ export class Opcode {
 
         let value: number = RAM.write(address, RAM.get(address) - 1);
 
-        Flag.Z = (Register.A == value ? 1 : 0);
+        Flag.Z = this.isZero(Register.A - value);
 
         Flag.N = this.isNegative(Register.A - value);
 
@@ -1248,9 +1269,9 @@ export class Opcode {
 
     // DEC nn, X
     public static 0xD6() {
-        let address: number = RAM.get(++Register.PC);
+        let address: number = RAM.get(++Register.PC) + Register.X;
 
-        let result: number = RAM.write(address + Register.X, RAM.get(address + Register.X) - 1);
+        let result: number = RAM.write(address, RAM.get(address) - 1);
 
         Flag.Z = this.isZero(result);
 
@@ -1282,11 +1303,11 @@ export class Opcode {
 
     // CMP nnnn, X
     public static 0xDD() {
-        let address: number = this.next2BYTES();
+        let address: number = this.next2BYTES()  + Register.X;
 
-        this.CMP('A', RAM.read(address + Register.X));
+        this.CMP('A', RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.X) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // CPX #nn

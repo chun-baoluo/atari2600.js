@@ -230,6 +230,15 @@ describe("CPU Memory and Register Transfers", () => {
         chai.assert.strictEqual(RAM.get(0xFF), 51);
     });
 
+    it("(0x28) should get register P to the stack", () => {
+        Register.S = 0xFE;
+        RAM.set(0xFF, parseInt('11000000', 2));
+
+        chai.assert.strictEqual(Opcode[0x28](), 4);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.V, 1);
+    });
+
     it("(0x48) should push register A to the stack", () => {
         Register.A = 0x05;
 
