@@ -551,6 +551,21 @@ export class Opcode {
         return 2;
     };
 
+    // ALR #nn
+    public static 0x4B() {
+        let bin: string = Convert.toBin(Register.A & RAM.get(++Register.PC));
+
+        Register.A = (Register.A & RAM.get(Register.PC)) >>> 1
+
+        Flag.Z = this.isZero(Register.A);
+
+        Flag.N = this.isNegative(Register.A);
+
+        Flag.C = (bin.charAt(7) == '1' ? 1 : 0);
+
+        return 2;
+    };
+
     // JMP nnnn
     public static 0x4C() {
         let address: number = this.next2BYTES();
@@ -1237,6 +1252,23 @@ export class Opcode {
         Flag.Z = this.isZero(Register.X);
 
         Flag.N = this.isNegative(Register.X);
+
+        return 2;
+    };
+
+    // AXS #nn
+    public static 0xCB() {
+        let value: number = RAM.get(++Register.PC);
+
+        let and: number = Register.X & Register.A;
+
+        Register.X = Convert.toUint8(and - value);
+
+        Flag.Z = this.isZero(Register.X);
+
+        Flag.N = this.isNegative(Register.X);
+
+        Flag.C = (and - value >= 0 ? 1 : 0);
 
         return 2;
     };

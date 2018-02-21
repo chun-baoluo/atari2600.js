@@ -2178,6 +2178,18 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Register.PC, 61442);
     });
 
+    it("(0x4B) should do AND with A and #nn, shift result 1 bit to the right, change Z, N and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x4B, 0xFF]), 0xF000);
+        Register.A = 0x02;
+        Flag.C = Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x4B](), 2);
+        chai.assert.strictEqual(Register.A, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+
     it("(0x80, 0x82, 0x89, 0xC2, 0xE2) should do NOP", () => {
         chai.assert.strictEqual(Opcode[0x80](), 2);
         chai.assert.strictEqual(Register.PC, 61441);
@@ -2242,6 +2254,19 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(RAM.get(0x33), 0);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
+
+    it("(0xCB) should do AND with A and X, substract #nn, change Z, N and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xCB, 0x01]), 0xF000);
+        Register.A = 0x02;
+        Register.X = 0x02;
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xCB](), 2);
+        chai.assert.strictEqual(Register.X, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.C, 1);
     });
 });
