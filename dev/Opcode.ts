@@ -265,7 +265,7 @@ export class Opcode {
 
         this.ORA(RAM.read(address));
 
-        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
+        return 4;
     };
 
     // ASL nnnn
@@ -739,7 +739,7 @@ export class Opcode {
         let address: number = this.next2BYTES() + Register.Y;
         this.ADC(RAM.read(address));
 
-        return 4  + (this.isNextPage(Register.PC, address) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // NOP nnnn, X
@@ -1325,7 +1325,7 @@ export class Opcode {
 
         this.CMP('A', RAM.read(address + Register.Y));
 
-        return 4  + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
+        return 4 + (this.isNextPage(Register.PC, address + Register.Y) ? 1 : 0);
     };
 
     // NOP nnnn, X

@@ -820,14 +820,14 @@ describe("CPU Arithmetic/Logical Operations", () => {
         RAM.set(0x33, 0xFF);
         Register.A = 0;
 
-        chai.assert.strictEqual(Opcode[0x0D](), 5);
+        chai.assert.strictEqual(Opcode[0x0D](), 4);
         chai.assert.strictEqual(Register.A, 0);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
 
         Register.A = 128;
 
-        chai.assert.strictEqual(Opcode[0x0D](), 5);
+        chai.assert.strictEqual(Opcode[0x0D](), 4);
         chai.assert.strictEqual(Register.A, 0xFF);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
