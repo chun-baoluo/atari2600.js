@@ -442,7 +442,9 @@ export class TIA {
 
     public static nextFrame() {
         return new Promise((resolve: Function) => {
-            for(this.scanline = 0; this.scanline < 262; this.scanline++) {
+            let scanline: number = 0;
+
+            while(scanline < 262) {
                 for(this.clock = 0; this.clock < 68; this.clock += 3) {
                     CPU.pulse();
                 };
@@ -462,6 +464,9 @@ export class TIA {
                 };
 
                 CPU.unlock();
+
+                scanline++;
+                this.scanline++;
             };
 
             this.draw();
