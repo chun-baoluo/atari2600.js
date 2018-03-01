@@ -1958,17 +1958,17 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 126);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
 
         Register.A = new Uint8Array([-126])[0];
-        Flag.C = 1;
+        Flag.Z = Flag.V = 1;
 
         chai.assert.strictEqual(Opcode[0xE5](), 3);
         chai.assert.strictEqual(Register.A, 128);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 1);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
     });
 
@@ -2019,7 +2019,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 127);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
 
         Register.A = new Uint8Array([-128])[0];
@@ -2029,7 +2029,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 126);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
     });
 
@@ -2072,17 +2072,17 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 124);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
 
         Register.A = new Uint8Array([-126])[0];
-        Flag.C = 1;
+        Flag.C = Flag.Z = Flag.V = 1;
 
         chai.assert.strictEqual(Opcode[0xF5](), 4);
         chai.assert.strictEqual(Register.A, 128);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 1);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
     });
 
@@ -2118,17 +2118,17 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 124);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
 
         Register.A = new Uint8Array([-126])[0];
-        Flag.C = 1;
+        Flag.C = Flag.V = Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xF9](), 5);
         chai.assert.strictEqual(Register.A, 128);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 1);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
     });
 
@@ -2144,17 +2144,17 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 124);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 0);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
 
         Register.A = new Uint8Array([-126])[0];
-        Flag.C = 1;
+        Flag.C = Flag.Z = Flag.V = 1;
 
         chai.assert.strictEqual(Opcode[0xFD](), 5);
         chai.assert.strictEqual(Register.A, 128);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.N, 1);
-        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.C, 1);
         chai.assert.strictEqual(Flag.V, 0);
     });
 });

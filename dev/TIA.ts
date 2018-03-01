@@ -211,8 +211,7 @@ class Player extends GameObject {
         for(let p of this.pixelRange) {
             let startingPosition: number = this.position + p;
 
-            if(clock >= startingPosition && clock < startingPosition + 8 && grp[currentPos % 8] == '1') {
-
+            if(clock >= startingPosition && clock < (startingPosition + 8) && grp[currentPos % 8] == '1') {
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
@@ -451,9 +450,7 @@ export class TIA {
 
                 let counter: number = 2;
                 for(this.clock = 68; this.clock < 228; this.clock += 1) {
-                    if(this.scanline > 30 && this.scanline < 252) {
-                        this.pixel(this.scanline - 30, this.clock - 68);
-                    };
+
 
                     if(counter > 2) {
                         counter = 0;
@@ -461,6 +458,10 @@ export class TIA {
                     };
 
                     counter++;
+
+                    if(this.scanline > 30 && this.scanline < 252) {
+                        this.pixel(this.scanline - 30, this.clock - 68);
+                    };
                 };
 
                 CPU.unlock();

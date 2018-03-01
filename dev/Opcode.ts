@@ -1363,7 +1363,7 @@ export class Opcode {
 
     // SBC nn
     public static 0xE5() {
-        this.ADC(~RAM.read(RAM.get(++Register.PC)));
+        this.ADC(Convert.toUint8(~RAM.read(RAM.get(++Register.PC))));
 
         return 3;
     };
@@ -1394,7 +1394,7 @@ export class Opcode {
 
     // SBC #nn
     public static 0xE9() {
-        this.ADC(~RAM.get(++Register.PC));
+        this.ADC(Convert.toUint8(~RAM.get(++Register.PC)));
 
         return 2;
     };
@@ -1418,7 +1418,7 @@ export class Opcode {
 
     // SBC nn, X
     public static 0xF5() {
-        this.ADC(~RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.ADC(Convert.toUint8(~RAM.read(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
@@ -1446,7 +1446,7 @@ export class Opcode {
     // SBC nnnn, Y
     public static 0xF9() {
         let address = this.next2BYTES() + Register.Y;
-        this.ADC(~RAM.read(address));
+        this.ADC(Convert.toUint8(~RAM.read(address)));
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -1459,7 +1459,7 @@ export class Opcode {
     // SBC nnnn, X
     public static 0xFD() {
         let address = this.next2BYTES() + Register.X;
-        this.ADC(~RAM.read(address));
+        this.ADC(Convert.toUint8(~RAM.read(address)));
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
