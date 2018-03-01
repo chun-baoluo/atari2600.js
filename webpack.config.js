@@ -2,10 +2,7 @@ const webpack = require('webpack');
 
 module.exports = (env={ type: 'dev'}) => {
     let plugins = [
-        new webpack.optimize.ModuleConcatenationPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.optimize.AggressiveMergingPlugin(),
     ];
 
@@ -19,7 +16,7 @@ module.exports = (env={ type: 'dev'}) => {
         },
 
         module: {
-            loaders: [
+            rules: [
                 {
                     test: /\.ts$/,
                     loader: 'ts-loader'
@@ -35,28 +32,8 @@ module.exports = (env={ type: 'dev'}) => {
             library: 'Atari2600'
         },
 
-        plugins: env.type == 'dev' ? plugins : plugins.concat([
-            new webpack.optimize.UglifyJsPlugin({
-                 beautify: false,
-                 comments: false,
-                 compress: {
-                     sequences: true,
-                     booleans: true,
-                     loops: true,
-                     unused: true,
-                     warnings: false,
-                     drop_console: true,
-                     pure_getters: true,
-                     unsafe: true,
-                     unsafe_comps: true,
-                     screw_ie8: true
-                 }
-             })
-        ]),
+        plugins: plugins,
 
         watch: env.type == 'dev'
     };
-
-
-
 };
