@@ -340,45 +340,12 @@ export class RAM {
 	// HMOVE write
 	private static 0x2A(value: number) {
 		if(value === undefined) return;
-		TIA.p0.position -= TIA.p0.hmp;
 
-		if(TIA.p0.position > 160) {
-			TIA.p0.position = 0;
-		} else if(TIA.p0.position < 0) {
-			TIA.p0.position = 160;
-		};
-
-		TIA.p1.position -= TIA.p1.hmp;
-
-		if(TIA.p1.position > 160) {
-			TIA.p1.position = 0;
-		} else if(TIA.p1.position < 0) {
-			TIA.p1.position = 160;
-		};
-
-		TIA.m0.position -= TIA.m0.hmm;
-
-		if(TIA.m0.position > 160) {
-			TIA.m0.position = 0;
-		} else if(TIA.m0.position < 0) {
-			TIA.m0.position = 160;
-		};
-
-		TIA.m1.position -= TIA.m1.hmm;
-
-		if(TIA.m1.position > 160) {
-			TIA.m1.position = 0;
-		} else if(TIA.m1.position < 0) {
-			TIA.m1.position = 160;
-		};
-
-		TIA.ball.position -= TIA.ball.hmbl;
-
-		if(TIA.ball.position > 160) {
-			TIA.ball.position = 0;
-		} else if(TIA.ball.position < 0) {
-			TIA.ball.position = 160;
-		};
+		TIA.p0.position = (TIA.p0.position - TIA.p0.hmp) % 160;
+		TIA.p1.position = (TIA.p1.position - TIA.p1.hmp) % 160;
+		TIA.m0.position = (TIA.m0.position - TIA.m0.hmm) % 160;
+		TIA.m1.position = (TIA.m1.position - TIA.m1.hmm) % 160;
+		TIA.ball.position = (TIA.ball.position - TIA.ball.hmbl) % 160;
 
 		return value;
 	};
