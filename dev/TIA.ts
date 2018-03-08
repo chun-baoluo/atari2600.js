@@ -197,6 +197,7 @@ class Player extends GameObject {
     public refp: boolean = false;
     public vdelp: boolean = false;
     public pixelRange: Array<number> = [0];
+    public size: number = 1;
 
     constructor(player: number = 0) {
         super();
@@ -205,13 +206,14 @@ class Player extends GameObject {
     };
 
     pixel(scanline: number, clock: number) {
-        let grp: Array<string> = (this.vdelp ? this.prevGrp : this.grp);
-        let currentPos: number = (this.refp ? 7 - (clock - this.position) : (clock - this.position));
+        let grp: Array<string> = (this.vdelp ? this.prevGrp : (this.grp));
+        let index: any = (((clock - this.position) / this.size) >> 0) % 8;
+        index = (this.refp ? 7 - index : index);
 
         for(let p of this.pixelRange) {
             let startingPosition: number = this.position + p;
 
-            if(clock >= startingPosition && clock < (startingPosition + 8) && grp[currentPos % 8] == '1') {
+            if(clock >= startingPosition && clock < (startingPosition + 8) && grp[index] == '1') {
                 return this.setImageData(scanline, clock, this.colup);
             };
         };
