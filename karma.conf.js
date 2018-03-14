@@ -22,8 +22,7 @@ module.exports = (config) => {
                 rules: [
                     {
                         test: /\.ts$/,
-                        loader: 'ts-loader',
-                        exclude: /dev-old/
+                        loader: 'ts-loader'
                     }
                 ]
             },
