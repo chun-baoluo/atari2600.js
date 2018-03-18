@@ -25,6 +25,14 @@ export class Flag {
 export class RAM {
 	public static memory: Uint8Array = new Uint8Array(65536);
 
+	public static swchaW: number = 0x00;
+
+	public static swchaR: number = 0xFF;
+
+	public static swchbW: number = 0x00;
+
+	public static swchbR: number = 0x3F;
+
 	public static get(address: number) {
 		return this.memory[address];
 	};
@@ -33,7 +41,7 @@ export class RAM {
 		let value: number = this.memory[address];
 
 		if(this[address] !== undefined) {
-			this[address]();
+			value = this[address]();
 		};
 
 		return value;
@@ -53,18 +61,6 @@ export class RAM {
 		this.reset();
 
 		this.memory = new Uint8Array(61440 + rom.length);
-
-		for(let i = 0; i < 61440; i++) {
-			this.memory[i] = 0xFF;
-		};
-
-		this.memory[0x283] = 0x00;
-
-		this.memory[0x284] = (Math.random() * 255) >> 0;
-		this.memory[0x294] = (Math.random() * 255) >> 0;
-		this.memory[0x295] = (Math.random() * 255) >> 0;
-		this.memory[0x296] = (Math.random() * 255) >> 0;
-		this.memory[0x297] = (Math.random() * 255) >> 0;
 
 		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
 			this.memory.set(rom, i);
@@ -166,6 +162,7 @@ export class RAM {
 	private static 0x0A(value: number) {
 		if(value === undefined) return;
 		let ctrlpf: Array<string> = Convert.toBin(value).split('');
+
 		TIA.pf.ctrlpf = ctrlpf;
 		TIA.pf.reflect = (ctrlpf[7] == '1');
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
@@ -212,14 +209,14 @@ export class RAM {
 	// RESP0 write
 	private static 0x10(value: number) {
 		if(value === undefined) return;
-		TIA.p0.position = (TIA.clock <= 68 ? 3 : TIA.clock - 68);
+		TIA.p0.position = (TIA.clock <= 68 ? 3 : TIA.clock - 61);
 		return value;
 	};
 
 	// RESP1 write
 	private static 0x11(value: number) {
 		if(value === undefined) return;
-		TIA.p1.position = (TIA.clock <= 68 ? 3 : TIA.clock - 68);
+		TIA.p1.position = (TIA.clock <= 68 ? 3 : TIA.clock - 61);
 		return value;
 	};
 
@@ -361,6 +358,46 @@ export class RAM {
 		if(value === undefined) return;
 		TIA.p0.hmp = TIA.p1.hmp = TIA.m0.hmm = TIA.m1.hmm = TIA.ball.hmbl = 0;
 		return value;
+	};
+
+	// SWCHA read/write
+	private static 0x280(value: number) {
+		if(value) {
+			this.swchaW = value;
+			return value;
+		};
+
+		let swacnt: Array<string> = Convert.toBin(this.memory[0x281]).split('');
+		let bin: Array<string> = Convert.toBin(this.swchaR).split('');
+		let result = Convert.toBin(this.swchaR).split('');
+
+		for(let i = 0; i < 8; i++) {
+			if(swacnt[i] == '1') {
+				result[i] = bin[i];
+			};
+		};
+
+		return parseInt(result.join(''), 2);
+	};
+
+	// SWCHB read/write
+	private static 0x282(value: number) {
+		if(value) {
+			this.swchbW = value;
+			return value;
+		};
+
+		let swbcnt: Array<string> = Convert.toBin(this.memory[0x283]).split('');
+		let bin: Array<string> = Convert.toBin(this.swchbW).split('');
+		let result = Convert.toBin(this.swchbR).split('');
+
+		for(let i = 0; i < 8; i++) {
+			if(swbcnt[i] == '1') {
+				result[i] = bin[i];
+			};
+		};
+
+		return parseInt(result.join(''), 2);
 	};
 
 	private static 0x284() {

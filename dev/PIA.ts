@@ -2,6 +2,8 @@ import { RAM } from './RAM';
 import { Convert } from './Common';
 
 // TODO: Timer restart after reading from INTIM?
+// TODO: different control types
+// TODO: keyup - proper detection (limit to one later, etc)
 
 export class PIA {
     public static prevTimer: number = null;
@@ -19,8 +21,8 @@ export class PIA {
 
     private static keydown(e: any) {
         let key = e.keyCode;
-        let swcha: any = Convert.toBin(RAM.get(0x280)).split('');
-        let swchb: any = Convert.toBin(RAM.get(0x282)).split('');
+        let swcha: any = Convert.toBin(RAM.swchaR).split('');
+        let swchb: any = Convert.toBin(RAM.swchbR).split('');
         let inpt4: any = Convert.toBin(RAM.get(0x3C)).split('');
         let inpt5: any = Convert.toBin(RAM.get(0x3D)).split('');
 
@@ -54,13 +56,15 @@ export class PIA {
             swchb[0] = (swchb[0] == '0' ? '1' : '0');
         };
 
-        RAM.set(0x280, parseInt(swcha.join(''), 2));
-        RAM.set(0x282, parseInt(swchb.join(''), 2));
+        RAM.swchaR = parseInt(swcha.join(''), 2);
+        RAM.swchbR = parseInt(swchb.join(''), 2);
         RAM.set(0x3C, parseInt(inpt4.join(''), 2));
         RAM.set(0x3D, parseInt(inpt5.join(''), 2));
     };
 
     private static keyup(e: any) {
+        RAM.swchaR = 0xFF;
+        RAM.swchbR = 0xFF;
         RAM.set(0x280, 0xFF);
         RAM.set(0x3C, 0xFF);
         RAM.set(0x3D, 0xFF);
