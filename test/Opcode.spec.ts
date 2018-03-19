@@ -533,52 +533,52 @@ describe("CPU Memory and Register Transfers", () => {
     });
 
     it("(0xAC) should set register Y to nnnn, change N and Z flags", () => {
-        RAM.memory.set(new Uint8Array([0xAC, 0x01, 0x00, 0x02, 0x00]), 0xF000);
-        RAM.set(0x01, 0xFA);
-        RAM.set(0x02, 0);
+        RAM.memory.set(new Uint8Array([0xAC, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x31, 0xFA);
+        RAM.set(0x32, 0);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xAC](), 4);
-        chai.assert.strictEqual(RAM.get(0x01), Register.Y);
+        chai.assert.strictEqual(RAM.get(0x31), Register.Y);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xAC](), 4);
-        chai.assert.strictEqual(RAM.get(0x02), Register.Y);
+        chai.assert.strictEqual(RAM.get(0x32), Register.Y);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
 
     it("(0xAD) should set register A to nnnn, change N and Z flags", () => {
-        RAM.memory.set(new Uint8Array([0xAD, 0x01, 0x00, 0x02, 0x00]), 0xF000);
-        RAM.set(0x01, 0xFA);
-        RAM.set(0x02, 0);
+        RAM.memory.set(new Uint8Array([0xAD, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x31, 0xFA);
+        RAM.set(0x32, 0);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xAD](), 4);
-        chai.assert.strictEqual(RAM.get(0x01), Register.A);
+        chai.assert.strictEqual(RAM.get(0x31), Register.A);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xAD](), 4);
-        chai.assert.strictEqual(RAM.get(0x02), Register.A);
+        chai.assert.strictEqual(RAM.get(0x32), Register.A);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
 
     it("(0xAE) should set register X to nnnn, change N and Z flags", () => {
-        RAM.memory.set(new Uint8Array([0xAE, 0x01, 0x00, 0x02, 0x00]), 0xF000);
-        RAM.set(0x01, 0xFA);
-        RAM.set(0x02, 0);
+        RAM.memory.set(new Uint8Array([0xAE, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x31, 0xFA);
+        RAM.set(0x32, 0);
         Flag.Z = 1;
 
         chai.assert.strictEqual(Opcode[0xAE](), 4);
-        chai.assert.strictEqual(RAM.get(0x01), Register.X);
+        chai.assert.strictEqual(RAM.get(0x31), Register.X);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
 
         chai.assert.strictEqual(Opcode[0xAE](), 4);
-        chai.assert.strictEqual(RAM.get(0x02), Register.X);
+        chai.assert.strictEqual(RAM.get(0x32), Register.X);
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });

@@ -16,13 +16,7 @@ export class Convert {
     };
 
     public static toBin(val: number) {
-        let bits: string = (val >>> 0).toString(2);
-
-        if(bits.length > 8) {
-            return ('0000000000000000' + bits).slice(-16);
-        };
-
-        return ('00000000' + bits).slice(-8);
+        return ('00000000' + (val >>> 0).toString(2)).slice(-8);
     };
 
     public static toColorArray(hex: string) {
