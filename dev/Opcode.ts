@@ -288,7 +288,7 @@ export class Opcode {
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
-    
+
     // NOP nn, X
     public static 0x14() {
         Register.PC++;
@@ -464,7 +464,7 @@ export class Opcode {
     public static 0x30() {
         return this.CJMP('N', false);
     };
-    
+
     // NOP nn, X
     public static 0x34() {
         return this[0x14]();
@@ -597,7 +597,7 @@ export class Opcode {
     public static 0x50() {
         return this.CJMP('V', true);
     };
-    
+
     // NOP nn, X
     public static 0x54() {
         return this[0x14]();
@@ -636,6 +636,15 @@ export class Opcode {
     // NOP nnnn, X
     public static 0x5C() {
         return this[0x1C]();
+    };
+
+    // EOR nnnn, X
+    public static 0x5D() {
+        let address: number = this.next2BYTES() + Register.X;
+
+        this.EOR(RAM.read(address));
+
+        return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
 
     // RTS
@@ -728,7 +737,7 @@ export class Opcode {
     public static 0x70() {
         return this.CJMP('V', false);
     };
-    
+
     // NOP nn, X
     public static 0x74() {
         return this[0x14]();
@@ -1312,7 +1321,7 @@ export class Opcode {
     public static 0xD0() {
         return this.CJMP('Z', true);
     };
-    
+
     // NOP nn, X
     public static 0xD4() {
         return this[0x14]();
@@ -1441,7 +1450,7 @@ export class Opcode {
     public static 0xF0() {
         return this.CJMP('Z', false);
     };
-    
+
     // NOP nn, X
     public static 0xF4() {
         return this[0x14]();

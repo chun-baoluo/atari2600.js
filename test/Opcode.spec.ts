@@ -1347,6 +1347,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
     });
 
+    it("(0x5D) should do XOR operation with A and [nnnn + X], change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x5D, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 1);
+        Register.X = 0x01;
+        Register.A = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x5D](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x5D](), 5);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
     it("(0x65) should add nn to accumulator with carry, change N, Z, C and V flags", () => {
         RAM.memory.set(new Uint8Array([0x65, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 2);
@@ -2171,7 +2191,7 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Opcode[0x0C](), 4);
         chai.assert.strictEqual(Register.PC, 61442);
     });
-    
+
     it("(0x14, 0x34, 0x54, 0x74, 0xD4, 0xF4) should do NOP nn, X", () => {
         chai.assert.strictEqual(Opcode[0x14](), 4);
         chai.assert.strictEqual(Register.PC, 61441);
