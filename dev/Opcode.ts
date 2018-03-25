@@ -94,6 +94,14 @@ export class Opcode {
         Flag.N = this.isNegative(Register.A);
     };
 
+    private static LD(name: string, address: number) {
+        Register[name] = RAM.read(address);
+
+        Flag.Z = this.isZero(Register[name]);
+
+        Flag.N = this.isNegative(Register[name]);
+    };
+
     private static LSR(address: number) {
         let value: number = RAM.read(address);
 
@@ -926,68 +934,42 @@ export class Opcode {
 
     // LDY #nn
     public static 0xA0() {
-        Register.Y = RAM.get(++Register.PC);
-
-        Flag.Z = this.isZero(Register.Y);
-
-        Flag.N = this.isNegative(Register.Y);
+        this.LD('Y', ++Register.PC);
 
         return 2;
     };
 
     // LDA (nn, X)
     public static 0xA1() {
-        let address: number = this.WORD(RAM.get(++Register.PC) + Register.X);
-
-        Register.A = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', this.WORD(RAM.get(++Register.PC) + Register.X));
 
         return 6;
     };
 
     // LDX #nn
     public static 0xA2() {
-        Register.X = RAM.get(++Register.PC);
-
-        Flag.Z = this.isZero(Register.X);
-
-        Flag.N = this.isNegative(Register.X);
+        this.LD('X', ++Register.PC);
 
         return 2;
     };
 
     // LDY nn
     public static 0xA4() {
-        Register.Y = RAM.read(RAM.get(++Register.PC));
-
-        Flag.Z = this.isZero(Register.Y);
-
-        Flag.N = this.isNegative(Register.Y);
+        this.LD('Y', RAM.get(++Register.PC));
 
         return 3;
     };
 
     // LDA nn
     public static 0xA5() {
-        Register.A = RAM.read(RAM.get(++Register.PC));
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', RAM.get(++Register.PC));
 
         return 3;
     };
 
     // LDX nn
     public static 0xA6() {
-        Register.X = RAM.read(RAM.get(++Register.PC));
-
-        Flag.Z = this.isZero(Register.X);
-
-        Flag.N = this.isNegative(Register.X);
+        this.LD('X', RAM.get(++Register.PC));
 
         return 3;
     };
@@ -1016,11 +998,7 @@ export class Opcode {
 
     // LDA #nn
     public static 0xA9() {
-        Register.A = RAM.get(++Register.PC);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', ++Register.PC);
 
         return 2;
     };
@@ -1038,33 +1016,21 @@ export class Opcode {
 
     // LDY nnnn
     public static 0xAC() {
-        Register.Y = RAM.read(this.next2BYTES());
-
-        Flag.Z = this.isZero(Register.Y);
-
-        Flag.N = this.isNegative(Register.Y);
+        this.LD('Y', this.next2BYTES());
 
         return 4;
     };
 
     // LDA nnnn
     public static 0xAD() {
-        Register.A = RAM.read(this.next2BYTES());
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', this.next2BYTES());
 
         return 4;
     };
 
     // LDX nnnn
     public static 0xAE() {
-        Register.X = RAM.read(this.next2BYTES());
-
-        Flag.Z = this.isZero(Register.X);
-
-        Flag.N = this.isNegative(Register.X);
+        this.LD('X', this.next2BYTES());
 
         return 4;
     };
@@ -1078,11 +1044,7 @@ export class Opcode {
     public static 0xB1() {
         let address: number = this.WORD(RAM.get(++Register.PC)) + Register.Y;
 
-        Register.A = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', address);
 
         return 5 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -1102,33 +1064,21 @@ export class Opcode {
 
     // LDY nn, X
     public static 0xB4() {
-        Register.Y = RAM.read(RAM.get(++Register.PC) + Register.X);
-
-        Flag.Z = this.isZero(Register.Y);
-
-        Flag.N = this.isNegative(Register.Y);
+        this.LD('Y', RAM.get(++Register.PC) + Register.X);
 
         return 4;
     };
 
     // LDA nn, X
     public static 0xB5() {
-        Register.A = RAM.read(RAM.get(++Register.PC) + Register.X);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', RAM.get(++Register.PC) + Register.X);
 
         return 4;
     };
 
     // LDX nn, Y
     public static 0xB6() {
-        Register.X = RAM.read(RAM.get(++Register.PC) + Register.Y);
-
-        Flag.Z = this.isZero(Register.X);
-
-        Flag.N = this.isNegative(Register.X);
+        this.LD('X', RAM.get(++Register.PC) + Register.Y);
 
         return 4;
     };
@@ -1155,11 +1105,7 @@ export class Opcode {
     public static 0xB9() {
         let address: number = this.next2BYTES() + Register.Y;
 
-        Register.A = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', address);
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -1179,11 +1125,7 @@ export class Opcode {
     public static 0xBC() {
         let address: number = this.next2BYTES() + Register.X;
 
-        Register.Y = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.Y);
-
-        Flag.N = this.isNegative(Register.Y);
+        this.LD('Y', address);
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -1192,11 +1134,7 @@ export class Opcode {
     public static 0xBD() {
         let address: number = this.next2BYTES() + Register.X;
 
-        Register.A = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.A);
-
-        Flag.N = this.isNegative(Register.A);
+        this.LD('A', address);
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
@@ -1205,11 +1143,7 @@ export class Opcode {
     public static 0xBE() {
         let address: number = this.next2BYTES() + Register.Y;
 
-        Register.X = RAM.read(address);
-
-        Flag.Z = this.isZero(Register.X);
-
-        Flag.N = this.isNegative(Register.X);
+        this.LD('X', address);
 
         return 4 + (this.isNextPage(Register.PC, address) ? 1 : 0);
     };
