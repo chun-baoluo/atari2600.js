@@ -1133,6 +1133,17 @@ export class Opcode {
         return 4;
     };
 
+    // LAX nn, Y
+    public static 0xB7() {
+        Register.A = Register.X = RAM.read(RAM.get(++Register.PC) + Register.Y);
+
+        Flag.Z = this.isZero(Register.A);
+
+        Flag.N = this.isNegative(Register.A);
+
+        return 4;
+    };
+
     // CLV
     public static 0xB8() {
         Flag.V = 0;
