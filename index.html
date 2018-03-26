@@ -1,0 +1,16 @@
+<div style="text-align: center; margin-bottom: 10px;"><canvas id="canvas" style="width: 800px; height: 600px;"></canvas></div>
+<div style="text-align: center;"><input type="file" id="fileinput"></div>
+
+<script src="./output/app.js"></script>
+<script>
+
+let canvas = document.getElementById('canvas');
+let app = new Atari2600.App(canvas);
+let fileinput = document.getElementById('fileinput');
+
+fileinput.onchange = () => {
+    let file = fileinput.files[0];
+    app.processFile(file);
+};
+
+</script>
