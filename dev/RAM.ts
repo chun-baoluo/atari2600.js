@@ -113,7 +113,7 @@ export class RAM {
 		let playerValue: number = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
 
 		TIA.p0.pixelRange = TIA.getPixelRange(playerValue);
-		TIA.p0.size = (playerValue == 5 || playerValue == 7 ? (playerValue + 1) / 2 : 1);
+		TIA.p0.size = (playerValue == 5 || playerValue == 7 ? playerValue % 5 + 2 : 1);
 		TIA.m0.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
@@ -125,7 +125,7 @@ export class RAM {
 		let playerValue: number = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
 
 		TIA.p1.pixelRange = TIA.getPixelRange(playerValue);
-		TIA.p1.size = (playerValue == 5 || playerValue == 7 ? (playerValue + 1) / 2 : 1);
+		TIA.p1.size = (playerValue == 5 || playerValue == 7 ? playerValue % 5 + 2 : 1);
 		TIA.m1.size = Math.pow(2, 2 * parseInt(nusiz[2]) + parseInt(nusiz[3]));
 		return value;
 	};
