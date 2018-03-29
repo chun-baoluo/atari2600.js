@@ -133,28 +133,28 @@ export class RAM {
 	// COLUP0 write
 	private static 0x06(value: number) {
 		if(value === undefined) return;
-		TIA.pf.colup0 = TIA.p0.colup = TIA.m0.colup = TIA.color(Convert.toBin(value));
+		TIA.pf.colup0 = TIA.p0.colup = TIA.m0.colup = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUP1 write
 	private static 0x07(value: number) {
 		if(value === undefined) return;
-		TIA.pf.colup1 = TIA.p1.colup = TIA.m1.colup = TIA.color(Convert.toBin(value));
+		TIA.pf.colup1 = TIA.p1.colup = TIA.m1.colup = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUPF write
 	private static 0x08(value: number) {
 		if(value === undefined) return;
-		TIA.pf.colupf = TIA.ball.colupf = TIA.color(Convert.toBin(value));
+		TIA.pf.colupf = TIA.ball.colupf = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUBK write
 	private static 0x09(value: number) {
 		if(value === undefined) return;
-		TIA.bk.colubk = TIA.color(Convert.toBin(value));
+		TIA.bk.colubk = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
