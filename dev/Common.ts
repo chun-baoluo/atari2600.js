@@ -18,13 +18,4 @@ export class Convert {
     public static toBin(val: number) {
         return ('00000000' + (val >>> 0).toString(2)).slice(-8);
     };
-
-    public static toColorArray(hex: string) {
-        let c: any = [];
-        hex = hex.replace('#','');
-        c[0] = parseInt(hex.substring(0, 2), 16);
-        c[1] = parseInt(hex.substring(2, 4), 16);
-        c[2] = parseInt(hex.substring(4, 6), 16);
-        return c;
-    };
 };

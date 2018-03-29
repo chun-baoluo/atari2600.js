@@ -93,7 +93,7 @@ export class RAM {
 	// VSYNC write
 	private static 0x00(value: number) {
 		if(value === undefined) return;
-		if(Convert.toBin(RAM.get(0x00)).charAt(6) == '0' && Convert.toBin(value).charAt(6) == '1') {
+		if(!(RAM.get(0x00) & 0x02) && (value & 0x02)) {
 			TIA.scanline = 0;
 		};
 		return value;
@@ -174,14 +174,14 @@ export class RAM {
 	// REFP0 write
 	private static 0x0B(value: number) {
 		if(value === undefined) return;
-		TIA.p0.refp = (Convert.toBin(value).charAt(4) == '1');
+		TIA.p0.refp = ((value & 0x08) > 0);
 		return value;
 	};
 
 	// REFP1 write
 	private static 0x0C(value: number) {
 		if(value === undefined) return;
-		TIA.p1.refp = (Convert.toBin(value).charAt(4) == '1');
+		TIA.p1.refp = ((value & 0x08) > 0);
 		return value;
 	};
 
@@ -261,21 +261,21 @@ export class RAM {
 	// ENAM0 write
 	private static 0x1D(value: number) {
 		if(value === undefined) return;
-		TIA.m0.enam = (Convert.toBin(value).charAt(6) == '1');
+		TIA.m0.enam = ((value & 0x02) > 0);
 		return value;
 	};
 
 	// ENAM1 write
 	private static 0x1E(value: number) {
 		if(value === undefined) return;
-		TIA.m1.enam = (Convert.toBin(value).charAt(6) == '1');
+		TIA.m1.enam = ((value & 0x02) > 0);
 		return value;
 	};
 
 	// ENABL write
 	private static 0x1F(value: number) {
 		if(value === undefined) return;
-		TIA.ball.enabl = (Convert.toBin(value).charAt(6) == '1');
+		TIA.ball.enabl = ((value & 0x02) > 0);
 		return value;
 	};
 
@@ -322,21 +322,21 @@ export class RAM {
 	// VDELP0 write
 	private static 0x25(value: number) {
 		if(value === undefined) return;
-		TIA.p0.vdelp = (Convert.toBin(value).charAt(7) == '1');
+		TIA.p0.vdelp = ((value & 0x01) > 0);
 		return value;
 	};
 
 	// VDELP1 write
 	private static 0x26(value: number) {
 		if(value === undefined) return;
-		TIA.p1.vdelp = (Convert.toBin(value).charAt(7) == '1');
+		TIA.p1.vdelp = ((value & 0x01) > 0);
 		return value;
 	};
 
 	// VDELBL write
 	private static 0x27(value: number) {
 		if(value === undefined) return;
-		TIA.ball.vdelbl = (Convert.toBin(value).charAt(7) == '1');
+		TIA.ball.vdelbl = ((value & 0x01) > 0);
 		return value;
 	};
 
@@ -368,7 +368,7 @@ export class RAM {
 		};
 
 		let swacnt: Array<string> = Convert.toBin(this.memory[0x281]).split('');
-		let bin: Array<string> = Convert.toBin(this.swchaR).split('');
+		let bin: Array<string> = Convert.toBin(this.swchaW).split('');
 		let result = Convert.toBin(this.swchaR).split('');
 
 		for(let i = 0; i < 8; i++) {

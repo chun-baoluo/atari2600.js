@@ -19,11 +19,6 @@ describe("Conversion functions", () => {
         chai.assert.strictEqual(Convert.toBin(24), '00011000');
     });
 
-    it("should convert hex color to color array", () => {
-        chai.assert.strictEqual(Convert.toColorArray('#FF00FF').join(','), [255, 0, 255].join(','));
-        chai.assert.strictEqual(Convert.toColorArray('#FADD0F').join(','), [250, 221, 15].join(','));
-    });
-
     it("should convert decimal to BCD", () => {
         chai.assert.strictEqual(Convert.toBCD(37), 55);
         chai.assert.strictEqual(Convert.toBCD(29), 41);

@@ -66,6 +66,7 @@ export class PIA {
         RAM.swchaR = 0xFF;
         RAM.swchbR = 0xFF;
         RAM.set(0x280, 0xFF);
+        RAM.set(0x282, 0xFF);
         RAM.set(0x3C, 0xFF);
         RAM.set(0x3D, 0xFF);
     };
