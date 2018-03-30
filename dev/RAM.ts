@@ -356,6 +356,7 @@ export class RAM {
 	// HMCLR write
 	private static 0x2B(value: number) {
 		if(value === undefined) return;
+		this.memory[0x20] = this.memory[0x21] = this.memory[0x22] = this.memory[0x23] = this.memory[0x24] = 0;
 		TIA.p0.hmp = TIA.p1.hmp = TIA.m0.hmm = TIA.m1.hmm = TIA.ball.hmbl = 0;
 		return value;
 	};
