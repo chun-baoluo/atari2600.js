@@ -7,8 +7,8 @@ import { Convert } from './Common';
 
 export class Opcode {
 
-    private static isNextPage(pc1: number, pc2: number) {
-        return pc1 / 0xFF >> 0 != pc2 / 0xFF >> 0;
+    private static isNextPage(address: number, addressWithOffset: number) {
+        return address >> 0x08 % 0xFF != addressWithOffset >> 0x08 % 0xFF;
     };
 
     private static isZero(value: number) {
