@@ -1,7 +1,6 @@
 import { Convert } from './Common';
 import { RAM } from './RAM';
 import { CPU } from './CPU';
-import { NTSC } from './Colors';
 
 interface GameObject {
     position?: number;
@@ -230,9 +229,9 @@ export class TIA {
     public static bk: Background = new Background();
 
     public static clock: number = 0;
-    
-    public static colorPalette: Map<number, number[]> = new Map(NTSC);
-    
+
+    public static colorPalette: Map<number, number[]> = null;
+
     public static ctx: any = null;
 
 	public static imageData: any = null;
