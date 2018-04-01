@@ -16,7 +16,7 @@ You'll need a canvas and a file input HTML elements for this to work.
 
     let canvas = document.getElementById('canvas');
     let app = new Atari2600.App(canvas, {
-        colors: 'NTSC' // optional (possible values - NTSC or PAL, default - NTSC)
+        colors: 'NTSC' // optional (possible values - NTSC, PAL or SECAM, default - NTSC)
     });
     let fileinput = document.getElementById('fileinput');
 

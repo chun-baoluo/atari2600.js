@@ -1,4 +1,16 @@
 export class Colors {
+
+    private static _SECAM: Array<[number, number[]]> = [
+        [0x00, [0x00, 0x00, 0x00]], // #000000
+        [0x02, [0x21, 0x21, 0xFF]], // #2121FF
+        [0x04, [0xF0, 0x3C, 0x79]], // #F03C79
+        [0x06, [0xFF, 0x50, 0xFF]], // #FF50FF
+        [0x08, [0x7F, 0xFF, 0x00]], // #7FFF00
+        [0x0A, [0x7F, 0xFF, 0xFF]], // #7FFFFF
+        [0x0C, [0xFF, 0xFF, 0x3F]], // #FFFF3F
+        [0x0E, [0xED, 0xED, 0xED]], // #EDEDED
+    ];
+
     public static NTSC: Array<[number, number[]]> = [
         [0x00, [0, 0, 0]], // #000000
         [0x02, [26, 26, 26]], // #1A1A1A
@@ -290,4 +302,14 @@ export class Colors {
         [0xFC, [0xC7, 0xC7, 0xC7]], // #C7C7C7
         [0xFE, [0xED, 0xED, 0xED]], // #EDEDED
     ];
+
+    public static get SECAM() {
+        let value: Array<[number, number[]]>  = this._SECAM;
+
+        for(let i = 0x10; i < 0xFF; i += 0x02) {
+            value.push([i, value[i % 0x10][1]]);
+        };
+
+        return value;
+    };
 };
