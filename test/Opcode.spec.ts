@@ -1269,6 +1269,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 1);
     });
 
+    it("(0x4D) should do XOR operation with A and [nnnn], change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x4D, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 0x01);
+        RAM.set(0x33, 0x01);
+        Register.A = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x4D](), 4);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+
+        chai.assert.strictEqual(Opcode[0x4D](), 4);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+    });
+
     it("(0x4E) should right shift nnnn, change N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0x4E, 0x32, 0x00, 0x33, 0x00]), 0xF000);
         RAM.set(0x32, 0x01);
@@ -1285,6 +1304,27 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
+    });
+
+    it("(0x51) should do XOR operation with A and [[nn] + Y], change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x51, 0x32]), 0xF000);
+        RAM.set(0x32, 0x33);
+        RAM.set(0x35, 0x01);
+        Register.A = 0x01;
+        Register.Y = 0x02;
+
+        chai.assert.strictEqual(Opcode[0x51](), 5);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+
+        Register.A = 128;
+        Register.PC = 0xF000;
+
+        chai.assert.strictEqual(Opcode[0x51](), 5);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
     });
 
     it("(0x55) should do XOR operation with A and [nn + X], change N and Z flags", () => {

@@ -591,6 +591,13 @@ export class Opcode {
         return 3;
     };
 
+    // EOR nnnn
+    public static 0x4D() {
+        this.EOR(RAM.read(this.next2BYTES()));
+
+        return 4;
+    };
+
     // LSR nnnn
     public static 0x4E() {
         this.LSR(this.next2BYTES());
@@ -601,6 +608,15 @@ export class Opcode {
     // BVC nnn
     public static 0x50() {
         return this.CJMP('V', true);
+    };
+
+    // EOR (nn), Y
+    public static 0x51() {
+        let address: number = this.WORD(RAM.get(++Register.PC));
+
+        this.EOR(RAM.read(address + Register.Y));
+
+        return 5 + (this.isNextPage(address, address + Register.Y) ? 1 : 0);
     };
 
     // NOP nn, X
