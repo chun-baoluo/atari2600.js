@@ -9,6 +9,7 @@ export class App {
 
     constructor(canvas: any, options: any = {}) {
         this.handleRom = this.handleRom.bind(this);
+        canvas.style.imageRendering = options.imageRendering || 'pixelated';
         TIA.colorPalette = new Map(Colors[options.colors] || Colors['NTSC']);
         TIA.canvas = canvas;
         PIA.initInputs();

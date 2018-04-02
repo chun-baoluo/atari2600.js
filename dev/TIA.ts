@@ -10,6 +10,10 @@ abstract class GameObject {
     protected _canvas: any = null;
     protected _ctx: any = null;
     protected _imageData: any = null;
+    
+    public get imageData() {
+        return this._imageData;
+    };
 
     public get canvas() {
         this._ctx.putImageData(this._imageData, 0, 0);
@@ -271,6 +275,86 @@ export class TIA {
 
         this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
     };
+    
+    private static checkCollisions() {
+        let ballData: number[] = this.ball.imageData.data;
+        let pfData: number[] = this.pf.imageData.data;
+        let p0Data: number[] = this.p0.imageData.data;
+        let p1Data: number[] = this.p1.imageData.data;
+        let m0Data: number[] = this.m0.imageData.data;
+        let m1Data: number[] = this.m1.imageData.data;
+        
+        for(let i = 0, length = (this._canvas.height * this._canvas.width << 2); i < length; i += 4) {
+            
+            // CXM0P
+            if(m0Data[i + 3] == 255 && p1Data[i + 3] == 255) {
+                RAM.write(0x30, RAM.get(0x30) | 0x80);
+            };
+            
+            if(m0Data[i + 3] == 255 && p0Data[i + 3] == 255) {
+                RAM.write(0x30, RAM.get(0x30) | 0x40);
+            };
+            
+            // CXM1P
+            if(m1Data[i + 3] == 255 && p0Data[i + 3] == 255) {
+                RAM.write(0x31, RAM.get(0x31) | 0x80);
+            };
+            
+            if(m1Data[i + 3] == 255 && p1Data[i + 3] == 255) {
+                RAM.write(0x31, RAM.get(0x31) | 0x40);
+            };
+            
+            // CXP0FB 
+            if(p0Data[i + 3] == 255 && pfData[i + 3] == 255) {
+                RAM.write(0x32, RAM.get(0x32) | 0x80);
+            };
+            
+            if(p0Data[i + 3] == 255 && ballData[i + 3] == 255) {
+                RAM.write(0x32, RAM.get(0x32) | 0x40);
+            };
+            
+            // CXP1FB
+            if(p1Data[i + 3] == 255 && pfData[i + 3] == 255) {
+                RAM.write(0x33, RAM.get(0x33) | 0x80);
+            };
+            
+            if(p1Data[i + 3] == 255 && ballData[i + 3] == 255) {
+                RAM.write(0x33, RAM.get(0x33) | 0x40);
+            };
+            
+            // CXM0FB
+            if(m0Data[i + 3] == 255 && pfData[i + 3] == 255) {
+                RAM.write(0x34, RAM.get(0x34) | 0x80);
+            };
+            
+            if(m0Data[i + 3] == 255 && ballData[i + 3] == 255) {
+                RAM.write(0x34, RAM.get(0x34) | 0x40);
+            };
+            
+            // CXM1FB
+            if(m1Data[i + 3] == 255 && pfData[i + 3] == 255) {
+                RAM.write(0x35, RAM.get(0x35) | 0x80);
+            };
+            
+            if(m1Data[i + 3] == 255 && ballData[i + 3] == 255) {
+                RAM.write(0x35, RAM.get(0x35) | 0x40);
+            };
+            
+            // CXBLPF
+            if(ballData[i + 3] == 255 && pfData[i + 3] == 255) {
+                RAM.write(0x36, RAM.get(0x36) | 0x80);
+            };
+            
+            // CXPPMM
+            if(p0Data[i + 3] == 255 && p1Data[i + 3] == 255) {
+                RAM.write(0x37, RAM.get(0x37) | 0x80);
+            };
+            
+            if(m0Data[i + 3] == 255 && m1Data[i + 3] == 255) {
+                RAM.write(0x37, RAM.get(0x37) | 0x40);
+            };
+        };
+    };
 
     private static draw() {
         if(this.pfp) {
@@ -305,8 +389,6 @@ export class TIA {
 
                 let counter: number = 2;
                 for(this.clock = 68; this.clock < 228; this.clock += 1) {
-
-
                     if(counter > 2) {
                         counter = 0;
                         CPU.pulse();
@@ -325,6 +407,7 @@ export class TIA {
                 this.scanline++;
             };
 
+            this.checkCollisions();
             this.draw();
 
             resolve(true);
