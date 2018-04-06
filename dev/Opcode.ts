@@ -203,7 +203,7 @@ export class Opcode {
 
     // ORA (nn, X)
     public static 0x01() {
-        this.ORA(RAM.read(this.WORD(RAM.get(++Register.PC) + Register.X)));
+        this.ORA(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
 
         return 6;
     };
@@ -301,14 +301,14 @@ export class Opcode {
 
     // ORA nn, X
     public static 0x15() {
-        this.ORA(RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.ORA(RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
 
     // ASL nn, X
     public static 0x16() {
-        this.ASL(RAM.get(++Register.PC) + Register.X);
+        this.ASL(Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 6;
     };
@@ -477,14 +477,14 @@ export class Opcode {
 
     // AND nn, X
     public static 0x35() {
-        this.AND(RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.AND(RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
 
     // ROL nn, X
     public static 0x36() {
-        this.ROL(RAM.get(++Register.PC) + Register.X);
+        this.ROL(Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 6;
     };
@@ -626,14 +626,14 @@ export class Opcode {
 
     // EOR nn, X
     public static 0x55() {
-        this.EOR(RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.EOR(RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
 
     // LSR nn, X
     public static 0x56() {
-        this.LSR(RAM.get(++Register.PC) + Register.X);
+        this.LSR(Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 6;
     };
@@ -766,14 +766,14 @@ export class Opcode {
 
     // ADC nn, X
     public static 0x75() {
-        this.ADC(RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.ADC(RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
 
     // ROR nn, X
     public static 0x76() {
-        this.ROR(RAM.get(++Register.PC) + Register.X);
+        this.ROR(Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 6;
     };
@@ -897,19 +897,19 @@ export class Opcode {
 
     // STY nn, X
     public static 0x94() {
-        RAM.write(RAM.get(++Register.PC) + Register.X, Register.Y);
+        RAM.write(Convert.toUint8(RAM.get(++Register.PC) + Register.X), Register.Y);
         return 4;
     };
 
     // STA nn, X
-    public static 0x95() {
-        RAM.write(RAM.get(++Register.PC) + Register.X, Register.A);
+    public static 0x95() {    
+        RAM.write(Convert.toUint8(RAM.get(++Register.PC) + Register.X), Register.A);
         return 4;
     };
 
     // STX nn, Y
     public static 0x96() {
-        RAM.write(RAM.get(++Register.PC) + Register.Y, Register.X);
+        RAM.write(Convert.toUint8(RAM.get(++Register.PC) + Register.Y), Register.X);
         return 4;
     };
 
@@ -954,7 +954,7 @@ export class Opcode {
 
     // LDA (nn, X)
     public static 0xA1() {
-        this.LD('A', this.WORD(RAM.get(++Register.PC) + Register.X));
+        this.LD('A', this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 6;
     };
@@ -1077,28 +1077,28 @@ export class Opcode {
 
     // LDY nn, X
     public static 0xB4() {
-        this.LD('Y', RAM.get(++Register.PC) + Register.X);
+        this.LD('Y', Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 4;
     };
 
     // LDA nn, X
     public static 0xB5() {
-        this.LD('A', RAM.get(++Register.PC) + Register.X);
+        this.LD('A', Convert.toUint8(RAM.get(++Register.PC) + Register.X));
 
         return 4;
     };
 
     // LDX nn, Y
     public static 0xB6() {
-        this.LD('X', RAM.get(++Register.PC) + Register.Y);
+        this.LD('X', Convert.toUint8(RAM.get(++Register.PC) + Register.Y));
 
         return 4;
     };
 
     // LAX nn, Y
     public static 0xB7() {
-        Register.A = Register.X = RAM.read(RAM.get(++Register.PC) + Register.Y);
+        Register.A = Register.X = RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.Y));
 
         Flag.Z = this.isZero(Register.A);
 
@@ -1287,14 +1287,14 @@ export class Opcode {
 
     // CMP nn, X
     public static 0xD5() {
-        this.CMP('A', RAM.read(RAM.get(++Register.PC) + Register.X));
+        this.CMP('A', RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X)));
 
         return 4;
     };
 
     // DEC nn, X
     public static 0xD6() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
+        let address: number = Convert.toUint8(RAM.get(++Register.PC) + Register.X);
 
         let result: number = RAM.write(address, RAM.get(address) - 1);
 
@@ -1416,14 +1416,14 @@ export class Opcode {
 
     // SBC nn, X
     public static 0xF5() {
-        this.ADC(Convert.toUint8(~RAM.read(RAM.get(++Register.PC) + Register.X)));
+        this.ADC(Convert.toUint8(~RAM.read(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
 
         return 4;
     };
 
     // INC nn, X
     public static 0xF6() {
-        let address: number = RAM.get(++Register.PC) + Register.X;
+        let address: number = Convert.toUint8(RAM.get(++Register.PC) + Register.X);
 
         let result: number = RAM.write(address, RAM.get(address) + 1);
 
