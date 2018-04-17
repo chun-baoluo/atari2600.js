@@ -196,7 +196,7 @@ export class Opcode {
 
         this.PUSH(flags);
 
-        Register.PC = RAM.read(0xFFFE);
+        Register.PC = this.WORD(0xFFFE);
 
         return 7;
     };
@@ -517,6 +517,29 @@ export class Opcode {
         this.AND(RAM.read(address + Register.X));
 
         return 4 + (this.isNextPage(address, address + Register.X) ? 1 : 0);
+    };
+    
+    // RTI
+    public static 0x40() {
+        let val: Array<string> = Convert.toBin(this.POP()).split('');
+        
+        Register.PC = this.POP();
+        
+        Register.PC += this.POP() << 8;
+        
+        Flag.N = parseInt(val[0]);
+
+        Flag.V = parseInt(val[1]);
+
+        Flag.D = parseInt(val[4]);
+
+        Flag.I = parseInt(val[5]);
+
+        Flag.Z = parseInt(val[6]);
+
+        Flag.C = parseInt(val[7]);
+
+        return 6;
     };
 
     // NOP nn

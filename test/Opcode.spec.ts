@@ -76,6 +76,26 @@ describe("CPU Jump and Control Instructions", () => {
         chai.assert.strictEqual(Opcode[0x38](), 2);
         chai.assert.strictEqual(Flag.C, 1);
     });
+    
+    it("(0x40) should return from break, modify all flags except unused and B, set program counter to be equal the value from stack", () => {
+        Register.S = 0xFC;
+        Flag.B = 0;
+        RAM.set(0xFF, 0xFB);
+        RAM.set(0xFE, 0x86);
+        RAM.set(0xFD, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x40](), 6);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.V, 1);
+        chai.assert.strictEqual(Flag.D, 1);
+        chai.assert.strictEqual(Flag.I, 1);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+        
+        chai.assert.strictEqual(Flag.B, 0);
+        chai.assert.strictEqual(Register.PC, 0xFB86);
+        
+    });
 
     it("(0x4C) should jump to nnnn", () => {
         RAM.memory.set(new Uint8Array([0x4C, 0x01, 0xFF]), 0xF000);
@@ -104,7 +124,6 @@ describe("CPU Jump and Control Instructions", () => {
     });
 
     it("(0x60) should return from subroutine", () => {
-        // RAM.stack.push(6);
         Register.S = 0xFD;
         chai.assert.strictEqual(Opcode[0x60](), 6);
         chai.assert.strictEqual(Register.S, 0xFF);
