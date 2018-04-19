@@ -866,6 +866,13 @@ export class Opcode {
         Register.PC++;
         return 2;
     };
+    
+    // STA (nn, X)
+    public static 0x81() {
+        RAM.write(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))), Register.A);
+        
+        return 6;
+    };
 
     // NOP #nn
     public static 0x82() {
@@ -875,18 +882,21 @@ export class Opcode {
     // STY nn
     public static 0x84() {
         RAM.write(RAM.get(++Register.PC), Register.Y);
+        
         return 3;
     };
 
     // STA nn
     public static 0x85() {
         RAM.write(RAM.get(++Register.PC), Register.A);
+        
         return 3;
     };
 
     // STX nn
     public static 0x86() {
         RAM.write(RAM.get(++Register.PC), Register.X);
+        
         return 3;
     };
 
