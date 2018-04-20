@@ -1004,6 +1004,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 1);
         chai.assert.strictEqual(Flag.C, 1);
     });
+    
+    it("(0x21) should do AND operation with A and [[nn + X]], change N and Z flags", () => {
+        RAM.memory.set(new Uint8Array([0x21, 0x32]), 0xF000);
+        RAM.set(0x33, 0x35);
+        RAM.set(0x35, 0xFE);
+        Register.X = 0x01;
+        Register.A = 0xFF;
+
+        chai.assert.strictEqual(Opcode[0x21](), 6);
+        chai.assert.strictEqual(Register.A, 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+
+        Register.A = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x21](), 6);
+        chai.assert.strictEqual(Register.A, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+    });
 
     it("(0x24) should test A and nn, change N, Z and V flags", () => {
         RAM.memory.set(new Uint8Array([0x24, 0x32, 0x33]), 0xF000);
@@ -1024,7 +1044,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
     });
 
     it("(0x25) should do AND operation with A and [nn], change N and Z flags", () => {
-        RAM.memory.set(new Uint8Array([0xE0, 0x32, 0x33]), 0xF000);
+        RAM.memory.set(new Uint8Array([0x25, 0x32, 0x33]), 0xF000);
         RAM.set(0x32, 0x01);
         RAM.set(0x33, 0xFF);
 
@@ -1591,6 +1611,35 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.C, 0);
         chai.assert.strictEqual(Flag.V, 0);
     });
+    
+    it("(0x71) should add [[nn] + Y] to accumulator with carry, change N, Z, C and V flags", () => {
+        RAM.memory.set(new Uint8Array([0x71, 0x32, 0x42]), 0xF000);
+        RAM.set(0x32, 0x37);
+        RAM.set(0x38, 0x02);
+        RAM.set(0x42, 0x47);
+        RAM.set(0x48, 0x01);
+        Register.A = 125;
+        Flag.C = Flag.Z = 1;
+        Register.Y = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x71](), 5);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 1);
+
+        Register.A = new Uint8Array([-129])[0];
+
+        Flag.C = 1;
+
+        chai.assert.strictEqual(Opcode[0x71](), 5);
+        chai.assert.strictEqual(Register.A, 129);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 0);
+        chai.assert.strictEqual(Flag.V, 0);
+    });
 
     it("(0x75) should add [nn + X] to accumulator with carry, change N, Z, C and V flags", () => {
         RAM.memory.set(new Uint8Array([0x75, 0x31, 0x32]), 0xF000);
@@ -1598,7 +1647,7 @@ describe("CPU Arithmetic/Logical Operations", () => {
         RAM.set(0x33, 1);
         Register.A = 125;
         Flag.C = Flag.Z = 1;
-        Register.X = 0x01
+        Register.X = 0x01;
 
         chai.assert.strictEqual(Opcode[0x75](), 4);
         chai.assert.strictEqual(Register.A, 128);
@@ -1942,6 +1991,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 1);
     });
+    
+    it("(0xD1) should compare results of A - [[nn] + Y], set N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xD1, 0x32, 0x33]), 0xF000);
+        RAM.set(0x32, 0x37);
+        RAM.set(0x38, 0x07);
+        Register.Y = 0x01;
+        Register.A = 0x07;
+        
+        chai.assert.strictEqual(Opcode[0xD1](), 5);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        Register.A = 0xFF;
+        
+        chai.assert.strictEqual(Opcode[0xD1](), 5);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0xD5) should compare results of A - [nn + X], set N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0xC5, 0x31, 0x31, 0x35]), 0xF000);
@@ -2226,6 +2295,31 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
+    });
+    
+    it("(0xED) should substract [nnnn] from accumulator with borrow, change N, Z, C and V flags", () => {
+        RAM.memory.set(new Uint8Array([0xED, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 1);
+        RAM.set(0x33, 2);
+        Register.A = 126;
+        Flag.C = Flag.Z = 0;
+
+        chai.assert.strictEqual(Opcode[0xED](), 4);
+        chai.assert.strictEqual(Register.A, 124);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+        chai.assert.strictEqual(Flag.V, 0);
+
+        Register.A = new Uint8Array([-126])[0];
+        Flag.C = Flag.V = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xED](), 4);
+        chai.assert.strictEqual(Register.A, 128);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+        chai.assert.strictEqual(Flag.V, 0);
     });
     
     it("(0xEE) should increment [nnnn] by one, change N and Z flags", () => {

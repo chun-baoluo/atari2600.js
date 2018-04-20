@@ -370,10 +370,17 @@ export class Opcode {
     // JSR nnnn
     public static 0x20() {
         let address: number = this.next2BYTES();
-
-        this.PUSH((Register.PC - 1) >> 8);
-        this.PUSH(Register.PC - 1);
+        
+        this.PUSH(Register.PC >> 8);
+        this.PUSH(Register.PC);
         Register.PC = address - 1;
+
+        return 6;
+    };
+    
+    // AND (nn, X)
+    public static 0x21() {
+        this.AND(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
 
         return 6;
     };
@@ -725,7 +732,7 @@ export class Opcode {
 
     // RTS
     public static 0x60() {
-        Register.PC = this.POP() + 1;
+        Register.PC = this.POP();
         Register.PC += this.POP() << 8;
 
         return 6;
@@ -812,6 +819,17 @@ export class Opcode {
     // BVS nnn
     public static 0x70() {
         return this.CJMP('V', false);
+    };
+    
+    // ADC (nn), Y
+    public static 0x71() {
+        let address: number = this.WORD(RAM.get(++Register.PC));
+        
+        console.log(RAM.read(address + Register.Y));
+        
+        this.ADC(RAM.read(address + Register.Y));
+
+        return 5 + (this.isNextPage(address, address + Register.Y) ? 1 : 0);
     };
 
     // NOP nn, X
@@ -1345,6 +1363,15 @@ export class Opcode {
     public static 0xD0() {
         return this.CJMP('Z', true);
     };
+    
+    // CMP (nn),Y
+    public static 0xD1() {
+        let address: number = this.WORD(RAM.get(++Register.PC));
+        
+        this.CMP('A', RAM.read(address + Register.Y));
+
+        return 5 + (this.isNextPage(address, address + Register.Y) ? 1 : 0);;
+    };
 
     // NOP nn, X
     public static 0xD4() {
@@ -1461,6 +1488,13 @@ export class Opcode {
     // CPX nnnn
     public static 0xEC() {
         this.CMP('X', RAM.read(this.next2BYTES()));
+
+        return 4;
+    };
+    
+    // SBC nnnn
+    public static 0xED() {
+        this.ADC(Convert.toUint8(~RAM.read(this.next2BYTES())));
 
         return 4;
     };
