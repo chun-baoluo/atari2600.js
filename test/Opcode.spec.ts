@@ -1612,6 +1612,26 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.V, 0);
     });
     
+    it("(0x6E) should rorate right through carry [nnnn], change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x56, 0x32, 0x00, 0x33, 0x00]), 0xF000);
+        RAM.set(0x32, 0xFF);
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x6E](), 6);
+        chai.assert.strictEqual(RAM.get(0x32), 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 0xFE);
+
+        chai.assert.strictEqual(Opcode[0x6E](), 6);
+        chai.assert.strictEqual(RAM.get(0x33), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+    
     it("(0x71) should add [[nn] + Y] to accumulator with carry, change N, Z, C and V flags", () => {
         RAM.memory.set(new Uint8Array([0x71, 0x32, 0x42]), 0xF000);
         RAM.set(0x32, 0x37);
@@ -1739,6 +1759,27 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.C, 0);
         chai.assert.strictEqual(Flag.V, 0);
+    });
+    
+    it("(0x7E) should rorate right through carry [nnnn + X], change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x56, 0x31, 0x00, 0x32, 0x00]), 0xF000);
+        RAM.set(0x32, 0xFF);
+        Register.X = 0x01;
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x7E](), 7);
+        chai.assert.strictEqual(RAM.get(0x32), 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0x33, 0xFE);
+
+        chai.assert.strictEqual(Opcode[0x7E](), 7);
+        chai.assert.strictEqual(RAM.get(0x33), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
     });
 
     it("(0x88) should decrement register Y by one, change N and Z flags", () => {

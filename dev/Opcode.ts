@@ -815,6 +815,13 @@ export class Opcode {
 
         return 4;
     };
+    
+    // ROR nnnn
+    public static 0x6E() {
+        this.ROR(this.next2BYTES());
+
+        return 6;
+    };
 
     // BVS nnn
     public static 0x70() {
@@ -824,8 +831,6 @@ export class Opcode {
     // ADC (nn), Y
     public static 0x71() {
         let address: number = this.WORD(RAM.get(++Register.PC));
-        
-        console.log(RAM.read(address + Register.Y));
         
         this.ADC(RAM.read(address + Register.Y));
 
@@ -877,6 +882,13 @@ export class Opcode {
         this.ADC(RAM.read(address + Register.X));
 
         return 4 + (this.isNextPage(address, address + Register.X) ? 1 : 0);
+    };
+    
+    // ROR nnnn, X
+    public static 0x7E() {
+        this.ROR((this.next2BYTES() + Register.X) & 0xFFFF);
+
+        return 7;
     };
 
     // NOP #nn
