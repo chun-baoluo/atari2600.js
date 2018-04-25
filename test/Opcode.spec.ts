@@ -1825,6 +1825,37 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
         chai.assert.strictEqual(Flag.C, 1);
     });
+    
+    it("(0xC1) should compare results of A - [[nn + X]], set N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xC5, 0x31, 0x31, 0x35]), 0xF000);
+        RAM.set(0x32, 0x34);
+        RAM.set(0x34, 0x32);
+        RAM.set(0x36, 0x38);
+        RAM.set(0x38, 0x36);
+        
+        Register.A = 0x07;
+        Register.X = 0x01;
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xC1](), 6);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+
+        Register.A = 0x32;
+
+        chai.assert.strictEqual(Opcode[0xC1](), 6);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 1);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        Register.A = 0x38;
+
+        chai.assert.strictEqual(Opcode[0xC1](), 6);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 
     it("(0xC4) should compare results of Y - [nn], set N, Z and C flags", () => {
         RAM.memory.set(new Uint8Array([0xC4, 0x32, 0x32, 0x36]), 0xF000);
