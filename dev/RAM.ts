@@ -47,16 +47,8 @@ export class RAM {
 		return value;
 	};
 
-	public static readRom(rom: Uint8Array) {
-		let romSize = rom.length;
-		let original: Uint8Array = rom;
-
-		for(let i = romSize; i < 0x1000; i += romSize) {
-			let old: Uint8Array = rom;
-			rom = new Uint8Array(i + romSize);
-			rom.set(old, 0);
-			rom.set(original, i);
-		};
+	public static readRom(banks: Array<Uint8Array>) {
+		let rom: Uint8Array = banks[0];
 
 		this.reset();
 
@@ -360,7 +352,7 @@ export class RAM {
 		TIA.p0.hmp = TIA.p1.hmp = TIA.m0.hmm = TIA.m1.hmm = TIA.ball.hmbl = 0;
 		return value;
 	};
-	
+
 	// CXCLR write
 	private static 0x2C(value: number) {
 		if(value === undefined) return this.memory[0x2C];
