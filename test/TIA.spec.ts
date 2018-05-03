@@ -24,7 +24,7 @@ describe("TIA", () => {
         RAM.memory[0x0FFC] = 0;
         RAM.memory[0x0FFD] = 0xF0;
 
-        RAM.readRom([rom]);
+        RAM.readRom([rom], '4KB');
 
         Register.PC = 0xF000;
 

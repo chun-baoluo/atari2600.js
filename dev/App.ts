@@ -25,8 +25,8 @@ export class App {
     public processFile(file: any)  {
         console.log('Reading process started!');
 
-        let reader = new RomReader(file, (banks: Array<Uint8Array>) => {
-            RAM.readRom(banks);
+        let reader = new RomReader(file, (banks: Array<Uint8Array>, type: string) => {
+            RAM.readRom(banks, type);
             this.handleRom();
         });
     };

@@ -3,7 +3,6 @@ import { Convert } from './Common';
 
 // TODO: Memory mirroring
 // TODO: Decimal mode for ABD/SBC
-// TODO: Check if combined ALU-opcodes work properly
 
 export class Opcode {
 
@@ -83,7 +82,7 @@ export class Opcode {
 
         return 3 + (this.isNextPage(Register.PC, Register.PC += num) ? 1 : 0);
     };
-    
+
     private static DEC(address: number) {
         let result: number = RAM.write(address, RAM.get(address) - 1);
 
@@ -99,7 +98,7 @@ export class Opcode {
 
         Flag.N = this.isNegative(Register.A);
     };
-    
+
     private static INC(address: number) {
         let result: number = RAM.write(address, RAM.get(address) + 1);
 
@@ -370,14 +369,14 @@ export class Opcode {
     // JSR nnnn
     public static 0x20() {
         let address: number = this.next2BYTES();
-        
+
         this.PUSH(Register.PC >> 8);
         this.PUSH(Register.PC);
         Register.PC = address - 1;
 
         return 6;
     };
-    
+
     // AND (nn, X)
     public static 0x21() {
         this.AND(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
@@ -492,7 +491,7 @@ export class Opcode {
     public static 0x30() {
         return this.CJMP('N', false);
     };
-    
+
     // AND (nn), Y
     public static 0x31() {
         let address: number = this.WORD(RAM.get(++Register.PC));
@@ -550,22 +549,22 @@ export class Opcode {
 
         return 4 + (this.isNextPage(address, (address + Register.X) & 0xFFFF) ? 1 : 0);
     };
-    
+
     // ROL nnnn, X
     public static 0x3E() {
         this.ROL((this.next2BYTES() + Register.X) & 0xFFFF);
 
         return 7;
     };
-    
+
     // RTI
     public static 0x40() {
         let val: Array<string> = Convert.toBin(this.POP()).split('');
-        
+
         Register.PC = this.POP();
-        
+
         Register.PC += this.POP() << 8;
-        
+
         Flag.N = parseInt(val[0]);
 
         Flag.V = parseInt(val[1]);
@@ -815,7 +814,7 @@ export class Opcode {
 
         return 4;
     };
-    
+
     // ROR nnnn
     public static 0x6E() {
         this.ROR(this.next2BYTES());
@@ -827,11 +826,11 @@ export class Opcode {
     public static 0x70() {
         return this.CJMP('V', false);
     };
-    
+
     // ADC (nn), Y
     public static 0x71() {
         let address: number = this.WORD(RAM.get(++Register.PC));
-        
+
         this.ADC(RAM.read(address + Register.Y));
 
         return 5 + (this.isNextPage(address, address + Register.Y) ? 1 : 0);
@@ -883,7 +882,7 @@ export class Opcode {
 
         return 4 + (this.isNextPage(address, (address + Register.X) & 0xFFFF) ? 1 : 0);
     };
-    
+
     // ROR nnnn, X
     public static 0x7E() {
         this.ROR((this.next2BYTES() + Register.X) & 0xFFFF);
@@ -896,11 +895,11 @@ export class Opcode {
         Register.PC++;
         return 2;
     };
-    
+
     // STA (nn, X)
     public static 0x81() {
         RAM.write(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))), Register.A);
-        
+
         return 6;
     };
 
@@ -912,21 +911,21 @@ export class Opcode {
     // STY nn
     public static 0x84() {
         RAM.write(RAM.get(++Register.PC), Register.Y);
-        
+
         return 3;
     };
 
     // STA nn
     public static 0x85() {
         RAM.write(RAM.get(++Register.PC), Register.A);
-        
+
         return 3;
     };
 
     // STX nn
     public static 0x86() {
         RAM.write(RAM.get(++Register.PC), Register.X);
-        
+
         return 3;
     };
 
@@ -997,7 +996,7 @@ export class Opcode {
     };
 
     // STA nn, X
-    public static 0x95() {    
+    public static 0x95() {
         RAM.write(Convert.toUint8(RAM.get(++Register.PC) + Register.X), Register.A);
         return 4;
     };
@@ -1005,7 +1004,7 @@ export class Opcode {
     // STX nn, Y
     public static 0x96() {
         RAM.write(Convert.toUint8(RAM.get(++Register.PC) + Register.Y), Register.X);
-        
+
         return 4;
     };
 
@@ -1263,11 +1262,11 @@ export class Opcode {
 
         return 2;
     };
-    
+
     // CMP (nn, X)
     public static 0xC1() {
         this.CMP('A', RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
-        
+
         return 6;
     };
 
@@ -1371,11 +1370,11 @@ export class Opcode {
 
         return 4;
     };
-    
+
     // DEC nnnn
     public static 0xCE() {
         this.DEC(this.next2BYTES());
-    
+
         return 6;
     };
 
@@ -1383,11 +1382,11 @@ export class Opcode {
     public static 0xD0() {
         return this.CJMP('Z', true);
     };
-    
+
     // CMP (nn),Y
     public static 0xD1() {
         let address: number = this.WORD(RAM.get(++Register.PC));
-        
+
         this.CMP('A', RAM.read(address + Register.Y));
 
         return 5 + (this.isNextPage(address, address + Register.Y) ? 1 : 0);;
@@ -1441,11 +1440,11 @@ export class Opcode {
 
         return 4 + (this.isNextPage(address, (address + Register.X) & 0xFFFF) ? 1 : 0);
     };
-    
+
     // DEC nnnn, X
     public static 0xDE() {
         this.DEC((this.next2BYTES() + Register.X) & 0xFFFF);
-    
+
         return 7;
     };
 
@@ -1511,14 +1510,14 @@ export class Opcode {
 
         return 4;
     };
-    
+
     // SBC nnnn
     public static 0xED() {
         this.ADC(Convert.toUint8(~RAM.read(this.next2BYTES())));
 
         return 4;
     };
-    
+
     // INC nnnn
     public static 0xEE() {
         this.INC(this.next2BYTES());
@@ -1577,7 +1576,7 @@ export class Opcode {
 
         return 4 + (this.isNextPage(address, (address + Register.X) & 0xFFFF) ? 1 : 0);
     };
-    
+
     // INC nnnn, X
     public static 0xFE() {
         this.INC((this.next2BYTES() + Register.X) & 0xFFFF);

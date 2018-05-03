@@ -2,7 +2,7 @@
 
 This project is an attempt to emulate Atari2600 video game console.
 
-Right now, the app is able to properly emulate only simple Atari 2600 roms, for example from [here](http://khryssun.free.fr/programming_code.html#Sources_Background). Some actual games are somewhat playable (if they load at all), like Texas Chainsaw Massacre, however Player, Ball and Missile graphics maybe a little messed up. Supports roms with a size of 4KB or less.
+Right now, the app is able to properly emulate only simple Atari 2600 roms, for example from [here](http://khryssun.free.fr/programming_code.html#Sources_Background). Some actual games are somewhat playable (if they load at all), like Texas Chainsaw Massacre, however Player, Ball and Missile graphics maybe a little messed up.
 
 You can check out the latest build [here](https://star-collector.github.io/atari2600.js/). Do not forget to bring your own roms!
 

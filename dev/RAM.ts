@@ -23,6 +23,10 @@ export class Flag {
 };
 
 export class RAM {
+	private static banks: Array<Uint8Array> = [];
+
+	private static type: string = '';
+
 	public static memory: Uint8Array = new Uint8Array(65536);
 
 	public static swchaW: number = 0x00;
@@ -32,6 +36,12 @@ export class RAM {
 	public static swchbW: number = 0x00;
 
 	public static swchbR: number = 0x3F;
+
+	private static switchRom(id: number) {
+		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
+			this.memory.set(this.banks[id], i);
+		};
+	};
 
 	public static get(address: number) {
 		return this.memory[address];
@@ -47,16 +57,16 @@ export class RAM {
 		return value;
 	};
 
-	public static readRom(banks: Array<Uint8Array>) {
-		let rom: Uint8Array = banks[0];
+	public static readRom(banks: Array<Uint8Array>, type: string) {
+		this.banks = banks;
+
+		this.type = type;
+
+		this.memory = new Uint8Array(65536);
 
 		this.reset();
 
-		this.memory = new Uint8Array(61440 + rom.length);
-
-		for(let i = 0x1000; i < 0xFFFF; i += 0x2000) {
-			this.memory.set(rom, i);
-		};
+		this.switchRom(0);
 
 		// Reset vector
 		Register.PC = ((this.memory[0xFFFD] & 0xFF) << 8) | (this.memory[0xFFFC] & 0xFF);
@@ -468,5 +478,113 @@ export class RAM {
 		PIA.setTimer(0x297);
 
 		return value;
+	};
+
+
+	private static 0xFFF4(value: number) {
+		switch(this.type) {
+			case '32KB':
+				this.switchRom(0);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF4]);
+	};
+
+	private static 0xFFF5(value: number) {
+		switch(this.type) {
+			case '32KB':
+				this.switchRom(1);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF5]);
+	};
+
+	private static 0xFFF6(value: number) {
+		switch(this.type) {
+			case '16KB':
+				this.switchRom(0);
+				break;
+			case '32KB':
+				this.switchRom(2);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF6]);
+	};
+
+	private static 0xFFF7(value: number) {
+		switch(this.type) {
+			case '16KB':
+				this.switchRom(1);
+				break;
+			case '32KB':
+				this.switchRom(3);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF7]);
+	};
+
+	private static 0xFFF8(value: number) {
+		switch(this.type) {
+			case '8KB':
+				this.switchRom(0);
+				break;
+			case '12KB':
+				this.switchRom(0);
+				break;
+			case '16KB':
+				this.switchRom(2);
+				break;
+			case '32KB':
+				this.switchRom(4);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF8]);
+	};
+
+	private static 0xFFF9(value: number) {
+		switch(this.type) {
+			case '8KB':
+				this.switchRom(1);
+				break;
+			case '12KB':
+				this.switchRom(1);
+				break;
+			case '16KB':
+				this.switchRom(3);
+				break;
+			case '32KB':
+				this.switchRom(5);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFF9]);
+	};
+
+	private static 0xFFFA(value: number) {
+		switch(this.type) {
+			case '12KB':
+				this.switchRom(2);
+				break;
+			case '32KB':
+				this.switchRom(6);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFFA]);
+	};
+
+	private static 0xFFFB(value: number) {
+		switch(this.type) {
+			case '32KB':
+				this.switchRom(7);
+				break;
+		};
+
+		return (value ? value : this.memory[0xFFFB]);
 	};
 };
