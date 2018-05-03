@@ -34,3 +34,8 @@ Then after you load a rom, your canvas will start rendering automatically.
 
 First joystick: Arrow Keys + Ctrl.
 Second joystick: WASD + Shift.
+
+Reset Button: /
+Select Button: .
+P0 Difficulty Switch: ,
+P1 Difficulty Switch: m

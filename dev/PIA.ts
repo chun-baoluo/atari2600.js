@@ -3,7 +3,6 @@ import { Convert } from './Common';
 
 // TODO: Timer restart after reading from INTIM?
 // TODO: different control types
-// TODO: keyup - proper detection (limit to one later, etc)
 
 export class PIA {
     public static prevTimer: number = null;
@@ -26,33 +25,41 @@ export class PIA {
         let inpt4: any = Convert.toBin(RAM.get(0x3C)).split('');
         let inpt5: any = Convert.toBin(RAM.get(0x3D)).split('');
 
-        if(key == 38) { // Player 0
+        e.preventDefault();
+        e.stopPropagation();
+
+        /* Player 0 */
+        if(key == 38) { /* ARROW UP */
             swcha[3] = '0';
-        } else if(key == 39) {
+        } else if(key == 39) { /* ARROW RIGHT */
             swcha[0] = '0';
-        }  else if(key == 40) {
+        }  else if(key == 40) { /* ARROW DOWN */
             swcha[2] = '0';
-        } else if(key == 37) {
+        } else if(key == 37) { /* ARROW LEFT */
             swcha[1] = '0';
-        } else if(key == 17) {
+        } else if(key == 17) { /* RIGHT CTRL */
             inpt4[0] = '0';
-        } else if(key == 87) { // Player 1
+        }
+        /* Player 1 */
+        else if(key == 87) { /* W */
             swcha[7] = '0';
-        } else if(key == 65) {
+        } else if(key == 65) { /* A */
             swcha[5] = '0';
-        } else if(key == 83) {
+        } else if(key == 83) { /* S */
             swcha[6] = '0';
-        } else if(key == 68) {
+        } else if(key == 68) { /* D */
             swcha[4] = '0';
-        } else if(key == 16) {
+        } else if(key == 16) { /* LEFT SHIFT */
             inpt5[0] = '0';
-        } else if(key == 191) { // Switches
+        }
+        /* Switches */
+        else if(key == 191) { /* / */
             swchb[7] = (swchb[7] == '0' ? '1' : '0');
-        } else if(key == 190) {
+        } else if(key == 190) { /* . */
             swchb[6] = (swchb[6] == '0' ? '1' : '0');
-        } else if(key == 78) {
+        } else if(key == 78) { /* , */
             swchb[1] = (swchb[1] == '0' ? '1' : '0');
-        } else if(key == 77) {
+        } else if(key == 77) { /* m */
             swchb[0] = (swchb[0] == '0' ? '1' : '0');
         };
 

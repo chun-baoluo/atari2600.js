@@ -62,8 +62,6 @@ export class RAM {
 
 		this.type = type;
 
-		this.memory = new Uint8Array(65536);
-
 		this.reset();
 
 		this.switchRom(0);
@@ -74,6 +72,9 @@ export class RAM {
 
 	public static reset() {
 		this.memory = new Uint8Array(65536);
+
+		this.memory[0x3C] = 0x80;
+		this.memory[0x3D] = 0x80;
 	};
 
 	public static set(address: number, value: number) {
@@ -368,6 +369,76 @@ export class RAM {
 		if(value === undefined) return this.memory[0x2C];
 		this.memory[0x30] = this.memory[0x31] = this.memory[0x32] = this.memory[0x33] = this.memory[0x34] = this.memory[0x35] = this.memory[0x36] = this.memory[0x37] = 0;
 		return value;
+	};
+
+	// CXM0P read only
+	private static 0x30() {
+		return this.memory[0x30];
+	};
+
+	// CXM1P read only
+	private static 0x31() {
+		return this.memory[0x31];
+	};
+
+	// CXP0FB read only
+	private static 0x32() {
+		return this.memory[0x32];
+	};
+
+	// CXP1FB read only
+	private static 0x33() {
+		return this.memory[0x33];
+	};
+
+	// CXM0FB read only
+	private static 0x34() {
+		return this.memory[0x34];
+	};
+
+	// CXM1FB read only
+	private static 0x35() {
+		return this.memory[0x35];
+	};
+
+	// CXBLPF read only
+	private static 0x36() {
+		return this.memory[0x36];
+	};
+
+	// CXPPMM read only
+	private static 0x37() {
+		return this.memory[0x37];
+	};
+
+	// INPT0 read only
+	private static 0x38() {
+		return this.memory[0x38];
+	};
+
+	// INPT1 read only
+	private static 0x39() {
+		return this.memory[0x39];
+	};
+
+	// INPT2 read only
+	private static 0x3A() {
+		return this.memory[0x3A];
+	};
+
+	// INPT3 read only
+	private static 0x3B() {
+		return this.memory[0x3B];
+	};
+
+	// INPT4 read only
+	private static 0x3C() {
+		return this.memory[0x3C];
+	};
+
+	// INPT5 read only
+	private static 0x3D() {
+		return this.memory[0x3D];
 	};
 
 	// SWCHA read/write

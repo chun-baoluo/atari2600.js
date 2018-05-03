@@ -33,7 +33,6 @@ export class RomReader {
 
     private onRomLoadEnd(evt: any) {
         let rom: Uint8Array = new Uint8Array(evt.target.result);
-        console.log(rom);
 
         let romSize: number = rom.length;
         let banks: Array<Uint8Array> = [];
@@ -49,12 +48,8 @@ export class RomReader {
 
         // lets parse rom into 4KB banks
         for(let i = 0; i < rom.length; i += 0x1000) {
-            console.log(new Uint8Array(rom.buffer, i, 0x1000));
-
             banks.push(new Uint8Array(rom.buffer, i, 0x1000));
         };
-
-
 
         this.callback(banks, romType);
     };
