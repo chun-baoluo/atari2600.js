@@ -13,9 +13,10 @@ I hope I'll have enough time, patience and inspiration to finish it.
 You'll need a canvas and a file input HTML elements for this to work.
 
 ```js
+    import { Atari2600 } from 'atari2600.js';
 
     let canvas = document.getElementById('canvas');
-    let app = new Atari2600.App(canvas, {
+    let app = new Atari2600(canvas, { // use Atari2600.App in case of direct "require" or inclusion with <script> tag
         colors: 'NTSC' // optional (possible values - NTSC, PAL or SECAM, default - NTSC)
         imageRendering: 'pixelated' // optional (values are the same as in image-rendering CSS property, default - pixelated)
     });
@@ -32,10 +33,10 @@ Then after you load a rom, your canvas will start rendering automatically.
 
 ## Controls
 
-First joystick: Arrow Keys + Ctrl.
-Second joystick: WASD + Shift.
+First joystick: Arrow Keys + Ctrl.  
+Second joystick: WASD + Shift.  
 
-Reset Button: /
-Select Button: .
-P0 Difficulty Switch: ,
-P1 Difficulty Switch: m
+Reset Button: /  
+Select Button: .  
+P0 Difficulty Switch: ,  
+P1 Difficulty Switch: m  
