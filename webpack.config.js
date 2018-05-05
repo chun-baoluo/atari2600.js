@@ -16,20 +16,18 @@ module.exports = (env={ type: 'dev'}) => {
         },
 
         module: {
-            rules: [
-                {
+            rules: [{
                     test: /\.ts$/,
                     loader: 'ts-loader'
-                }
-            ]
+            }]
         },
 
         output: {
             path: __dirname + '/output',
             publicPath: '/',
             filename: '[name].js',
-            libraryTarget: "var",
-            library: 'Atari2600'
+            libraryTarget: "umd",
+            library: 'atari2600'
         },
 
         plugins: plugins,
