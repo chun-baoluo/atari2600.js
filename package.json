@@ -1,6 +1,6 @@
 {
   "name": "atari2600.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:dev": "webpack --config ./webpack.config.js --progress --colors --profile --bail --env.type=dev --mode=development",
     "build:prod": "webpack --config ./webpack.config.js --progress --colors --profile --bail --env.type=prod --mode=production",
@@ -25,12 +25,15 @@
     "webpack-cli": "^2.0.13"
   },
   "keywords": [
-      "Atari2600.js",
-      "Atari",
-      "2600",
-      "6507",
-      "emulator",
-      "emulation"
+    "Atari2600.js",
+    "Atari",
+    "2600",
+    "6507",
+    "emulator",
+    "emulation"
   ],
-  "private": true
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/star-collector/atari2600.js.git"
+  }
 }
