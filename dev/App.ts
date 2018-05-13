@@ -9,7 +9,12 @@ export class App {
 
     constructor(canvas: any, options: any = {}) {
         this.handleRom = this.handleRom.bind(this);
+        this.onCanvasDrop = this.onCanvasDrop.bind(this);
+
         canvas.style.imageRendering = options.imageRendering || 'pixelated';
+        canvas.addEventListener("dragover", (e: any) => e.preventDefault());
+        canvas.addEventListener('drop', this.onCanvasDrop);
+
         TIA.colorPalette = new Map(Colors[options.colors] || Colors['NTSC']);
         TIA.canvas = canvas;
         PIA.initInputs();
@@ -20,6 +25,12 @@ export class App {
             requestAnimationFrame(this.handleRom);
             console.log('NEW FRAME');
         });
+    };
+
+    private onCanvasDrop(e: any) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.processFile(e.dataTransfer.files[0]);
     };
 
     public processFile(file: any)  {

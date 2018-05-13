@@ -1,6 +1,6 @@
 {
   "name": "atari2600.js",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "scripts": {
     "build:dev": "webpack --config ./webpack.config.js --progress --colors --profile --bail --env.type=dev --mode=development",
     "build:prod": "webpack --config ./webpack.config.js --progress --colors --profile --bail --env.type=prod --mode=production",
