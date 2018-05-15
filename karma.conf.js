@@ -10,7 +10,7 @@ module.exports = (config) => {
         preprocessors: {
             "test/**/*.spec.ts": ["webpack"]
         },
-        
+
         browsers: ['PhantomJS'],
 
         mime: {
@@ -28,7 +28,8 @@ module.exports = (config) => {
             },
             resolve: {
                 extensions: ['*', '.ts']
-            }
+            },
+            mode: 'development'
         }
     });
 }

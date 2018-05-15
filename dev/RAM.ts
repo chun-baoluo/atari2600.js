@@ -94,24 +94,37 @@ export class RAM {
 	};
 
 	// VSYNC write
+	// CXM0P read
 	private static 0x00(value: number) {
-		if(value === undefined) return this.memory[0x00];
+		if(value === undefined) return this.memory[0x30];
 		if(!(RAM.get(0x00) & 0x02) && (value & 0x02)) {
 			TIA.scanline = 0;
 		};
 		return value;
 	};
 
+	// CXM1P read
+	private static 0x01() {
+		return this.memory[0x31];
+	};
+
 	// WSYNC write
+	// CXP0FB read
 	private static 0x02(value: number) {
-		if(value === undefined) return this.memory[0x02];
+		if(value === undefined) return this.memory[0x32];
 		CPU.lock();
 		return value;
 	};
 
+	// CXP1FB read
+	private static 0x03() {
+		return this.memory[0x33];
+	};
+
 	// NUSIZ0 write
+	// CXM0FB read
 	private static 0x04(value: number) {
-		if(value === undefined) return this.memory[0x04];
+		if(value === undefined) return this.memory[0x34];
 		let nusiz: Array<string> = Convert.toBin(value).split('');
 		let playerValue: number = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
 
@@ -122,8 +135,9 @@ export class RAM {
 	};
 
 	// NUSIZ1 write
+	// CXM1FB read
 	private static 0x05(value: number) {
-		if(value === undefined) return this.memory[0x05];
+		if(value === undefined) return this.memory[0x35];
 		let nusiz: Array<string> = Convert.toBin(value).split('');
 		let playerValue: number = parseInt(nusiz[5] + nusiz[6] + nusiz[7], 2);
 
@@ -134,36 +148,41 @@ export class RAM {
 	};
 
 	// COLUP0 write
+	// CXBLPF read
 	private static 0x06(value: number) {
-		if(value === undefined) return this.memory[0x06];
+		if(value === undefined) return this.memory[0x36];
 		TIA.pf.colup0 = TIA.p0.colup = TIA.m0.colup = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUP1 write
+	// CXPPMM read
 	private static 0x07(value: number) {
-		if(value === undefined) return this.memory[0x07];
+		if(value === undefined) return this.memory[0x37];
 		TIA.pf.colup1 = TIA.p1.colup = TIA.m1.colup = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUPF write
+	// INPT0 read
 	private static 0x08(value: number) {
-		if(value === undefined) return this.memory[0x08];
+		if(value === undefined) return this.memory[0x38];
 		TIA.pf.colupf = TIA.ball.colupf = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// COLUBK write
+	// INPT1 read
 	private static 0x09(value: number) {
-		if(value === undefined) return this.memory[0x09];
+		if(value === undefined) return this.memory[0x39];
 		TIA.bk.colubk = TIA.colorPalette.get(value & 0xFE);
 		return value;
 	};
 
 	// CTRLPF write
+	// INPT2 read
 	private static 0x0A(value: number) {
-		if(value === undefined) return this.memory[0x0A];
+		if(value === undefined) return this.memory[0x3A];
 		let ctrlpf: Array<string> = Convert.toBin(value).split('');
 
 		TIA.pf.ctrlpf = ctrlpf;
@@ -175,22 +194,25 @@ export class RAM {
 	};
 
 	// REFP0 write
+	// INPT3 read
 	private static 0x0B(value: number) {
-		if(value === undefined) return this.memory[0x0B];
+		if(value === undefined) return this.memory[0x3B];
 		TIA.p0.refp = ((value & 0x08) > 0);
 		return value;
 	};
 
 	// REFP1 write
+	// INPT4 read
 	private static 0x0C(value: number) {
-		if(value === undefined) return this.memory[0x0C];
+		if(value === undefined) return this.memory[0x3C];
 		TIA.p1.refp = ((value & 0x08) > 0);
 		return value;
 	};
 
 	// PF0 write
+	// INPT5 read
 	private static 0x0D(value: number) {
-		if(value === undefined) return this.memory[0x0D];
+		if(value === undefined) return this.memory[0x3D];
 		TIA.pf.pf0 = Convert.toBin(value).split('').reverse();
 		return value;
 	};
@@ -226,21 +248,21 @@ export class RAM {
 	// RESM0 write
 	private static 0x12(value: number) {
 		if(value === undefined) return this.memory[0x12];
-		TIA.m0.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
+		TIA.m0.position = (TIA.clock <= 68 ? 2 : TIA.clock - 61);
 		return value;
 	};
 
 	// RESM1 write
 	private static 0x13(value: number) {
 		if(value === undefined) return this.memory[0x13];
-		TIA.m1.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
+		TIA.m1.position = (TIA.clock <= 68 ? 2 : TIA.clock - 61);
 		return value;
 	};
 
 	// RESBL write
 	private static 0x14(value: number) {
 		if(value === undefined) return this.memory[0x14];
-		TIA.ball.position = (TIA.clock <= 68 ? 2 : TIA.clock - 68);
+		TIA.ball.position = (TIA.clock <= 68 ? 2 : TIA.clock - 61);
 		return value;
 	};
 
