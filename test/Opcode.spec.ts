@@ -1160,6 +1160,27 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Flag.Z, 0);
     });
 
+    it("(0x2E) should rotate left through carry [nnnn], change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x3E, 0xF2, 0x00, 0xF3, 0x00]), 0xF000);
+        RAM.set(0xF2, 0xFF);
+
+        chai.assert.strictEqual(Opcode[0x2E](), 6);
+        chai.assert.strictEqual(RAM.get(0xF2), 0xFE);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        RAM.set(0xF3, 127);
+
+        Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0x2E](), 6);
+        chai.assert.strictEqual(RAM.get(0xF3), 0xFF);
+        chai.assert.strictEqual(Flag.N, 1);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 0);
+    });
+
     it("(0x31) should do AND operation with A and [[nn] + Y], change N and Z flags", () => {
         RAM.memory.set(new Uint8Array([0x31, 0x32]), 0xF000);
         RAM.set(0x32, 0x33);
@@ -1498,6 +1519,25 @@ describe("CPU Arithmetic/Logical Operations", () => {
         chai.assert.strictEqual(Register.A, 129);
         chai.assert.strictEqual(Flag.N, 1);
         chai.assert.strictEqual(Flag.Z, 0);
+    });
+
+    it("(0x5E) should right shift [nnnn + X], change N, Z and C flags", () => {
+        RAM.memory.set(new Uint8Array([0x4E, 0xF1, 0x00, 0xF2, 0x00]), 0xF000);
+        RAM.set(0xF2, 0x01);
+        RAM.set(0xF3, 0xFF);
+        Register.X = 0x01;
+
+        chai.assert.strictEqual(Opcode[0x5E](), 7);
+        chai.assert.strictEqual(RAM.get(0xF2), 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+
+        chai.assert.strictEqual(Opcode[0x5E](), 7);
+        chai.assert.strictEqual(RAM.get(0xF3), 127);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.C, 1);
     });
 
     it("(0x65) should add [nn] to accumulator with carry, change N, Z, C and V flags", () => {

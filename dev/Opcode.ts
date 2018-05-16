@@ -487,6 +487,13 @@ export class Opcode {
         return 4;
     };
 
+    // ROL nnnn
+    public static 0x2E() {
+        this.ROL(this.next2BYTES());
+
+        return 6;
+    };
+
     // BMI nnn
     public static 0x30() {
         return this.CJMP('N', false);
@@ -727,6 +734,13 @@ export class Opcode {
         this.EOR(RAM.read((address + Register.X) & 0xFFFF));
 
         return 4 + (this.isNextPage(address, (address + Register.X) & 0xFFFF) ? 1 : 0);
+    };
+
+    // LSR nnnn, X
+    public static 0x5E() {
+        this.LSR((this.next2BYTES() + Register.X) & 0xFFFF);
+
+        return 7;
     };
 
     // RTS
