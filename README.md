@@ -6,10 +6,13 @@ Right now, the app is able to properly emulate only simple Atari 2600 roms, for 
 
 You can check out the latest build [here](https://star-collector.github.io/atari2600.js/). Do not forget to bring your own roms!
 
+| ![alt text](https://github.com/star-collector/atari2600.js/raw/gh-pages/img/1.png "Mario Bros." )        | ![alt text](https://github.com/star-collector/atari2600.js/raw/gh-pages/img/2.png "Halloween")          |
+| ------------- |:-------------:|
+| ![alt text](https://github.com/star-collector/atari2600.js/raw/gh-pages/img/3.png "Star Gunner")     | ![alt text](https://github.com/star-collector/atari2600.js/raw/gh-pages/img/4.png "Texas Chainsaw Massacre") |
+
 ## Installation
 
 ```sh
-
 	$ npm install atari2600.js
 
 ```
@@ -34,7 +37,6 @@ You'll need a canvas and a file input HTML elements for this to work.
         let file = fileinput.files[0];
         app.processFile(file);
     };
-
 ```
 
 Then after you load a rom, your canvas will start rendering automatically.
