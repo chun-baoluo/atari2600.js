@@ -587,6 +587,13 @@ export class Opcode {
         return 6;
     };
 
+    // EOR (nn, X)
+    public static 0x41() {
+        this.EOR(RAM.read(this.WORD(Convert.toUint8(RAM.get(++Register.PC) + Register.X))));
+
+        return 6;
+    };
+
     // NOP nn
     public static 0x44() {
         return this[0x04]();
