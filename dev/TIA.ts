@@ -7,55 +7,31 @@ interface GameObject {
 };
 
 abstract class GameObject {
-    protected _canvas: any = null;
-    protected _ctx: any = null;
-    protected _imageData: any = null;
+    public imageData: ImageData = new ImageData(160, 220);
 
-    public get imageData() {
-        return this._imageData;
-    };
+    public abstract pixel(imageData: ImageData, scanline: number, clock: number): any;
 
-    public get canvas() {
-        this._ctx.putImageData(this._imageData, 0, 0);
-        this._imageData = this._ctx.createImageData(this._canvas.width, this._canvas.height);
-        return this._canvas;
-    };
+    public setImageData(imageData: ImageData, scanline: number, clock: number, color: any) {
+        let pixelindex: number = (scanline * 160 + clock) << 2;
+        this.imageData.data[pixelindex] = imageData.data[pixelindex] = color[0];
+        this.imageData.data[pixelindex + 1] = imageData.data[pixelindex + 1] = color[1];
+        this.imageData.data[pixelindex + 2] = imageData.data[pixelindex + 2] = color[2];
+        this.imageData.data[pixelindex + 3] = imageData.data[pixelindex + 3] = 255;
 
-    constructor() {
-        this._canvas = document.createElement('canvas');
-
-        this._canvas.width = 160;
-
-        this._canvas.height = 222;
-
-        this._ctx = this._canvas.getContext('2d');
-
-        this._imageData = this._ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
-    };
-
-    public abstract pixel(scanline: number, clock: number): any;
-
-    public setImageData(scanline: number, clock: number, color: any) {
-        let pixelindex = (scanline * this._canvas.width + clock) << 2;
-        this._imageData.data[pixelindex] = color[0];
-        this._imageData.data[pixelindex + 1] = color[1];
-        this._imageData.data[pixelindex + 2] = color[2];
-        this._imageData.data[pixelindex + 3] = 255;
-        return this._imageData;
+        return this.imageData;
     };
 };
 
 class Background extends GameObject {
     public colubk: Array<number> = [0, 0, 0];
 
-    pixel(scanline: number, clock: number) {
-        return this.setImageData(scanline, clock, this.colubk)
+    public pixel(imageData: ImageData, scanline: number, clock: number) {
+        return this.setImageData(imageData, scanline, clock, this.colubk)
     };
 };
 
 class Playfield extends GameObject {
     public reflect: boolean = false;
-    public ctrlpf: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public colupf: Array<number> = [0, 0, 0];
     public scoreMode: boolean = false;
     public colup0: Array<number> = [0, 0, 0];
@@ -64,7 +40,7 @@ class Playfield extends GameObject {
     public pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    pixel(scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number) {
         let c: Array<number> = null;
 
         if(clock <= 16) {
@@ -150,7 +126,7 @@ class Playfield extends GameObject {
             };
         };
 
-        return (c ? this.setImageData(scanline, clock, c) : null);
+        return (c ? this.setImageData(imageData, scanline, clock, c) : null);
     };
 };
 
@@ -163,9 +139,9 @@ class Ball extends GameObject {
     public size: number = 1;
     public vdelbl: boolean = false;
 
-    pixel(scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number) {
         if((this.vdelbl ? this.prevEnabl : this.enabl) && clock >= this.position && clock < this.position + this.size) {
-            return this.setImageData(scanline, clock, this.colupf);
+            return this.setImageData(imageData, scanline, clock, this.colupf);
         };
     };
 };
@@ -183,9 +159,9 @@ class Missile extends GameObject {
         this.missile = missile;
     };
 
-    pixel(scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number) {
         if(this.enam && clock >= this.position && clock < this.position + this.size) {
-            return this.setImageData(scanline, clock, this.colup);
+            return this.setImageData(imageData, scanline, clock, this.colup);
         };
     };
 };
@@ -209,7 +185,7 @@ class Player extends GameObject {
         this.position = 80 * player;
     };
 
-    pixel(scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number) {
         let grp: Array<string> = (this.vdelp ? this.prevGrp : (this.grp));
         let index: any = (((clock - this.position) / this.size) >> 0) % 8;
         index = (this.refp ? 7 - index : index);
@@ -218,7 +194,7 @@ class Player extends GameObject {
             let startingPosition: number = this.position + p;
 
             if(clock >= startingPosition && clock < (startingPosition + 8) && grp[index] == '1') {
-                return this.setImageData(scanline, clock, this.colup);
+                return this.setImageData(imageData, scanline, clock, this.colup);
             };
         };
     };
@@ -238,7 +214,7 @@ export class TIA {
 
     public static ctx: any = null;
 
-	public static imageData: any = null;
+	public static imageData: ImageData = null;
 
     public static expectNewFrame: boolean = false;
 
@@ -273,16 +249,16 @@ export class TIA {
 
         this.ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
-        this.imageData = this.ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
+        this.imageData = this.ctx.createImageData(this._canvas.width, this._canvas.height);
     };
 
     private static checkCollisions(i: number) {
-        let ballData: number[] = this.ball.imageData.data;
-        let pfData: number[] = this.pf.imageData.data;
-        let p0Data: number[] = this.p0.imageData.data;
-        let p1Data: number[] = this.p1.imageData.data;
-        let m0Data: number[] = this.m0.imageData.data;
-        let m1Data: number[] = this.m1.imageData.data;
+        let ballData: Uint8ClampedArray = this.ball.imageData.data;
+        let pfData: Uint8ClampedArray = this.pf.imageData.data;
+        let p0Data: Uint8ClampedArray = this.p0.imageData.data;
+        let p1Data: Uint8ClampedArray = this.p1.imageData.data;
+        let m0Data: Uint8ClampedArray = this.m0.imageData.data;
+        let m1Data: Uint8ClampedArray = this.m1.imageData.data;
 
         // CXM0P
         if(m0Data[i + 3] == 255 && p1Data[i + 3] == 255) {
@@ -355,25 +331,7 @@ export class TIA {
     };
 
     private static draw() {
-        if(this.pfp) {
-            this.ctx.drawImage(this.bk.canvas, 0, 0);
-            this.ctx.drawImage(this.p1.canvas, 0, 0);
-            this.ctx.drawImage(this.m1.canvas, 0, 0);
-            this.ctx.drawImage(this.p0.canvas, 0, 0);
-            this.ctx.drawImage(this.m0.canvas, 0, 0);
-            this.ctx.drawImage(this.pf.canvas, 0, 0);
-            this.ctx.drawImage(this.ball.canvas, 0, 0);
-
-            return;
-        };
-
-        this.ctx.drawImage(this.bk.canvas, 0, 0);
-        this.ctx.drawImage(this.pf.canvas, 0, 0);
-        this.ctx.drawImage(this.ball.canvas, 0, 0);
-        this.ctx.drawImage(this.p0.canvas, 0, 0);
-        this.ctx.drawImage(this.m0.canvas, 0, 0);
-        this.ctx.drawImage(this.p1.canvas, 0, 0);
-        this.ctx.drawImage(this.m1.canvas, 0, 0);
+        this.ctx.putImageData(this.imageData, 0, 0);
     };
 
     public static nextFrame() {
@@ -406,19 +364,33 @@ export class TIA {
             };
 
             this.draw();
+            this.resetCanvases();
 
             resolve(true);
         });
     };
 
     private static pixel(scanline: number, clock: number) {
-        this.bk.pixel(scanline, clock);
-        this.pf.pixel(scanline, clock);
-        this.p0.pixel(scanline, clock);
-        this.p1.pixel(scanline, clock);
-        this.m0.pixel(scanline, clock);
-        this.m1.pixel(scanline, clock);
-        this.ball.pixel(scanline, clock);
+        if(this.pfp) {
+            this.bk.pixel(this.imageData, scanline, clock);
+            this.p1.pixel(this.imageData, scanline, clock);
+            this.m1.pixel(this.imageData, scanline, clock);
+            this.p0.pixel(this.imageData, scanline, clock);
+            this.m0.pixel(this.imageData, scanline, clock);
+            this.pf.pixel(this.imageData, scanline, clock);
+            this.ball.pixel(this.imageData, scanline, clock);
+            this.checkCollisions((scanline * this._canvas.width + clock) << 2);
+            return;
+        };
+
+        this.bk.pixel(this.imageData, scanline, clock);
+        this.pf.pixel(this.imageData, scanline, clock);
+        this.ball.pixel(this.imageData, scanline, clock);
+        this.p0.pixel(this.imageData, scanline, clock);
+        this.m0.pixel(this.imageData, scanline, clock);
+        this.p1.pixel(this.imageData, scanline, clock);
+        this.m1.pixel(this.imageData, scanline, clock);
+
         this.checkCollisions((scanline * this._canvas.width + clock) << 2);
     };
 
@@ -450,5 +422,16 @@ export class TIA {
         };
 
         return range;
+    };
+
+    public static resetCanvases() {
+        this.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.bk.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.pf.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.p0.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.p1.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.m0.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.m1.imageData = new ImageData(this._canvas.width, this._canvas.height);
+        TIA.ball.imageData = new ImageData(this._canvas.width, this._canvas.height);
     };
 };

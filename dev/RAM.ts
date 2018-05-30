@@ -185,7 +185,6 @@ export class RAM {
 		if(value === undefined) return this.memory[0x3A];
 		let ctrlpf: Array<string> = Convert.toBin(value).split('');
 
-		TIA.pf.ctrlpf = ctrlpf;
 		TIA.pf.reflect = (ctrlpf[7] == '1');
 		TIA.pf.scoreMode = (ctrlpf[6] == '1' && ctrlpf[5] == '0');
 		TIA.pfp = (ctrlpf[5] == '1');
