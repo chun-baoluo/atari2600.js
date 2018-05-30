@@ -4,8 +4,9 @@
 <script src="./output/app.js"></script>
 <script>
 
+let Atari2600 = atari2600.App;
 let canvas = document.getElementById('canvas');
-let app = new Atari2600.App(canvas);
+let app = new Atari2600(canvas);
 let fileinput = document.getElementById('fileinput');
 
 fileinput.onchange = () => {
