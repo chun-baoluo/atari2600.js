@@ -4,6 +4,13 @@ import { Convert } from './Common';
 // TODO: Timer restart after reading from INTIM?
 // TODO: different control types
 
+interface ITimerIntervals {
+    0x294: number;
+    0x295: number;
+    0x296: number;
+    0x297: number;
+};
+
 export class PIA {
     public static prevTimer: number = null;
 
@@ -11,19 +18,19 @@ export class PIA {
 
     public static cycle: number = 0;
 
-    public static timerIntervals: any = {
+    public static timerIntervals: ITimerIntervals = {
         0x294: 1,
         0x295: 8,
         0x296: 64,
         0x297: 1024
     };
 
-    private static keydown(e: any) {
+    private static keydown(e: KeyboardEvent) {
         let key = e.keyCode;
-        let swcha: any = Convert.toBin(RAM.swchaR).split('');
-        let swchb: any = Convert.toBin(RAM.swchbR).split('');
-        let inpt4: any = Convert.toBin(RAM.get(0x3C)).split('');
-        let inpt5: any = Convert.toBin(RAM.get(0x3D)).split('');
+        let swcha: Array<string> = Convert.toBin(RAM.swchaR).split('');
+        let swchb: Array<string> = Convert.toBin(RAM.swchbR).split('');
+        let inpt4: Array<string> = Convert.toBin(RAM.get(0x3C)).split('');
+        let inpt5: Array<string> = Convert.toBin(RAM.get(0x3D)).split('');
 
         e.preventDefault();
         e.stopPropagation();
@@ -69,7 +76,7 @@ export class PIA {
         RAM.set(0x3D, parseInt(inpt5.join(''), 2));
     };
 
-    private static keyup(e: any) {
+    private static keyup(e: KeyboardEvent) {
         RAM.swchaR = 0xFF;
         RAM.swchbR = 0xFF;
         RAM.set(0x280, 0xFF);

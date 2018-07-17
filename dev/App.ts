@@ -5,14 +5,19 @@ import { TIA } from './TIA';
 import { PIA } from './PIA';
 import { Colors }  from './Colors';
 
+interface IOptions {
+    colors?: string;
+    imageRendering?: string;
+};
+
 export class App {
 
-    constructor(canvas: any, options: any = {}) {
+    constructor(canvas: HTMLCanvasElement, options: IOptions = {}) {
         this.handleRom = this.handleRom.bind(this);
         this.onCanvasDrop = this.onCanvasDrop.bind(this);
 
-        canvas.style.imageRendering = options.imageRendering || 'pixelated';
-        canvas.addEventListener("dragover", (e: any) => e.preventDefault());
+        canvas.style.setProperty('image-rendering', options.imageRendering || 'pixelated');
+        canvas.addEventListener("dragover", (e: MouseEvent) => e.preventDefault());
         canvas.addEventListener('drop', this.onCanvasDrop);
 
         TIA.colorPalette = new Map(Colors[options.colors] || Colors['NTSC']);
@@ -27,13 +32,13 @@ export class App {
         });
     };
 
-    private onCanvasDrop(e: any) {
+    private onCanvasDrop(e: DragEvent) {
         e.preventDefault();
         e.stopPropagation();
         this.processFile(e.dataTransfer.files[0]);
     };
 
-    public processFile(file: any)  {
+    public processFile(file: File)  {
         console.log('Reading process started!');
 
         let reader = new RomReader(file, (banks: Array<Uint8Array>, type: string) => {

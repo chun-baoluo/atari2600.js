@@ -3,14 +3,14 @@ export class RomReader {
 
     reader: FileReader = new FileReader();
 
-    constructor(file: any, callback: Function) {
+    constructor(file: File, callback: Function) {
         this.onRomLoadEnd = this.onRomLoadEnd.bind(this);
         this.callback = callback;
         this.reader.onloadend = this.onRomLoadEnd;
         this.reader.readAsArrayBuffer(file);
     };
 
-    private determineRomType(rom: Uint8Array) {
+    private determineRomType(rom: Uint8Array): string {
         switch(rom.length) {
             case 1024:
                 return '1KB';
@@ -31,7 +31,7 @@ export class RomReader {
         };
     };
 
-    private onRomLoadEnd(evt: any) {
+    private onRomLoadEnd(evt: FileReaderProgressEvent): void {
         let rom: Uint8Array = new Uint8Array(evt.target.result);
 
         let romSize: number = rom.length;

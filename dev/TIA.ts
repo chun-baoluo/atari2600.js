@@ -9,9 +9,9 @@ interface GameObject {
 abstract class GameObject {
     public imageData: ImageData = new ImageData(160, 220);
 
-    public abstract pixel(imageData: ImageData, scanline: number, clock: number): any;
+    public abstract pixel(imageData: ImageData, scanline: number, clock: number): ImageData;
 
-    public setImageData(imageData: ImageData, scanline: number, clock: number, color: any) {
+    public setImageData(imageData: ImageData, scanline: number, clock: number, color: Array<number>): ImageData {
         let pixelindex: number = (scanline * 160 + clock) << 2;
         this.imageData.data[pixelindex] = imageData.data[pixelindex] = color[0];
         this.imageData.data[pixelindex + 1] = imageData.data[pixelindex + 1] = color[1];
@@ -25,7 +25,7 @@ abstract class GameObject {
 class Background extends GameObject {
     public colubk: Array<number> = [0, 0, 0];
 
-    public pixel(imageData: ImageData, scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number): ImageData {
         return this.setImageData(imageData, scanline, clock, this.colubk)
     };
 };
@@ -40,7 +40,7 @@ class Playfield extends GameObject {
     public pf1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public pf2: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
-    public pixel(imageData: ImageData, scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number): ImageData {
         let c: Array<number> = null;
 
         if(clock <= 16) {
@@ -139,7 +139,7 @@ class Ball extends GameObject {
     public size: number = 1;
     public vdelbl: boolean = false;
 
-    public pixel(imageData: ImageData, scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number): ImageData {
         if((this.vdelbl ? this.prevEnabl : this.enabl) && clock >= this.position && clock < this.position + this.size) {
             return this.setImageData(imageData, scanline, clock, this.colupf);
         };
@@ -159,7 +159,7 @@ class Missile extends GameObject {
         this.missile = missile;
     };
 
-    public pixel(imageData: ImageData, scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number): ImageData {
         if(this.enam && clock >= this.position && clock < this.position + this.size) {
             return this.setImageData(imageData, scanline, clock, this.colup);
         };
@@ -185,9 +185,9 @@ class Player extends GameObject {
         this.position = 80 * player;
     };
 
-    public pixel(imageData: ImageData, scanline: number, clock: number) {
+    public pixel(imageData: ImageData, scanline: number, clock: number): ImageData {
         let grp: Array<string> = (this.vdelp ? this.prevGrp : (this.grp));
-        let index: any = (((clock - this.position) / this.size) >> 0) % 8;
+        let index: number = (((clock - this.position) / this.size) >> 0) % 8;
         index = (this.refp ? 7 - index : index);
 
         for(let p of this.pixelRange) {
@@ -202,7 +202,7 @@ class Player extends GameObject {
 
 export class TIA {
 
-    private static _canvas: any = null;
+    private static _canvas: HTMLCanvasElement = null;
 
     public static ball: Ball = new Ball();
 
@@ -212,7 +212,7 @@ export class TIA {
 
     public static colorPalette: Map<number, number[]> = null;
 
-    public static ctx: any = null;
+    public static ctx: CanvasRenderingContext2D = null;
 
 	public static imageData: ImageData = null;
 
@@ -236,7 +236,7 @@ export class TIA {
 
     public static scanline: number = 0;
 
-    public static set canvas(canvas: any) {
+    public static set canvas(canvas: HTMLCanvasElement) {
         this._canvas = canvas;
 
         this._canvas.width = 160;
