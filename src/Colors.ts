@@ -303,7 +303,7 @@ export class Colors {
         [0xFE, [0xED, 0xED, 0xED]], // #EDEDED
     ];
 
-    public static get SECAM() {
+    public static get SECAM(): Array<[number, number[]]> {
         let value: Array<[number, number[]]>  = this._SECAM;
 
         for(let i = 0x10; i < 0xFF; i += 0x02) {

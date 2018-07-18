@@ -7,18 +7,18 @@ export class CPU {
 
 	private static _cycle: number = 0;
 
-	public static lock() {
+	public static lock(): void {
 		this._locked = true;
 	};
 
-	public static unlock() {
+	public static unlock(): void {
 		this._locked = false;
 	};
 
-	public static pulse() {
+	public static pulse(): void {
 		PIA.tick();
 		if(this._locked) {
-			return false;
+			return;
 		};
 
 		if(this._cycle <= 0) {

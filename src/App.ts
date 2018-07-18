@@ -25,20 +25,20 @@ export class App {
         PIA.initInputs();
     };
 
-    private handleRom() {
+    private handleRom(): void {
         TIA.nextFrame().then(() => {
             requestAnimationFrame(this.handleRom);
             console.log('NEW FRAME');
         });
     };
 
-    private onCanvasDrop(e: DragEvent) {
+    private onCanvasDrop(e: DragEvent): void {
         e.preventDefault();
         e.stopPropagation();
         this.processFile(e.dataTransfer.files[0]);
     };
 
-    public processFile(file: File)  {
+    public processFile(file: File): void  {
         console.log('Reading process started!');
 
         let reader = new RomReader(file, (banks: Array<Uint8Array>, type: string) => {

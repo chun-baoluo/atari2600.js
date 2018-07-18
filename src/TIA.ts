@@ -252,7 +252,7 @@ export class TIA {
         this.imageData = this.ctx.createImageData(this._canvas.width, this._canvas.height);
     };
 
-    private static checkCollisions(i: number) {
+    private static checkCollisions(i: number): void {
         let ballData: Uint8ClampedArray = this.ball.imageData.data;
         let pfData: Uint8ClampedArray = this.pf.imageData.data;
         let p0Data: Uint8ClampedArray = this.p0.imageData.data;
@@ -330,11 +330,11 @@ export class TIA {
 
     };
 
-    private static draw() {
+    private static draw(): void {
         this.ctx.putImageData(this.imageData, 0, 0);
     };
 
-    public static nextFrame() {
+    public static nextFrame(): Promise<boolean> {
         return new Promise((resolve: Function) => {
             let scanline: number = 0;
 
@@ -370,7 +370,7 @@ export class TIA {
         });
     };
 
-    private static pixel(scanline: number, clock: number) {
+    private static pixel(scanline: number, clock: number): void {
         if(this.pfp) {
             this.bk.pixel(this.imageData, scanline, clock);
             this.p1.pixel(this.imageData, scanline, clock);
@@ -394,7 +394,7 @@ export class TIA {
         this.checkCollisions((scanline * this._canvas.width + clock) << 2);
     };
 
-    public static getPixelRange(value: number) {
+    public static getPixelRange(value: number): Array<number> {
         let range: Array<number> = [0];
 
         switch(value) {
@@ -424,7 +424,7 @@ export class TIA {
         return range;
     };
 
-    public static resetCanvases() {
+    public static resetCanvases(): void {
         this.imageData = new ImageData(this._canvas.width, this._canvas.height);
         TIA.bk.imageData = new ImageData(this._canvas.width, this._canvas.height);
         TIA.pf.imageData = new ImageData(this._canvas.width, this._canvas.height);

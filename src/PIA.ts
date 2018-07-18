@@ -25,7 +25,7 @@ export class PIA {
         0x297: 1024
     };
 
-    private static keydown(e: KeyboardEvent) {
+    private static keydown(e: KeyboardEvent): void {
         let key = e.keyCode;
         let swcha: Array<string> = Convert.toBin(RAM.swchaR).split('');
         let swchb: Array<string> = Convert.toBin(RAM.swchbR).split('');
@@ -76,7 +76,7 @@ export class PIA {
         RAM.set(0x3D, parseInt(inpt5.join(''), 2));
     };
 
-    private static keyup(e: KeyboardEvent) {
+    private static keyup(e: KeyboardEvent): void {
         RAM.swchaR = 0xFF;
         RAM.swchbR = 0xFF;
         RAM.set(0x280, 0xFF);
@@ -85,18 +85,18 @@ export class PIA {
         RAM.set(0x3D, 0xFF);
     };
 
-    public static initInputs() {
+    public static initInputs(): void {
         document.addEventListener("keydown", this.keydown, false);
         document.addEventListener("keyup", this.keyup, false);
     };
 
-    public static setTimer(address: number) {
+    public static setTimer(address: number): void {
         this.timer = address;
         this.cycle = this.timerIntervals[address];
         RAM.set(0x284, RAM.get(address));
     };
 
-    public static tick() {
+    public static tick(): void {
         for(let i: number = 0x294; i <= 0x297; i++) {
             if(this.timer != i) {
                 continue;

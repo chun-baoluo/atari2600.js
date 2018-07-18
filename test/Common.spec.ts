@@ -1,7 +1,7 @@
 import {} from 'mocha';
 import {} from 'chai';
 
-import { Convert } from '../dev/Common';
+import { Convert } from '../src/Common';
 
 describe("Conversion functions", () => {
     it("should convert number to Uint8", () => {

@@ -1,9 +1,9 @@
 import {} from 'mocha';
 import {} from 'chai';
 
-import { Opcode } from '../dev/Opcode';
-import { Flag, Register, RAM } from '../dev/RAM';
-import { Convert } from '../dev/Common';
+import { Opcode } from '../src/Opcode';
+import { Flag, Register, RAM } from '../src/RAM';
+import { Convert } from '../src/Common';
 
 let beforeEachCallback = () => {
     Flag.B = 0;

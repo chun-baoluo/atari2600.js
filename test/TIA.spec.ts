@@ -1,9 +1,9 @@
 import {} from 'mocha';
 import {} from 'chai';
 
-import { Opcode } from '../dev/Opcode';
-import { Register, RAM } from '../dev/RAM';
-import { TIA } from '../dev/TIA';
+import { Opcode } from '../src/Opcode';
+import { Register, RAM } from '../src/RAM';
+import { TIA } from '../src/TIA';
 
 let beforeEachCallback = () => {
     TIA.canvas = document.createElement('canvas');

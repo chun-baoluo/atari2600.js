@@ -8,7 +8,7 @@ module.exports = (env={ type: 'dev'}) => {
 
     return {
         entry: {
-            app: __dirname + '/dev/App.ts'
+            app: __dirname + '/src/App.ts'
         },
 
         resolve: {
