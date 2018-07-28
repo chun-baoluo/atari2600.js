@@ -1,6 +1,5 @@
 import { RomReader } from './RomReader';
-import { CPU } from './CPU';
-import { Register, RAM } from './RAM';
+import { RAM } from './RAM';
 import { TIA } from './TIA';
 import { PIA } from './PIA';
 import { Colors }  from './Colors';

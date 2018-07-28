@@ -3,7 +3,6 @@ module.exports = (config) => {
         frameworks: ['mocha', 'chai'],
 
         files: [
-            'node_modules/babel-polyfill/dist/polyfill.min.js',
             'test/**/*.spec.ts'
         ],
 
@@ -11,7 +10,7 @@ module.exports = (config) => {
             "test/**/*.spec.ts": ["webpack"]
         },
 
-        browsers: ['PhantomJS'],
+        browsers: ['Chrome'],
 
         mime: {
             'text/x-typescript': ['ts']

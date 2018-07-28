@@ -2727,4 +2727,20 @@ describe("CPU Illegal Opcodes", () => {
         chai.assert.strictEqual(Flag.N, 0);
         chai.assert.strictEqual(Flag.C, 1);
     });
+
+    it("(0xDF) should DEC [nnnn + X] and compare the result with register A, change Z, N and C flags", () => {
+        RAM.memory.set(new Uint8Array([0xDF, 0xF0, 0x00]), 0xF000);
+        Register.A = 0x03;
+        Register.X = 0x01;
+
+        RAM.set(0xF1, 0x03);
+
+        Flag.N = Flag.Z = 1;
+
+        chai.assert.strictEqual(Opcode[0xDF](), 7);
+        chai.assert.strictEqual(RAM.get(0xF1), 2);
+        chai.assert.strictEqual(Flag.Z, 0);
+        chai.assert.strictEqual(Flag.N, 0);
+        chai.assert.strictEqual(Flag.C, 1);
+    });
 });

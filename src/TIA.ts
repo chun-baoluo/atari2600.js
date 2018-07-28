@@ -1,12 +1,9 @@
-import { Convert } from './Common';
 import { RAM } from './RAM';
 import { CPU } from './CPU';
 
-interface GameObject {
-    position?: number;
-};
-
 abstract class GameObject {
+    public position: number;
+
     public imageData: ImageData = new ImageData(160, 220);
 
     public abstract pixel(imageData: ImageData, scanline: number, clock: number): ImageData;
@@ -171,8 +168,6 @@ class Player extends GameObject {
     public grp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public prevGrp: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
     public hmp: number = 0;
-    public nusiz: number = 0;
-    private player: number = 0;
     public position: number = null;
     public refp: boolean = false;
     public vdelp: boolean = false;
@@ -181,7 +176,6 @@ class Player extends GameObject {
 
     constructor(player: number = 0) {
         super();
-        this.player = player;
         this.position = 80 * player;
     };
 
@@ -216,15 +210,9 @@ export class TIA {
 
 	public static imageData: ImageData = null;
 
-    public static expectNewFrame: boolean = false;
-
     public static m0: Missile = new Missile(0);
 
     public static m1: Missile = new Missile(1);
-
-    public static nusiz0: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
-
-    public static nusiz1: Array<string> = ['0', '0', '0', '0', '0', '0', '0', '0'];
 
     public static p0: Player = new Player(0);
 

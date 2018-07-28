@@ -1469,6 +1469,16 @@ export class Opcode {
         return 7;
     };
 
+    // DCP nnnn, X
+    public static 0xDF(): number {
+        let address: number = (this.next2BYTES() + Register.X) & 0xFFFF;
+
+        this.DEC(address);
+        this.CMP('A', RAM.read(address));
+
+        return 7;
+    };
+
     // CPX #nn
     public static 0xE0(): number {
         this.CMP('X', RAM.get(++Register.PC));
